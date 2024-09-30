@@ -1,0 +1,33 @@
+<div class="container">
+    <form (ngSubmit)="editar(formulario)" #formulario="ngForm">
+
+        <label>Ingrese Id</label>
+        <input type="text" class="form-control" name="id" [(ngModel)]="id">
+        <label>Ingresar Modelo</label>
+        <select class="form-control" name="modelo" [(ngModel)]="modelo">
+            <option value="Bentely">Bentely</option>
+            <option value="Mercedes">Mercedes Benz</option>
+            <option value="Jeep">Jeep</option>
+            <option value="Opel-Corsa">Opel-Corsa</option>
+            <option value="Suzuki">Suzuki SW</option>
+            <option value="Aveo">Chevrolet Aveo</option>
+            <option value="Skoda">Skoda</option>
+            <option value="Sail">Chevrolet Sail</option>
+        </select>
+        <label>Ingrese Placa</label>
+        <input type="text" class="form-control"name="placa" [(ngModel)]="placa">
+
+        <label>Ingrese Año</label>
+        <input type="text" class="form-control"name="anio" [(ngModel)]="anio">
+
+        <label>Ingresar El Precio</label>
+        <input type="text" class="form-control"name="precio" [(ngModel)]="precio">
+        <label>Ingresar El Kilometraje</label>
+        <input type="text" class="form-control"name="kilometraje" [(ngModel)]="kilometraje">
+        <label>Ingresar El Dueño Anterior</label>
+        <input type="text" class="form-control"name="duenioAnterior" [(ngModel)]="duenioAnterior">
+        <br>
+        <br>
+        <button class="btn btn-primary" type="submit">EDITAR</button>
+    </form>
+</div>

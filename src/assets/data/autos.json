@@ -1,0 +1,67 @@
+{
+  "autos": [
+    {
+      "id": "2",
+      "modelo": "Mercedes",
+      "placa": "DEF-5678",
+      "anio": "2025",
+      "precio": "180000",
+      "kilometraje": "22000",
+      "duenioAnterior": "Manuel Chavez"
+    },
+    {
+      "id": "3",
+      "modelo": "Jeep",
+      "placa": "GHI-9101",
+      "anio": "2021",
+      "precio": "35000",
+      "kilometraje": "10000",
+      "duenioAnterior": "Pablo Marmol"
+    },
+    {
+      "id": "4",
+      "modelo": "Opel-Corsa",
+      "placa": "JKL-1123",
+      "anio": "2018",
+      "precio": "15000",
+      "kilometraje": "45000",
+      "duenioAnterior": "Bryan Mina"
+    },
+    {
+      "id": "5",
+      "modelo": "Suzuki",
+      "placa": "MNO-1415",
+      "anio": "2022",
+      "precio": "18000",
+      "kilometraje": "8000",
+      "duenioAnterior": "Diego Tambo"
+    },
+    {
+      "id": "6",
+      "modelo": "Aveo",
+      "placa": "PQR-1617",
+      "anio": "2020",
+      "precio": "12000",
+      "kilometraje": "30000",
+      "duenioAnterior": "Michell Cardenas"
+    },
+    {
+      "id": "7",
+      "modelo": "Skoda",
+      "placa": "STU-1819",
+      "anio": "2019",
+      "precio": "22000",
+      "kilometraje": "25000",
+      "duenioAnterior": "Marcelo Moya"
+    },
+    {
+      "id": "8",
+      "modelo": "Sail",
+      "placa": "VWX-2021",
+      "anio": "2021",
+      "precio": "14000",
+      "kilometraje": "12000",
+      "duenioAnterior": "Fernando Calvopiña"
+    }
+  ]
+}

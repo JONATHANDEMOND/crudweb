@@ -1,0 +1,46 @@
+<h4>Filtrar Vehiculos por Precio</h4>
+<div class="form-group">
+    <label for="precioDesde">Precio Desde:</label>
+    <input type="number" id="precioDesde" [(ngModel)]="precioDesde" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="precioHasta">Precio Hasta:</label>
+    <input type="number" id="precioHasta" [(ngModel)]="precioHasta" class="form-control">
+  </div>
+  <button (click)="filtrarVehiculos()" class="btn btn-primary">Filtrar</button>
+
+
+
+<table class="table table-condensed">
+     <thead>
+       <tr>
+         <th>ID</th>
+         <th>Modelo</th>
+         <th>Placa</th>
+         <th>Año</th>
+         <th>Precio</th>
+         <th>Kilometraje</th>
+         <th>Dueño Anterior</th>
+       </tr>
+     </thead>
+     <tbody>
+       
+            @for (item of autos; track item) {
+               <tr>
+                   <td>{{item.id}}</td>
+                   <td>{{item.modelo}}</td>
+                   <td>{{item.placa}}</td>
+                   <td>{{item.anio}}</td>
+                   <td>{{item.precio}}</td>
+                   <td>{{item.kilometraje}}</td>
+                   <td>{{item.duenioAnterior}}</td>
+                   
+                    </tr>
+           }
+         
+
+     </tbody>
+   </table>
+
+
+
