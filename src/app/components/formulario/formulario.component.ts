@@ -12,12 +12,25 @@ import { AutoServiceService } from '../../service/auto-service.service';
 export class FormularioComponent {
   servicio = inject(AutoServiceService)
 id:any
+usuario:any
+dependencia:any
+hostname:any
+tipo:any
 modelo:any
-placa:any
-anio:any
-precio:any
-kilometraje:any
-duenioAnterior:any
+codbinecpu:any
+seriecpu:any
+codbienmonitor:any
+seriemonitor:any
+codbienmouse:any
+seriemouse:any
+codbienteclado:any
+serieteclado:any
+codbienups:any
+serieups:any
+estadoup:any
+tipodisco:any
+
+
 
 guardar(data:any){
   this.servicio.postAuto(data.value).subscribe()
@@ -27,12 +40,23 @@ guardar(data:any){
 }
 limpiar(){
   this.id='',
+this.usuario='',
+this.dependencia='',
+this.hostname='',
+this.tipo='',
 this.modelo='',
-this.placa='',
-this.anio='',
-this.precio='',
-this.kilometraje='',
-this.duenioAnterior=''
+this.codbinecpu='',
+this.seriecpu='',
+this.codbienmonitor='',
+this.seriemonitor='',
+this.codbienmouse='',
+this.seriemouse='',
+this.codbienteclado='',
+this.serieteclado='',
+this.codbienups='',
+this.serieups='',
+this.estadoup='',
+this.tipodisco=''
 
 
 }

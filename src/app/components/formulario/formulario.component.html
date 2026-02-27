@@ -1,33 +1,170 @@
-<div class="container">
-    <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Registro de Inventario de Equipos</h4>
+        </div>
+        <div class="card-body">
+            <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
 
-        <label>Ingrese Id</label>
-        <input type="text" class="form-control" name="id" [(ngModel)]="id">
-        <label>Ingresar Modelo</label>
-        <select class="form-control" name="modelo" [(ngModel)]="modelo">
-            <option value="Bentely">Bentely</option>
-            <option value="Mercedes">Mercedes Benz</option>
-            <option value="Jeep">Jeep</option>
-            <option value="Opel-Corsa">Opel-Corsa</option>
-            <option value="Suzuki">Suzuki SW</option>
-            <option value="Aveo">Chevrolet Aveo</option>
-            <option value="Skoda">Skoda</option>
-            <option value="Sail">Chevrolet Sail</option>
-        </select>
-        <label>Ingrese Placa</label>
-        <input type="text" class="form-control"name="placa" [(ngModel)]="placa">
+                <h5 class="text-secondary border-bottom pb-2">Información General</h5>
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label font-weight-bold">ID</label>
+                        <input type="text" class="form-control" name="id" [(ngModel)]="id" required>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" class="form-control" name="usuario" [(ngModel)]="usuario" placeholder="Nombre del responsable">
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label">Dependencia</label>
+                        <select class="form-control" name="dependencia" [(ngModel)]="dependencia">
+                            <option value="" disabled selected>Seleccione una dependencia</option>
+                            <option value="ADOQUINERA">ADOQUINERA</option>
+                            <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
+                            <option value="BIOINSUMOS">BIOINSUMOS</option>
+                            <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
+                            <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
+                            <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
+                            <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
+                            <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
+                            <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
+                            <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
+                            <option value="CEDES MEJIA">CEDES MEJIA</option>
+                            <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
+                            <option value="CEDES SOLANDA">CEDES SOLANDA</option>
+                            <option value="CEDES IESSFUT">CEDES IESSFUT</option>
+                            <option value="CEMBA">CEMBA</option>
+                            <option value="CC EL BOSQUE">CC EL BOSQUE</option>
+                            <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
+                            <option value="CEVA CACAO">CEVA CACAO</option>
+                            <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
+                            <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
+                            <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
+                            <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
+                            <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
+                            <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
+                            <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
+                            <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
+                            <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
+                            <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
+                            <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
+                            <option value="NANEGALITO">NANEGALITO</option>
+                            <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
+                            <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
+                            <option value="PSICOLA">PSICOLA</option>
+                            <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
+                            <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
+                            <option value="VIVERO">VIVERO</option>
+                            <option value="WARMI ALANGASI">WARMI ALANGASI</option>
+                            <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
+                            <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
+                            <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
+                            <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
+                            <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
+                            <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
+                            <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
+                            <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
+                            <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
+                        </select>
+                    </div>
+                </div>
 
-        <label>Ingrese Año</label>
-        <input type="text" class="form-control"name="anio" [(ngModel)]="anio">
+                <h5 class="text-secondary border-bottom pb-2 mt-4">Hardware Principal</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Host Name</label>
+                        <input type="text" class="form-control" name="hostname" [(ngModel)]="hostname">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Tipo de Equipo</label>
+                        <select class="form-control" name="tipo" [(ngModel)]="tipo">
+                            <option value="" disabled selected>Seleccione tipo...</option>
+                            <option value="LAPTOP">LAPTOP</option>
+                            <option value="ESCRITORIO">ESCRITORIO</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Modelo del Equipo</label>
+                        <input type="text" class="form-control" name="modelo" [(ngModel)]="modelo">
+                    </div>
+                </div>
 
-        <label>Ingresar El Precio</label>
-        <input type="text" class="form-control"name="precio" [(ngModel)]="precio">
-        <label>Ingresar El Kilometraje</label>
-        <input type="text" class="form-control"name="kilometraje" [(ngModel)]="kilometraje">
-        <label>Ingresar El Dueño Anterior</label>
-        <input type="text" class="form-control"name="duenioAnterior" [(ngModel)]="duenioAnterior">
-        <br>
-        <br>
-        <button class="btn btn-primary" type="submit">REGISTRAR</button>
-    </form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Código de Bien (CPU)</label>
+                        <input type="text" class="form-control" name="codigoBien" [(ngModel)]="codbinecpu">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Número de Serie (CPU)</label>
+                        <input type="text" class="form-control" name="numeroSerie" [(ngModel)]="seriecpu">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Tipo de Disco Duro</label>
+                        <select class="form-control" name="tipoDisco" [(ngModel)]="tipodisco">
+                            <option value="HDD">HDD (Mecánico)</option>
+                            <option value="SSD">SSD (Sólido)</option>
+                            <option value="M2">M.2 / NVMe</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Código de Bien Monitor</label>
+                        <input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codbienmonitor">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Serie Monitor</label>
+                        <input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="seriemonitor">
+                    </div>
+                </div>
+
+                <h5 class="text-secondary border-bottom pb-2 mt-4">Periféricos y UPS</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Código Mouse</label>
+                        <input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codbienmouse">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Serie Mouse</label>
+                        <input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="seriemouse">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Código Teclado</label>
+                        <input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codbienteclado">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Serie Teclado</label>
+                        <input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="serieteclado">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Código de Bien UPS</label>
+                        <input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codbienups">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Serie UPS</label>
+                        <input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="serieups">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Estado del UPS</label>
+                        <select class="form-control" name="estadoup" [(ngModel)]="estadoup">
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button class="btn btn-primary btn-lg px-5 shadow-sm" type="submit">
+                        <i class="fas fa-save mr-2"></i> REGISTRAR EQUIPO
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
