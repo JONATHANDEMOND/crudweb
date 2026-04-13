@@ -1,3 +1,40 @@
 {
-  "autos": []
+  "autos": [
+    {
+      "id": "1",
+      "usuario": "Diana Maribel Cualchi Males",
+      "dependencia": "BICENTENARIO TABUACUNDO",
+      "hostname": "dcualchi",
+      "tipo": "ESCRITORIO",
+      "modelo": "QUSAD",
+      "codigoBien": "AF 700100130001.0038372",
+      "numeroSerie": "CZY2P23",
+      "tipoDisco": "HDD",
+      "codigoBienMonitor": "AF 700100440001.0038544",
+      "numeroSerieMonitor": "cn0ryk5rtv2009bg2t7u",
+      "codigoBienMouse": "AF 170700290001.0038790",
+      "numeroSerieMouse": "CN0PRDV9LO3009BF0EPZ",
+      "codigoBienTeclado": "AF 170700200001.0038940",
+      "numeroSerieTeclado": "CN01GN56M6D009950M88",
+      "codigoBienUps": "BS 170700310001.0034316",
+      "numeroSerieUps": "\t2825CVHOM87A201564",
+      "estadoups": "Malo"
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "1",
+      "nombre": "Jonathan Barros",
+      "user": "admin",
+      "pass": "pichincha2026",
+      "role": "admin"
+    },
+    {
+      "id": "bba0",
+      "nombre": "Diana Guevara",
+      "user": "dguevara",
+      "pass": "diana",
+      "role": "user"
+    }
+  ]
 }

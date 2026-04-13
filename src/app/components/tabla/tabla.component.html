@@ -1,49 +1,77 @@
-<h4>Filtrar Vehiculos por Precio</h4>
-<div class="form-group">
-    <label for="precioDesde">Precio Desde:</label>
-    <input type="number" id="precioDesde" [(ngModel)]="precioDesde" class="form-control">
+<div class="main-container">
+  <header class="table-header">
+    <div class="title-section">
+      <h1>Inventario Técnico Pichincha</h1>
+      <span class="stats-summary">
+        Total: <b>{{ vehiculosFiltrados.length }}</b> |
+        UPS Malos: <b class="text-danger">{{ contarUpsMalos() }}</b> |
+        Usuarios: <b>{{ contarUsuarios() }}</b>
+      </span>
+    </div>
+
+    <div class="search-bar">
+      <div class="search-group">
+        <i class="fas fa-barcode"></i>
+        <input type="text" [(ngModel)]="busquedaCodigo" (keyup)="filtrarEquipos()" placeholder="Código de Bien...">
+      </div>
+      <div class="search-group">
+        <i class="fas fa-user"></i>
+        <input type="text" [(ngModel)]="busquedaUsuario" (keyup)="filtrarEquipos()" placeholder="Responsable...">
+      </div>
+    </div>
+  </header>
+
+  <div class="table-wrapper">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Responsable / Dependencia</th>
+          <th>Modelo Equipo</th>
+          <th>Cód. CPU</th>
+          <th>Cód. Monitor</th>
+          <th>Estado UPS</th>
+          <th>Almacenamiento</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
+          <td class="col-id">{{item.id}}</td>
+          <td class="col-user">
+            <div class="primary-text">{{item.usuario}}</div>
+            <div class="secondary-text">{{item.dependencia}}</div>
+          </td>
+          <td class="primary-text">{{item.modelo}}</td>
+          <td><span class="code-pill">{{item.codigoBien}}</span></td>
+          <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
+          <td>
+            <span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">
+              {{item.estadoups}}
+            </span>
+          </td>
+          <td>
+            <span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">
+              {{item.tipoDisco}}
+            </span>
+          </td>
+          <td class="actions-cell">
+  <div class="btn-group-actions">
+    <button class="btn-ui edit" (click)="equipoSeleccionado = item">
+      <i class="fas fa-edit"></i> <span>EDITAR</span>
+    </button>
+
+    <button class="btn-ui print" (click)="imprimirEtiqueta(item)">
+      <i class="fas fa-print"></i> <span>IMPRIMIR</span>
+    </button>
+
+    <button class="btn-ui delete" (click)="eliminar(item.id)">
+      <i class="fas fa-trash"></i> <span>BORRAR</span>
+    </button>
   </div>
-  <div class="form-group">
-    <label for="precioHasta">Precio Hasta:</label>
-    <input type="number" id="precioHasta" [(ngModel)]="precioHasta" class="form-control">
+</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <button (click)="filtrarVehiculos()" class="btn btn-primary">Filtrar</button>
-
-
-
-<table class="table table-condensed">
-     <thead>
-       <tr>
-         <th>ID</th>
-         <th>Modelo</th>
-         <th>Placa</th>
-         <th>Año</th>
-         <th>Precio</th>
-         <th>Kilometraje</th>
-         <th>Dueño Anterior</th>
-         <th>Acciones</th>
-       </tr>
-     </thead>
-     <tbody>
-       
-            @for (item of vehiculosFiltrados; track item) {
-               <tr>
-                   <td>{{item.id}}</td>
-                   <td>{{item.modelo}}</td>
-                   <td>{{item.placa}}</td>
-                   <td>{{item.anio}}</td>
-                   <td>{{item.precio}}</td>
-                   <td>{{item.kilometraje}}</td>
-                   <td>{{item.duenioAnterior}}</td>
-                   <td>
-                    <button class="btn btn-success"[routerLink]="['/editar',item.id]" >EDITAR</button>
-                    <button class="btn btn-danger" (click)="eliminar(item.id)">Eliminar</button>
-                   </td>
-                    </tr>
-           }
-         
-
-     </tbody>
-   </table>
-
-
+</div>
