@@ -24,7 +24,7 @@
         <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
           <td class="col-id">{{item.id}}</td>
           <td class="col-user">
-            <div class="primary-text link-detail" style="cursor: pointer;" (click)="abrirDetalles(item)">
+            <div class="primary-text link-detail" style="cursor: pointer; color: var(--primary);" (click)="abrirDetalles(item)">
               {{item.usuario}}
             </div>
             <div class="secondary-text">{{item.dependencia}}</div>
@@ -32,12 +32,8 @@
           <td class="primary-text">{{item.modelo}}</td>
           <td><span class="code-pill">{{item.codigoBien}}</span></td>
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
-          <td>
-            <span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span>
-          </td>
-          <td>
-            <span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span>
-          </td>
+          <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
+          <td><span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span></td>
           <td class="actions-cell">
             <div class="btn-group-actions">
               <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i> <span>EDITAR</span></button>
@@ -51,6 +47,60 @@
   </div>
 </div>
 
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="equipoSeleccionado && !mostrarModalRegistro">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow-lg border-0">
+      <div class="modal-header bg-primary text-white border-0">
+        <h5 class="modal-title fw-bold"><i class="fas fa-id-card me-2"></i>Ficha Técnica: {{equipoSeleccionado.usuario}}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="equipoSeleccionado = null"></button>
+      </div>
+      <div class="modal-body p-4 bg-light">
+        <div class="card mb-3 shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-primary fw-bold border-bottom pb-2">Información General</h6>
+            <div class="row mt-2">
+              <div class="col-md-4"><strong>ID:</strong> {{equipoSeleccionado.id}}</div>
+              <div class="col-md-4"><strong>Dependencia:</strong> {{equipoSeleccionado.dependencia}}</div>
+              <div class="col-md-4"><strong>Hostname:</strong> {{equipoSeleccionado.hostname}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-3 shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-primary fw-bold border-bottom pb-2">Hardware Principal</h6>
+            <div class="row mt-2">
+              <div class="col-md-4"><strong>Tipo:</strong> {{equipoSeleccionado.tipo}}</div>
+              <div class="col-md-4"><strong>Modelo:</strong> {{equipoSeleccionado.modelo}}</div>
+              <div class="col-md-4"><strong>Disco:</strong> {{equipoSeleccionado.tipoDisco}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. Bien (CPU):</strong> {{equipoSeleccionado.codigoBien}}</div>
+              <div class="col-md-6 mt-2"><strong>Serie (CPU):</strong> {{equipoSeleccionado.numeroSerie}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-primary fw-bold border-bottom pb-2">Periféricos y Energía</h6>
+            <div class="row mt-2">
+              <div class="col-md-6"><strong>Cód. Monitor:</strong> {{equipoSeleccionado.codigoBienMonitor}}</div>
+              <div class="col-md-6"><strong>Serie Monitor:</strong> {{equipoSeleccionado.numeroSerieMonitor}}</div>
+              <div class="col-md-6"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
+              <div class="col-md-6"><strong>Serie Mouse:</strong> {{equipoSeleccionado.numeroSerieMouse}}</div>
+              <div class="col-md-6"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
+              <div class="col-md-6"><strong>Serie Teclado:</strong> {{equipoSeleccionado.numeroSerieTeclado}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. UPS:</strong> {{equipoSeleccionado.codigoBienUps}}</div>
+              <div class="col-md-6 mt-2"><strong>Serie UPS:</strong> {{equipoSeleccionado.numeroSerieUps}}</div>
+              <div class="col-md-12 mt-2"><strong>Estado UPS:</strong> <span class="badge" [ngClass]="{'bg-success': equipoSeleccionado.estadoups == 'Bueno', 'bg-warning': equipoSeleccionado.estadoups == 'Regular', 'bg-danger': equipoSeleccionado.estadoups == 'Malo'}">{{equipoSeleccionado.estadoups}}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-light">
+        <button class="btn btn-outline-secondary fw-bold" (click)="equipoSeleccionado = null">CERRAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -61,7 +111,6 @@
         </h5>
         <button type="button" class="btn-close btn-close-white" (click)="cerrarModalRegistro()"></button>
       </div>
-
       <div class="modal-body p-4 bg-light">
         <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
           <div class="card mb-3 border-0 shadow-sm">
@@ -74,7 +123,7 @@
                   <label class="form-label fw-bold">Dependencia</label>
                   <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
                     <option value="" disabled>Seleccione dependencia</option>
-                      <option value="ADOQUINERA">ADOQUINERA</option>
+                                         <option value="ADOQUINERA">ADOQUINERA</option>
   <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
   <option value="BIOINSUMOS">BIOINSUMOS</option>
   <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
@@ -127,23 +176,40 @@
           </div>
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
-              <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware y Periféricos</h6>
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware Principal</h6>
               <div class="row">
                 <div class="col-md-4 mb-3"><label class="form-label fw-bold">Hostname</label><input type="text" class="form-control" name="hostname" [(ngModel)]="hostname"></div>
                 <div class="col-md-4 mb-3"><label class="form-label fw-bold">Tipo</label><select class="form-control form-select" name="tipo" [(ngModel)]="tipo"><option value="LAPTOP">LAPTOP</option><option value="ESCRITORIO">ESCRITORIO</option></select></div>
-                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Modelo</label><input type="text" class="form-control" name="modelo" [(ngModel)]="modelo"></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Almacenamiento</label><select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco"><option value="HDD">HDD</option><option value="SSD">SSD</option><option value="M2">M.2</option></select></div>
               </div>
               <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. Bien (CPU)</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
-                <div class="col-md-6 mb-3"><label class="form-label fw-bold">N° Serie (CPU)</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie"></div>
+                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. CPU</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Serie CPU</label><input type="text" class="form-control" name="numeroSerieCPU" [(ngModel)]="numeroSerie"></div>
+                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. Monitor</label><input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor"></div>
+                 <div class="col-md-6 mb-3"><label class="form-label">Serie Monitor</label><input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor"></div>
+              </div>
+            </div>
+             <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
+              <div class="row">
+
+
+                <div class="col-md-6 mb-3"><label class="form-label">Cód. Mouse</label><input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Cód. Teclado</label><input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado"></div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
               </div>
             </div>
           </div>
+
+          </div>
           <div class="d-flex justify-content-end gap-2 mt-3">
             <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
-            <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'" [disabled]="!formulario.valid">
-              <i class="fas fa-save me-1"></i> {{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}
-            </button>
+            <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">{{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}</button>
           </div>
         </form>
       </div>
