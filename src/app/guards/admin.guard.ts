@@ -4,15 +4,20 @@ import { CanActivateFn, Router } from '@angular/router';
 export const adminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
-  // Obtenemos el rol guardado durante el login
-  const role = localStorage.getItem('role');
+  // Recuperamos el objeto de login
+  const sesion = localStorage.getItem('login');
 
-  if (role === 'admin') {
-    return true; // Si es admin, puede pasar a gestionar usuarios
-  } else {
-    // Si es un técnico normal u otro usuario, lo mandamos al listado
-    alert('Acceso denegado: Solo el Administrador puede ingresar aquí.');
-    router.navigate(['/listado']);
-    return false;
+  if (sesion) {
+    const usuario = JSON.parse(sesion);
+
+    // Si el rol es admin, permitimos el paso
+    if (usuario.role === 'admin') {
+      return true;
+    }
   }
+
+  // Si no es admin, lo mandamos al listado normal y bloqueamos el paso
+  alert('Acceso denegado: Se requieren permisos de Administrador.');
+  router.navigate(['/listado']);
+  return false;
 };

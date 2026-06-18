@@ -1,29 +1,30 @@
-<div class="container mt-4">
-  <div class="card shadow border-0">
-    <div class="card-header bg-danger text-white p-3">
-      <h4 class="mb-0"><i class="fas fa-user-shield"></i> Registro de Nuevos Técnicos</h4>
+<div class="admin-container">
+  <div class="custom-card shadow">
+    <div class="card-header-custom">
+      <h4><i class="fas fa-user-shield"></i> Registro de Nuevos Técnicos</h4>
+      <p>Configure los accesos para el personal de soporte</p>
     </div>
 
-    <div class="card-body p-4">
+    <div class="card-body-custom">
       <form (ngSubmit)="registrarUsuario()">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="font-weight-bold">Nombre Completo</label>
-            <input type="text" name="nombre" [(ngModel)]="nuevoNombre" class="form-control" placeholder="Ej: Juan Perez" required>
+        <div class="form-grid">
+          <div class="input-group-custom">
+            <label>Nombre Completo</label>
+            <input type="text" name="nombre" [(ngModel)]="nuevoNombre" placeholder="Ej: Juan Perez" required>
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="font-weight-bold">Nombre de Usuario (Login)</label>
-            <input type="text" name="usuario" [(ngModel)]="nuevoUser" class="form-control" placeholder="jperez" required>
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="font-weight-bold">Contraseña Temporal</label>
-            <input type="password" name="password" [(ngModel)]="nuevoPass" class="form-control" placeholder="••••••••" required>
+          <div class="input-group-custom">
+            <label>Nombre de Usuario (Login)</label>
+            <input type="text" name="usuario" [(ngModel)]="nuevoUser" placeholder="jperez" required>
           </div>
-          <div class="col-md-6 mb-3 d-flex align-items-end">
-            <button type="submit" class="btn btn-danger btn-block shadow-sm">
+
+          <div class="input-group-custom">
+            <label>Contraseña Temporal</label>
+            <input type="password" name="password" [(ngModel)]="nuevoPass" placeholder="••••••••" required>
+          </div>
+
+          <div class="action-group">
+            <button type="submit" class="btn-main-action">
               <i class="fas fa-user-plus"></i> REGISTRAR TÉCNICO
             </button>
           </div>
@@ -32,27 +33,33 @@
     </div>
   </div>
 
-  <div class="mt-5">
-    <h5 class="text-secondary border-bottom pb-2">Técnicos con Acceso al Sistema</h5>
-    <table class="table table-sm table-hover mt-3 bg-white shadow-sm">
-      <thead class="bg-light text-muted small text-uppercase">
-        <tr>
-          <th class="py-3 px-3">Nombre</th>
-          <th class="py-3">Usuario</th>
-          <th class="py-3 text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let u of listaUsuarios">
-          <td class="align-middle px-3 font-weight-bold">{{u.nombre}}</td>
-          <td class="align-middle"><code>{{u.user}}</code></td>
-          <td class="text-center">
-            <button class="btn btn-outline-danger btn-sm border-0" (click)="quitarAcceso(u.user)">
-              <i class="fas fa-trash-alt"></i> Eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="list-section mt-5">
+    <h5 class="section-title">Técnicos con Acceso al Sistema</h5>
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="px-4">Nombre</th>
+            <th>Usuario</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of listaUsuarios">
+            <td class="px-4">
+              <div class="user-name">{{u.nombre}}</div>
+            </td>
+            <td>
+              <span class="user-pill">{{u.usuario || u.user}}</span>
+            </td>
+            <td class="text-center">
+              <button class="btn-delete" (click)="quitarAcceso(u.id)">
+                <i class="fas fa-trash-alt"></i> <span>ELIMINAR ACCESO</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

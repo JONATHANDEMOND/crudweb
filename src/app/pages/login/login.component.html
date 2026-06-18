@@ -1,31 +1,39 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-4">
-      <div class="card shadow border-0">
-        <div class="card-header bg-primary text-white text-center py-3">
-          <h5 class="mb-0">Soporte Técnico - Pichincha</h5>
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-header">
+      <div class="logo-circle">
+        <i class="fas fa-user-shield"></i> </div>
+      <h2>Soporte Técnico</h2>
+      <p>Gobierno Autónomo de Pichincha</p>
+    </div>
+
+    <div class="login-body">
+      <form (ngSubmit)="login()">
+        <div class="input-group-custom">
+          <label><i class="fas fa-user"></i> Usuario</label>
+          <input type="text" [(ngModel)]="user" name="user" placeholder="Ingrese su usuario" required>
         </div>
-        <div class="card-body p-4">
-          <form (ngSubmit)="login()">
-            <div class="form-group mb-3">
-              <label class="font-weight-bold">Usuario</label>
-              <input type="text" name="user" [(ngModel)]="user" class="form-control" placeholder="Ingrese su usuario">
-            </div>
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Contraseña</label>
-              <input type="password" name="pass" [(ngModel)]="pass" class="form-control" placeholder="••••••••">
-            </div>
-            <button type="submit" class="btn btn-primary btn-block shadow-sm">
-              INGRESAR AL SISTEMA
-            </button>
-          </form>
-          @if (error) {
-            <div class="alert alert-danger mt-3 py-2 small text-center">
-              Credenciales incorrectas
-            </div>
-          }
+
+        <div class="input-group-custom">
+          <label><i class="fas fa-lock"></i> Contraseña</label>
+          <input type="password" [(ngModel)]="pass" name="pass" placeholder="••••••••" required>
         </div>
+
+        <button type="submit" class="btn-login">
+          <span>INGRESAR AL SISTEMA</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="alert-error" *ngIf="error">
+        <i class="fas fa-exclamation-circle"></i>
+        Credenciales incorrectas, intente de nuevo.
       </div>
+    </div>
+
+    <div class="login-footer">
+      <span>CSTM - 2026</span>
     </div>
   </div>
 </div>

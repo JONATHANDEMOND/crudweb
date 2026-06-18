@@ -1,26 +1,11 @@
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-2">
+  <h4 class="text-primary fw-bold mb-0"><i class="fas fa-building me-2"></i>Inventario - Sitios Remotos</h4>
+  <button class="btn btn-success shadow-sm fw-bold" (click)="abrirModalRegistro()">
+    <i class="fas fa-plus-circle me-1"></i> REGISTRAR EQUIPO
+  </button>
+</div>
+
 <div class="main-container">
-  <header class="table-header">
-    <div class="title-section">
-      <h1>Inventario Técnico Pichincha</h1>
-      <span class="stats-summary">
-        Total: <b>{{ vehiculosFiltrados.length }}</b> |
-        UPS Malos: <b class="text-danger">{{ contarUpsMalos() }}</b> |
-        Usuarios: <b>{{ contarUsuarios() }}</b>
-      </span>
-    </div>
-
-    <div class="search-bar">
-      <div class="search-group">
-        <i class="fas fa-barcode"></i>
-        <input type="text" [(ngModel)]="busquedaCodigo" (keyup)="filtrarEquipos()" placeholder="Código de Bien...">
-      </div>
-      <div class="search-group">
-        <i class="fas fa-user"></i>
-        <input type="text" [(ngModel)]="busquedaUsuario" (keyup)="filtrarEquipos()" placeholder="Responsable...">
-      </div>
-    </div>
-  </header>
-
   <div class="table-wrapper">
     <table class="modern-table">
       <thead>
@@ -39,39 +24,129 @@
         <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
           <td class="col-id">{{item.id}}</td>
           <td class="col-user">
-            <div class="primary-text">{{item.usuario}}</div>
+            <div class="primary-text link-detail" style="cursor: pointer;" (click)="abrirDetalles(item)">
+              {{item.usuario}}
+            </div>
             <div class="secondary-text">{{item.dependencia}}</div>
           </td>
           <td class="primary-text">{{item.modelo}}</td>
           <td><span class="code-pill">{{item.codigoBien}}</span></td>
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
           <td>
-            <span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">
-              {{item.estadoups}}
-            </span>
+            <span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span>
           </td>
           <td>
-            <span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">
-              {{item.tipoDisco}}
-            </span>
+            <span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span>
           </td>
           <td class="actions-cell">
-  <div class="btn-group-actions">
-    <button class="btn-ui edit" (click)="equipoSeleccionado = item">
-      <i class="fas fa-edit"></i> <span>EDITAR</span>
-    </button>
-
-    <button class="btn-ui print" (click)="imprimirEtiqueta(item)">
-      <i class="fas fa-print"></i> <span>IMPRIMIR</span>
-    </button>
-
-    <button class="btn-ui delete" (click)="eliminar(item.id)">
-      <i class="fas fa-trash"></i> <span>BORRAR</span>
-    </button>
-  </div>
-</td>
+            <div class="btn-group-actions">
+              <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i> <span>EDITAR</span></button>
+              <button class="btn-ui print" (click)="imprimirEtiqueta(item)"><i class="fas fa-print"></i> <span>ETIQUETA</span></button>
+              <button class="btn-ui delete" (click)="eliminar(item.id)"><i class="fas fa-trash"></i> <span>BORRAR</span></button>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow-lg border-0">
+      <div class="modal-header text-white border-0" [ngClass]="modoEdicion ? 'bg-primary' : 'bg-success'">
+        <h5 class="modal-title fw-bold">
+          <i class="fas me-2" [ngClass]="modoEdicion ? 'fa-edit' : 'fa-plus-circle'"></i>
+          {{ modoEdicion ? 'Editar Equipo #' + id : 'Registrar Nuevo Equipo' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarModalRegistro()"></button>
+      </div>
+
+      <div class="modal-body p-4 bg-light">
+        <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
+          <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Información General</h6>
+              <div class="row">
+                <div class="col-md-2 mb-3"><label class="form-label fw-bold">ID</label><input type="text" class="form-control" name="id" [(ngModel)]="id" [disabled]="modoEdicion" required></div>
+                <div class="col-md-5 mb-3"><label class="form-label fw-bold">Usuario</label><input type="text" class="form-control" name="usuario" [(ngModel)]="usuario" required></div>
+                <div class="col-md-5 mb-3">
+                  <label class="form-label fw-bold">Dependencia</label>
+                  <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
+                    <option value="" disabled>Seleccione dependencia</option>
+                      <option value="ADOQUINERA">ADOQUINERA</option>
+  <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
+  <option value="BIOINSUMOS">BIOINSUMOS</option>
+  <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
+  <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
+  <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
+  <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
+  <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
+  <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
+  <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
+  <option value="CEDES MEJIA">CEDES MEJIA</option>
+  <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
+  <option value="CEDES SOLANDA">CEDES SOLANDA</option>
+  <option value="CEDES IESSFUT">CEDES IESSFUT</option>
+  <option value="CEMBA">CEMBA</option>
+  <option value="CC EL BOSQUE">CC EL BOSQUE PEAJE</option>
+  <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
+  <option value="CEVA CACAO">CEVA CACAO</option>
+  <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
+  <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
+  <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
+  <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
+  <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
+  <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
+  <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
+  <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
+  <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
+  <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
+  <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
+  <option value="NANEGALITO">NANEGALITO</option>
+  <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
+  <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
+  <option value="PSICOLA">PSICOLA</option>
+  <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
+  <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
+  <option value="VIVERO">VIVERO</option>
+  <option value="WARMI ALANGASI">WARMI ALANGASI</option>
+  <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
+  <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
+  <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
+  <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
+  <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
+  <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
+  <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
+  <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
+  <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware y Periféricos</h6>
+              <div class="row">
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Hostname</label><input type="text" class="form-control" name="hostname" [(ngModel)]="hostname"></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Tipo</label><select class="form-control form-select" name="tipo" [(ngModel)]="tipo"><option value="LAPTOP">LAPTOP</option><option value="ESCRITORIO">ESCRITORIO</option></select></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Modelo</label><input type="text" class="form-control" name="modelo" [(ngModel)]="modelo"></div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. Bien (CPU)</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
+                <div class="col-md-6 mb-3"><label class="form-label fw-bold">N° Serie (CPU)</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie"></div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
+            <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'" [disabled]="!formulario.valid">
+              <i class="fas fa-save me-1"></i> {{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

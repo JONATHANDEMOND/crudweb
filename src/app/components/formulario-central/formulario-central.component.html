@@ -1,0 +1,154 @@
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-building me-2"></i>Registro de Inventario - Edificio Central</h4>
+        </div>
+        <div class="card-body">
+            <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
+
+                <h5 class="text-secondary border-bottom pb-2 mt-2"><i class="fas fa-info-circle me-2"></i>Información General</h5>
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label fw-bold">ID</label>
+                        <input type="text" class="form-control" name="id" [(ngModel)]="id" required placeholder="Ej. 101">
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label fw-bold">Usuario</label>
+                        <input type="text" class="form-control" name="usuario" [(ngModel)]="usuario" placeholder="Nombre del responsable">
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label fw-bold">Dependencia</label>
+                        <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia">
+                            <option value="" disabled selected>Seleccione una dependencia</option>
+                            <option value="PREFECTURA">PREFECTURA</option>
+                            <option value="VICEPREFECTURA">VICEPREFECTURA</option>
+                            <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
+                            <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
+                            <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
+                            <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
+                            <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
+                            <option value="CONTRALORIA">CONTRALORIA</option>
+                            <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
+                            <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
+                            <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
+                            <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
+                            <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
+                            <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
+                            <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
+                            <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
+                            <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
+                            <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
+                            <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
+                            <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
+                            <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
+                            <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
+                            <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
+                            <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
+                            <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
+                            <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
+                            <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
+                            <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
+                            <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h5 class="text-secondary border-bottom pb-2 mt-4"><i class="fas fa-desktop me-2"></i>Hardware Principal</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Host Name</label>
+                        <input type="text" class="form-control" name="hostname" [(ngModel)]="hostname">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Tipo de Equipo</label>
+                        <select class="form-control form-select" name="tipo" [(ngModel)]="tipo">
+                            <option value="" disabled selected>Seleccione tipo...</option>
+                            <option value="LAPTOP">LAPTOP</option>
+                            <option value="ESCRITORIO">ESCRITORIO</option>
+                            <option value="ALL IN ONE">ALL IN ONE</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Modelo del Equipo</label>
+                        <input type="text" class="form-control" name="modelo" [(ngModel)]="modelo">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-primary">Código de Bien (CPU)</label>
+                        <input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-primary">Número de Serie (CPU)</label>
+                        <input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Tipo de Disco Duro</label>
+                        <select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco">
+                            <option value="HDD">HDD (Mecánico)</option>
+                            <option value="SSD">SSD (Sólido)</option>
+                            <option value="M2">M.2 / NVMe</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Código de Bien Monitor</label>
+                        <input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Serie Monitor</label>
+                        <input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor">
+                    </div>
+                </div>
+
+                <h5 class="text-secondary border-bottom pb-2 mt-4"><i class="fas fa-keyboard me-2"></i>Periféricos y UPS</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Código Mouse</label>
+                        <input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Serie Mouse</label>
+                        <input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="numeroSerieMouse">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Código Teclado</label>
+                        <input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Serie Teclado</label>
+                        <input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="numeroSerieTeclado">
+                    </div>
+                </div>
+
+                <div class="row border-top pt-3 mt-2">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold text-warning">Código de Bien UPS</label>
+                        <input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold text-warning">Serie UPS</label>
+                        <input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold text-warning">Estado del UPS</label>
+                        <select class="form-control form-select border-warning" name="estadoups" [(ngModel)]="estadoups">
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-end">
+                    <button class="btn btn-success btn-lg px-5 shadow-sm" type="submit" [disabled]="!formulario.valid">
+                        <i class="fas fa-save me-2"></i> REGISTRAR EQUIPO
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

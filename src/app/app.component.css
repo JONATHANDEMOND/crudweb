@@ -1,0 +1,10 @@
+/* app.component.css */
+:host {
+  display: block;
+  background-color: #0f172a;
+  min-height: 100vh;
+}
+
+.main-content {
+  padding: 20px;
+}

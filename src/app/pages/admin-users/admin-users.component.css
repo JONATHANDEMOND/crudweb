@@ -1,0 +1,152 @@
+/* admin-users.component.css */
+.admin-container {
+  padding: 2rem;
+  background-color: #0f172a; /* Fondo oscuro igual que el resto */
+  min-height: 100vh;
+  color: #f8fafc;
+}
+
+/* Estilo de la Tarjeta */
+.custom-card {
+  background: #1e293b;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.card-header-custom {
+  background: linear-gradient(90deg, #1e40af, #3b82f6);
+  padding: 1.5rem;
+}
+
+.card-header-custom h4 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.card-header-custom p {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.card-body-custom {
+  padding: 2rem;
+}
+
+/* Grid del Formulario */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.input-group-custom label {
+  display: block;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.input-group-custom input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.input-group-custom input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.btn-main-action {
+  width: 100%;
+  padding: 0.75rem;
+  background: #ef4444; /* Rojo para destacar el registro */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-main-action:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+/* Estilos de la Tabla */
+.section-title {
+  color: #38bdf8;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.table-wrapper {
+  background: #1e293b;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #334155;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modern-table th {
+  background: #334155;
+  color: #94a3b8;
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modern-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #334155;
+}
+
+.user-name {
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.user-pill {
+  background: #0f172a;
+  color: #38bdf8;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.btn-delete {
+  background: transparent;
+  color: #f87171;
+  border: 1px solid #f87171;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background: #ef4444;
+  color: white;
+}

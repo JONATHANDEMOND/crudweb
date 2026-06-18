@@ -19,6 +19,48 @@
       "codigoBienUps": "BS 170700310001.0034316",
       "numeroSerieUps": "\t2825CVHOM87A201564",
       "estadoups": "Malo"
+    },
+    {
+      "id": "2",
+      "usuario": "Flor Elizabeth Vaca Cruz",
+      "dependencia": "NANEGALITO",
+      "hostname": "fvacaca ",
+      "tipo": "ESCRITORIO",
+      "modelo": "HP \t6200",
+      "codigoBien": "\tAF 700100130001.0018904",
+      "numeroSerie": "MXL2140QM9",
+      "tipoDisco": "SSD",
+      "codigoBienMonitor": "AF 700100440001.0016314",
+      "numeroSerieMonitor": "CN-ON300H-64180-083-IHWL",
+      "codigoBienMouse": "AF 170700290001.0024164",
+      "numeroSerieMouse": "CN-011D3V-71581-42I-02I6",
+      "codigoBienTeclado": "AF 170700200001.0024157",
+      "numeroSerieTeclado": "CN0C639N716163CA03SX-A00",
+      "codigoBienUps": "AF 170700310001.0053914",
+      "numeroSerieUps": "\t241132518033",
+      "estadoups": "Bueno"
+    }
+  ],
+  "edificioCentral": [
+    {
+      "id": "1",
+      "usuario": "Usuario Ejemplo Central",
+      "dependencia": "MATRIZ - PISO 1",
+      "hostname": "ucentral",
+      "tipo": "ESCRITORIO",
+      "modelo": "DELL OPTIPLEX",
+      "codigoBien": "AF 0000000000.00000",
+      "numeroSerie": "XXXXXXX",
+      "tipoDisco": "SSD",
+      "codigoBienMonitor": "AF 0000000000.00000",
+      "numeroSerieMonitor": "XXXXXXX",
+      "codigoBienMouse": "AF 0000000000.00000",
+      "numeroSerieMouse": "XXXXXXX",
+      "codigoBienTeclado": "AF 0000000000.00000",
+      "numeroSerieTeclado": "XXXXXXX",
+      "codigoBienUps": "BS 0000000000.00000",
+      "numeroSerieUps": "XXXXXXX",
+      "estadoups": "Bueno"
     }
   ],
   "usuarios": [
@@ -34,6 +76,14 @@
       "nombre": "Diana Guevara",
       "user": "dguevara",
       "pass": "diana",
+      "role": "user"
+    },
+    {
+      "id": "09f3",
+      "nombre": "Diego Tambo",
+      "usuario": "dtambo",
+      "user": "dtambo",
+      "pass": "12345",
       "role": "user"
     }
   ]

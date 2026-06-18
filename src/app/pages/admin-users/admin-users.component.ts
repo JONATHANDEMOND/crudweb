@@ -32,31 +32,38 @@ export class AdminUsersComponent implements OnInit {
   }
 
   // Registra y guarda permanentemente
-  registrarUsuario() {
-    if (this.nuevoNombre && this.nuevoUser) {
-      const nuevo = {
-        nombre: this.nuevoNombre,
-        user: this.nuevoUser,
-        pass: this.nuevoPass,
-        role: 'user'
-      };
+ registrarUsuario() {
+  if (this.nuevoNombre && this.nuevoUser && this.nuevoPass) {
+    const nuevo = {
+      nombre: this.nuevoNombre,
+      usuario: this.nuevoUser, // Cambiado de 'user' a 'usuario' (revisa tu login)
+      user: this.nuevoUser,    // Mantengo ambos por si acaso
+      pass: this.nuevoPass,
+      role: 'user'
+    };
 
-      this.servicio.postUsuario(nuevo).subscribe(() => {
-        alert('Técnico ' + this.nuevoNombre + ' guardado en base de datos');
-        this.cargarUsuarios(); // Recarga la tabla automáticamente
+    this.servicio.postUsuario(nuevo).subscribe({
+      next: () => {
+        alert('Técnico ' + this.nuevoNombre + ' guardado correctamente');
+        this.cargarUsuarios();
         this.limpiarFormulario();
-      });
-    }
+      },
+      error: (err) => alert('Error al guardar: ' + err)
+    });
+  } else {
+    alert('Por favor, completa todos los campos.');
   }
+}
 
-  // Elimina el técnico de la base de datos por su ID
-  quitarAcceso(id: any) {
-    if (confirm('¿Está seguro de eliminar este acceso?')) {
-      this.servicio.deleteUsuario(id).subscribe(() => {
-        this.cargarUsuarios(); // Refresca la lista tras eliminar
-      });
-    }
+// CORRECCIÓN: Ahora recibe el ID real de la base de datos
+quitarAcceso(id: any) {
+  if (!id) return; // Seguridad si el ID no existe
+  if (confirm('¿Está seguro de eliminar este acceso?')) {
+    this.servicio.deleteUsuario(id).subscribe(() => {
+      this.cargarUsuarios();
+    });
   }
+}
 
   limpiarFormulario() {
     this.nuevoNombre = '';

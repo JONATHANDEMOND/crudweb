@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -9,20 +9,22 @@ import { CommonModule } from '@angular/common';
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
-export class NavbarComponent { // 'b' minúscula
+export class NavbarComponent {
   router = inject(Router);
 
-  isLoggedIn(): boolean {
+  // Usamos GETTERS para que Angular siempre tenga el valor fresco
+  get isLoggedIn(): boolean {
     return localStorage.getItem('isLogged') === 'true';
   }
 
-  // CORRECCIÓN: Agregamos la función que faltaba
-  esAdmin(): boolean {
+  get esAdmin(): boolean {
+    // Verificamos el rol directamente del storage
     return localStorage.getItem('role') === 'admin';
   }
 
   logout() {
     localStorage.clear();
+    // Forzamos la navegación al login
     this.router.navigate(['/login']);
   }
 }

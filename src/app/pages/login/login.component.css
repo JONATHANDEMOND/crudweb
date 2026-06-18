@@ -1,0 +1,134 @@
+/* login.component.css */
+
+/* Contenedor principal que cubre toda la pantalla */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Cubre el alto de la pantalla */
+  width: 100%;       /* Cubre el ancho */
+  /* Fondo degradado oscuro */
+  background: radial-gradient(circle at top right, #1e293b, #0f172a);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Tarjeta del Login */
+.login-card {
+  background: #1e293b; /* Un tono más claro que el fondo */
+  width: 100%;
+  max-width: 400px; /* Ancho máximo */
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+}
+
+/* Cabecera (Logo y Título) */
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-circle {
+  width: 60px;
+  height: 60px;
+  background: #3b82f6; /* Azul brillante */
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.login-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.login-header p {
+  color: #94a3b8; /* Gris azulado */
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Estilos de los inputs */
+.input-group-custom {
+  margin-bottom: 1.5rem;
+}
+
+.input-group-custom label {
+  display: block;
+  color: #cbd5e1; /* Gris claro */
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.input-group-custom input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: #0f172a; /* Fondo muy oscuro para el input */
+  border: 1px solid #334155;
+  border-radius: 10px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.input-group-custom input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Botón Ingresar */
+.btn-login {
+  width: 100%;
+  padding: 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background: #2563eb; /* Azul más oscuro al pasar el mouse */
+  transform: translateY(-2px);
+}
+
+/* Alerta de error */
+.alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  padding: 0.8rem;
+  border-radius: 10px;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Pie de página */
+.login-footer {
+  margin-top: 2rem;
+  text-align: center;
+  color: #475569;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}

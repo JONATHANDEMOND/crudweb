@@ -1,0 +1,103 @@
+/* Contenedor principal */
+.corporate-navbar {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+  border-bottom: 3px solid #004d99;
+}
+
+/* Marca / Logo */
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.brand-subtitle {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Enlaces del Nav */
+.nav-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.nav-link:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(3px); /* En móvil es mejor moverlo un poco a la derecha al hacer hover */
+}
+
+/* Estado Activo */
+.active-link {
+  color: #ffffff !important;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid #ffc107; /* Línea lateral para móvil */
+}
+
+.admin-link {
+  color: #ffda6a !important;
+}
+
+/* Insignia de la Institución */
+.institution-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.5px;
+}
+
+/* Botón de Salir */
+.btn-logout {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.btn-logout:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+/* --- REGLAS ESPECÍFICAS PARA PANTALLAS GRANDES (PC) --- */
+@media (min-width: 992px) {
+  .nav-link:hover {
+    transform: translateY(-1px); /* En PC sube un poco en lugar de ir a la derecha */
+  }
+
+  .active-link {
+    border-left: none;
+    border-bottom: 2px solid #ffc107; /* En PC la línea va abajo */
+  }
+
+  .institution-badge {
+    padding: 4px 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .mobile-separator {
+    border-top: none !important;
+  }
+}
+
+/* --- REGLAS ESPECÍFICAS PARA CELULARES --- */
+@media (max-width: 991px) {
+  .mobile-separator {
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Crea una línea divisoria antes del botón salir */
+  }
+}
