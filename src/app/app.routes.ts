@@ -17,9 +17,6 @@ export const routes: Routes = [
   // Inventario S.R.
   { path: 'listado', component: TablaComponent, canActivate: [authGuard] },
 
-  // Registro de Equipos (S.R.)
-  { path: 'gestion', component: FormularioComponent, canActivate: [authGuard] },
-
   // Inventario Edificio Central
   { path: 'listadoedfcent', component: TablaListadoComponent, canActivate: [authGuard] },
 

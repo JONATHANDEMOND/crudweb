@@ -288,3 +288,13 @@ hr { border: 0; border-top: 1px solid #334155; margin: 10px 0; }
   display: flex;
   justify-content: flex-end;
 }
+.search-bar input::placeholder {
+  font-size: 0.85rem; /* Puedes ajustar este valor (ej: 0.8rem o 12px) */
+  color: #6c757d;    /* Un color gris suave para que no distraiga */
+}
+
+/* Opcional: Para hacer que el buscador también sea un poco más compacto */
+.search-bar input {
+  font-size: 0.9rem;
+  padding: 0.375rem 0.75rem;
+}

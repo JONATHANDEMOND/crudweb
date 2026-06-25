@@ -9,47 +9,80 @@ export class AutoServiceService {
 
   constructor(private http: HttpClient) { }
 
-  private API_AUTOS = "http://localhost:3000/autos";
-  private API_USUARIOS = "http://localhost:3000/usuarios";
-  private API_EDFCENTRAL = "http://localhost:3000/edificioCentral";
+  // Apuntamos al nuevo servidor real en Node.js + MongoDB
 
-  // --- MÉTODOS DE AUTOS ---
-  getAutos(): Observable<any> { return this.http.get(this.API_AUTOS); }
-  postAuto(auto: any): Observable<any> { return this.http.post(this.API_AUTOS, auto); }
-  deleteAuto(id: string): Observable<any> { return this.http.delete(`${this.API_AUTOS}/${id}`); }
-  //---METODO DE EDIFICIO CENTRAL---//
-  getEdificioCentral(): Observable<any> { return this.http.get(this.API_EDFCENTRAL); }
-  postEdificioCentral(edificio: any): Observable<any> { return this.http.post(this.API_EDFCENTRAL, edificio); }
-  deleteEdificioCentral(id: string): Observable<any> { return this.http.delete(`${this.API_EDFCENTRAL}/${id}`); }
+ private API_URL = 'http://192.168.0.11:4000/api';
+  // --- MÉTODOS DE LECTURA (GET) ---
 
+  getAutos(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/autos`);
+  }
 
-  // --- MÉTODOS DE USUARIOS ---
-  updateAuto(id: any, equipo: any) {
-  // Asegúrate de que la URL coincida con la que usas para 'getAutos'
-  return this.http.put(`http://localhost:3000/autos/${id}`, equipo);
-}
-
+  getEdificioCentral(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/edificioCentral`);
+  }
+//USUARIOS //
   getUsuarios(): Observable<any[]> {
-    return this.http.get<any[]>(this.API_USUARIOS);
+    return this.http.get<any[]>(`${this.API_URL}/usuarios`);
   }
 
-  postUsuario(usuario: any): Observable<any> {
-    return this.http.post(this.API_USUARIOS, usuario);
+postUsuario(usuario: any): Observable<any> {
+  return this.http.post<any>(`${this.API_URL}/usuarios`, usuario);
+}
+  // --- MÉTODO LOGIN ---
+  login(user: string, pass: string): Observable<any> {
+    // Limpiamos los espacios en blanco accidentales
+    const userLimpio = user.trim();
+    const passLimpio = pass.trim();
+
+    return this.getUsuarios().pipe(
+      map(usuarios => {
+        console.log("1. Usuarios desde MongoDB:", usuarios);
+        console.log(`2. Intentando entrar con -> Usuario: '${userLimpio}' | Contraseña: '${passLimpio}'`);
+
+        const usuarioEncontrado = usuarios.find(u =>
+          (u.usuario === userLimpio || u.user === userLimpio) && u.pass === passLimpio
+        );
+
+        if (!usuarioEncontrado) {
+          console.warn("3. No hubo coincidencia. Revisa bien las mayúsculas/minúsculas.");
+        }
+
+        return usuarioEncontrado || null;
+      })
+    );
   }
+
+  // --- MÉTODOS DE ESCRITURA (POST/PUT/DELETE) ---
+  // Ahora estos métodos se conectan directamente a la base de datos real
+
+  postAuto(auto: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/autos`, auto);
+  }
+
+  deleteAuto(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/autos/${id}`);
+  }
+
+  updateAuto(id: any, equipo: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/autos/${id}`, equipo);
+  }
+
+  postEdificioCentral(edificio: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/edificioCentral`, edificio);
+  }
+
+  deleteEdificioCentral(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/edificioCentral/${id}`);
+  }
+
+  updateEdificioCentral(id: any, equipo: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/edificioCentral/${id}`, equipo);
+  }
+
+
 
   deleteUsuario(id: any): Observable<any> {
-    return this.http.delete(`${this.API_USUARIOS}/${id}`);
+    return this.http.delete<any>(`${this.API_URL}/usuarios/${id}`);
   }
-
-  // VALIDAR LOGIN CORREGIDO
- login(user: string, pass: string): Observable<any> {
-  return this.http.get<any[]>(this.API_USUARIOS).pipe(
-    map(usuarios => {
-      // Buscamos que coincida el nombre de usuario (en cualquier campo) y la contraseña
-      return usuarios.find(u =>
-        (u.usuario === user || u.user === user) && u.pass === pass
-      ) || null;
-    })
-  );
-}
 }

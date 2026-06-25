@@ -7,14 +7,14 @@
       "tipo": "ESCRITORIO",
       "tipoDisco": "SSD",
       "codigoBien": "AF 700100130001.0038372",
-      "numeroSerieCPU": "CZY2P23",
+      "modelo": "OPTIPLEX 7070MTI7",
       "codigoBienMonitor": "AF 700100440001.0038544",
       "numeroSerieMonitor": "cn0ryk5rtv2009bg2t7u",
       "codigoBienMouse": "AF 170700290001.0038790",
       "codigoBienTeclado": "AF 170700200001.0038940",
       "codigoBienUps": "BS 170700310001.0034316",
       "numeroSerieUps": "\t2825CVHOM87A201564",
-      "estadoups": "Malo",
+      "estadoups": "Bueno",
       "id": "1"
     },
     {
@@ -35,28 +35,7 @@
       "id": "2"
     }
   ],
-  "edificioCentral": [
-    {
-      "id": "1",
-      "usuario": "Usuario Ejemplo Central",
-      "dependencia": "MATRIZ - PISO 1",
-      "hostname": "ucentral",
-      "tipo": "ESCRITORIO",
-      "modelo": "DELL OPTIPLEX",
-      "codigoBien": "AF 0000000000.00000",
-      "numeroSerie": "XXXXXXX",
-      "tipoDisco": "SSD",
-      "codigoBienMonitor": "AF 0000000000.00000",
-      "numeroSerieMonitor": "XXXXXXX",
-      "codigoBienMouse": "AF 0000000000.00000",
-      "numeroSerieMouse": "XXXXXXX",
-      "codigoBienTeclado": "AF 0000000000.00000",
-      "numeroSerieTeclado": "XXXXXXX",
-      "codigoBienUps": "BS 0000000000.00000",
-      "numeroSerieUps": "XXXXXXX",
-      "estadoups": "Bueno"
-    }
-  ],
+  "edificioCentral": [],
   "usuarios": [
     {
       "id": "1",

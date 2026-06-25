@@ -32,26 +32,27 @@ export class AdminUsersComponent implements OnInit {
   }
 
   // Registra y guarda permanentemente
- registrarUsuario() {
+registrarUsuario() {
   if (this.nuevoNombre && this.nuevoUser && this.nuevoPass) {
     const nuevo = {
       nombre: this.nuevoNombre,
-      usuario: this.nuevoUser, // Cambiado de 'user' a 'usuario' (revisa tu login)
-      user: this.nuevoUser,    // Mantengo ambos por si acaso
+      usuario: this.nuevoUser,
       pass: this.nuevoPass,
       role: 'user'
     };
 
     this.servicio.postUsuario(nuevo).subscribe({
-      next: () => {
-        alert('Técnico ' + this.nuevoNombre + ' guardado correctamente');
+      next: (res) => {
+        console.log("Respuesta del servidor:", res); // Mira esto en F12
+        alert('Técnico guardado correctamente');
         this.cargarUsuarios();
         this.limpiarFormulario();
       },
-      error: (err) => alert('Error al guardar: ' + err)
+      error: (err) => {
+        console.error("Error completo:", err); // Aquí verás por qué falla
+        alert('Error al guardar. Revisa la consola F12.');
+      }
     });
-  } else {
-    alert('Por favor, completa todos los campos.');
   }
 }
 

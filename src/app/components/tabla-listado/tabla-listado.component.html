@@ -1,113 +1,211 @@
-<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="equipoSeleccionado">
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-2">
+  <h4 class="text-primary fw-bold mb-0"><i class="fas fa-building me-2"></i>Inventario - Edificio Central</h4>
+  <button class="btn btn-success shadow-sm fw-bold" (click)="abrirModalRegistro()">
+    <i class="fas fa-plus-circle me-1"></i> REGISTRAR EQUIPO
+  </button>
+</div>
+
+<div class="row mb-3 px-2">
+  <div class="col-md-3">
+    <input type="text"
+           class="form-control"
+           placeholder="🔍 Buscar en todo el inventario..."
+           [(ngModel)]="busquedaGlobal"
+           (input)="filtrarEquipos()">
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="table-wrapper">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Responsable / Dependencia</th>
+          <th>Modelo Equipo</th>
+          <th>Cód. CPU</th>
+          <th>Cód. Monitor</th>
+          <th>Estado UPS</th>
+          <th>Almacenamiento</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
+          <td class="col-id">{{item.id}}</td>
+          <td class="col-user">
+            <div class="primary-text link-detail" style="cursor: pointer; color: var(--primary);" (click)="abrirDetalles(item)">
+              {{item.usuario}}
+            </div>
+            <div class="secondary-text">{{item.dependencia}}</div>
+          </td>
+          <td class="primary-text">{{item.modelo}}</td>
+          <td><span class="code-pill">{{item.codigoBien}}</span></td>
+          <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
+          <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
+          <td><span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span></td>
+          <td class="actions-cell">
+            <div class="btn-group-actions">
+              <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i> <span>EDITAR</span></button>
+              <button class="btn-ui print" (click)="imprimirEtiqueta(item)"><i class="fas fa-print"></i> <span>ETIQUETA</span></button>
+              <button class="btn-ui delete" (click)="eliminar(item.id)"><i class="fas fa-trash"></i> <span>BORRAR</span></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="equipoSeleccionado && !mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
-
       <div class="modal-header bg-primary text-white border-0">
-        <div>
-          <h5 class="modal-title fw-bold mb-0"><i class="fas fa-clipboard-list me-2"></i>Ficha Técnica Detallada</h5>
-          <small class="text-white-50">ID Registro: #{{equipoSeleccionado.id}}</small>
-        </div>
-        <button type="button" class="btn-close btn-close-white shadow-none" (click)="equipoSeleccionado = null" aria-label="Close"></button>
+        <h5 class="modal-title fw-bold"><i class="fas fa-id-card me-2"></i>Ficha Técnica: {{equipoSeleccionado.usuario}}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="equipoSeleccionado = null"></button>
       </div>
-
       <div class="modal-body p-4 bg-light">
-
-        <div class="card mb-3 border-0 shadow-sm">
+        <div class="card mb-3 shadow-sm border-0">
           <div class="card-body">
-            <h6 class="card-subtitle mb-3 text-primary fw-bold border-bottom pb-2">
-              <i class="fas fa-user-tie me-2"></i>Usuario y Ubicación
-            </h6>
-            <div class="row g-3">
-              <div class="col-md-12">
-                <small class="text-muted d-block fw-bold">Responsable</small>
-                <span class="fs-6">{{equipoSeleccionado.usuario || 'N/A'}}</span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Dependencia</small>
-                <span class="fs-6">{{equipoSeleccionado.dependencia || 'N/A'}}</span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Hostname</small>
-                <span class="badge bg-secondary fs-6">{{equipoSeleccionado.hostname || 'N/A'}}</span>
-              </div>
+            <h6 class="text-primary fw-bold border-bottom pb-2">Información General</h6>
+            <div class="row mt-2">
+              <div class="col-md-4"><strong>ID:</strong> {{equipoSeleccionado.id}}</div>
+              <div class="col-md-4"><strong>Dependencia:</strong> {{equipoSeleccionado.dependencia}}</div>
+              <div class="col-md-4"><strong>Hostname:</strong> {{equipoSeleccionado.hostname}}</div>
             </div>
           </div>
         </div>
-
-        <div class="card mb-3 border-0 shadow-sm">
+        <div class="card mb-3 shadow-sm border-0">
           <div class="card-body">
-            <h6 class="card-subtitle mb-3 text-secondary fw-bold border-bottom pb-2">
-              <i class="fas fa-microchip me-2"></i>Unidad Central (CPU)
-            </h6>
-            <div class="row g-3">
-              <div class="col-md-4">
-                <small class="text-muted d-block fw-bold">Tipo</small>
-                <span>{{equipoSeleccionado.tipo || 'N/A'}}</span>
-              </div>
-              <div class="col-md-4">
-                <small class="text-muted d-block fw-bold">Modelo</small>
-                <span>{{equipoSeleccionado.modelo || 'N/A'}}</span>
-              </div>
-              <div class="col-md-4">
-                <small class="text-muted d-block fw-bold">Almacenamiento</small>
-                <span class="badge bg-dark">{{equipoSeleccionado.tipoDisco || 'N/A'}}</span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Código de Bien</small>
-                <span class="text-primary fw-bold">{{equipoSeleccionado.codigoBien || 'N/A'}}</span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Número de Serie</small>
-                <span class="text-primary fw-bold">{{equipoSeleccionado.numeroSerie || 'N/A'}}</span>
-              </div>
+            <h6 class="text-primary fw-bold border-bottom pb-2">Hardware Principal</h6>
+            <div class="row mt-2">
+              <div class="col-md-4"><strong>Tipo:</strong> {{equipoSeleccionado.tipo}}</div>
+              <div class="col-md-4"><strong>Modelo:</strong> {{equipoSeleccionado.modelo}}</div>
+              <div class="col-md-4"><strong>Disco:</strong> {{equipoSeleccionado.tipoDisco}}</div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-6"><strong>Cód. CPU:</strong> {{equipoSeleccionado.codigoBien}}</div>
+              <div class="col-md-6"><strong>Serie (CPU):</strong> {{equipoSeleccionado.numeroSerie}}</div>
             </div>
           </div>
         </div>
-
-        <div class="card border-0 shadow-sm">
+        <div class="card shadow-sm border-0">
           <div class="card-body">
-            <h6 class="card-subtitle mb-3 text-dark fw-bold border-bottom pb-2">
-              <i class="fas fa-keyboard me-2"></i>Periféricos y Energía
-            </h6>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Monitor (Cód - Serie)</small>
-                <span>{{equipoSeleccionado.codigoBienMonitor || 'S/N'}} <br> <span class="text-muted small">{{equipoSeleccionado.numeroSerieMonitor || 'S/N'}}</span></span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Teclado (Cód - Serie)</small>
-                <span>{{equipoSeleccionado.codigoBienTeclado || 'S/N'}} <br> <span class="text-muted small">{{equipoSeleccionado.numeroSerieTeclado || 'S/N'}}</span></span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">Mouse (Cód - Serie)</small>
-                <span>{{equipoSeleccionado.codigoBienMouse || 'S/N'}} <br> <span class="text-muted small">{{equipoSeleccionado.numeroSerieMouse || 'S/N'}}</span></span>
-              </div>
-              <div class="col-md-6">
-                <small class="text-muted d-block fw-bold">UPS</small>
-                <span>{{equipoSeleccionado.codigoBienUps || 'S/N'}} <br>
-                  <span class="badge mt-1"
-                        [ngClass]="{
-                          'bg-success': equipoSeleccionado.estadoups === 'Bueno',
-                          'bg-warning text-dark': equipoSeleccionado.estadoups === 'Regular',
-                          'bg-danger': equipoSeleccionado.estadoups === 'Malo'
-                        }">
-                    {{equipoSeleccionado.estadoups || 'N/A'}}
-                  </span>
-                </span>
-              </div>
+            <h6 class="text-primary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
+            <div class="row mt-2">
+              <div class="col-md-6"><strong>Cód. Monitor:</strong> {{equipoSeleccionado.codigoBienMonitor}}</div>
+              <div class="col-md-6"><strong>Serie Monitor:</strong> {{equipoSeleccionado.numeroSerieMonitor}}</div>
+              <div class="col-md-6"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
+              <div class="col-md-6"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. UPS:</strong> {{equipoSeleccionado.codigoBienUps}}</div>
+              <div class="col-md-6 mt-2"><strong>Estado UPS:</strong> {{equipoSeleccionado.estadoups}}</div>
             </div>
           </div>
         </div>
-
       </div>
-
       <div class="modal-footer border-0 bg-light">
-        <button type="button" class="btn btn-outline-secondary" (click)="equipoSeleccionado = null">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="imprimirEtiqueta(equipoSeleccionado)">
-          <i class="fas fa-print me-2"></i> Imprimir Etiqueta
-        </button>
+        <button class="btn btn-outline-secondary fw-bold" (click)="equipoSeleccionado = null">CERRAR</button>
       </div>
+    </div>
+  </div>
+</div>
 
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow-lg border-0">
+      <div class="modal-header text-white border-0" [ngClass]="modoEdicion ? 'bg-primary' : 'bg-success'">
+        <h5 class="modal-title fw-bold">
+          <i class="fas me-2" [ngClass]="modoEdicion ? 'fa-edit' : 'fa-plus-circle'"></i>
+          {{ modoEdicion ? 'Editar Equipo #' + id : 'Registrar Nuevo Equipo' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarModalRegistro()"></button>
+      </div>
+      <div class="modal-body p-4 bg-light">
+        <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
+          <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Información General</h6>
+              <div class="row">
+                <div class="col-md-2 mb-3" *ngIf="modoEdicion"><label class="form-label fw-bold">ID</label><input type="text" class="form-control" name="id" [(ngModel)]="id" disabled></div>
+                <div class="col-md-5 mb-3"><label class="form-label fw-bold">Usuario</label><input type="text" class="form-control" name="usuario" [(ngModel)]="usuario" required></div>
+                <div class="col-md-5 mb-3">
+                  <label class="form-label fw-bold">Dependencia</label>
+                  <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
+                    <option value="" disabled>Seleccione dependencia</option>
+                      <option value="" disabled selected>Seleccione una dependencia</option>
+                            <option value="PREFECTURA">PREFECTURA</option>
+                            <option value="VICEPREFECTURA">VICEPREFECTURA</option>
+                            <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
+                            <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
+                            <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
+                            <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
+                            <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
+                            <option value="CONTRALORIA">CONTRALORIA</option>
+                            <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
+                            <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
+                            <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
+                            <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
+                            <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
+                            <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
+                            <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
+                            <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
+                            <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
+                            <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
+                            <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
+                            <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
+                            <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
+                            <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
+                            <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
+                            <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
+                            <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
+                            <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
+                            <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
+                            <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
+                            <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware y Periféricos</h6>
+              <div class="row">
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Hostname</label><input type="text" class="form-control" name="hostname" [(ngModel)]="hostname"></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Modelo</label><input type="text" class="form-control" name="modelo" [(ngModel)]="modelo"></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Tipo</label><select class="form-control form-select" name="tipo" [(ngModel)]="tipo"><option value="LAPTOP">LAPTOP</option><option value="ESCRITORIO">ESCRITORIO</option></select></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Disco</label><select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco"><option value="HDD">HDD</option><option value="SSD">SSD</option><option value="M2">M.2</option></select></div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. CPU</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Serie CPU</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie"></div>
+                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. Monitor</label><input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Serie Monitor</label><input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-secondary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
+              <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label">Cód. Mouse</label><input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Serie Mouse</label><input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="numeroSerieMouse"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Cód. Teclado</label><input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Serie Teclado</label><input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="numeroSerieTeclado"></div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
+                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
+            <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">{{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
