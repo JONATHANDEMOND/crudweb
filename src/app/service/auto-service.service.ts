@@ -85,4 +85,7 @@ postUsuario(usuario: any): Observable<any> {
   deleteUsuario(id: any): Observable<any> {
     return this.http.delete<any>(`${this.API_URL}/usuarios/${id}`);
   }
+  actualizarEquipo(id: string, datos: any) {
+    return this.http.put(`${this.API_URL}/autos/${id}`, datos);
+  }
 }

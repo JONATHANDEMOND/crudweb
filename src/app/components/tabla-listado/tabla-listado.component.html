@@ -5,7 +5,7 @@
   </button>
 </div>
 
-<div class="row mb-3 px-2">
+<div  class="row mb-3 px-2">
   <div class="col-md-3">
     <input type="text"
            class="form-control"
@@ -27,6 +27,7 @@
           <th>Cód. Monitor</th>
           <th>Estado UPS</th>
           <th>Almacenamiento</th>
+          <th class="text-center">Mantenimiento</th>
           <th class="text-center">Acciones</th>
         </tr>
       </thead>
@@ -37,14 +38,24 @@
             <div class="primary-text link-detail" style="cursor: pointer; color: var(--primary);" (click)="abrirDetalles(item)">
               {{item.usuario}}
             </div>
-            <div class="secondary-text">{{item.dependencia}}</div>
+            <div  class="secondary-text">{{item.dependencia}}</div>
           </td>
           <td class="primary-text">{{item.modelo}}</td>
           <td><span class="code-pill">{{item.codigoBien}}</span></td>
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
           <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
           <td><span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span></td>
+          <td>
+            <div class="form-check form-switch d-flex justify-content-center">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     [(ngModel)]="item.mantenimientoRealizado"
+                     (change)="marcarMantenimiento(item)"
+                     style="cursor: pointer; transform: scale(1.3);">
+            </div>
+          </td>
+
           <td class="actions-cell">
+
             <div class="btn-group-actions">
               <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i> <span>EDITAR</span></button>
               <button class="btn-ui print" (click)="imprimirEtiqueta(item)"><i class="fas fa-print"></i> <span>ETIQUETA</span></button>

@@ -175,6 +175,21 @@ export class TablaListadoComponent implements OnInit {
   contarM2() { return this.vehiculosFiltrados.filter(x => x.tipoDisco === 'M2').length; }
   contarHDD() { return this.vehiculosFiltrados.filter(x => x.tipoDisco === 'HDD').length; }
   // ----------------------------------------------------
+
+ marcarMantenimiento(equipo: any) {
+    // Cambiamos "tuServicio" por "servicio" y agregamos ": any" a las respuestas
+    this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
+      next: (res: any) => {
+        console.log('Mantenimiento actualizado exitosamente', res);
+      },
+      error: (err: any) => {
+        console.error('Error al guardar el estado', err);
+        // Si hay error en la red, regresamos el switch a su estado original
+        equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado;
+      }
+    });
+  }
+
   // ETIQUETAS
   // ----------------------------------------------------
   imprimirEtiqueta(equipo: any) {
