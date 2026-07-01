@@ -11,7 +11,9 @@ import { CommonModule } from '@angular/common';// Asegúrate de importar FormsMo
   templateUrl: './impresoras-sitio-remoto.component.html', // Verifica que este nombre sea EXACTAMENTE igual al nombre del archivo en la carpeta
   styleUrls: ['./impresoras-sitio-remoto.component.css']  // Verifica también que el nombre del CSS coincida
 })
-export class ImpresorasComponent implements OnInit {
+export class ImpresorasSitioRemotoComponent implements OnInit {
+
+
   impresoras: any[] = [];
   impresorasFiltradas: any[] = [];
   busquedaGlobal: string = '';
@@ -21,8 +23,10 @@ export class ImpresorasComponent implements OnInit {
   mostrarModalRegistro: boolean = false;
   modoEdicion: boolean = false;
 
+
+
   // CAMBIA ESTA RUTA según corresponda: '/api/impresoras-ec' o '/api/impresoras-sr'
-  private apiUrl = 'http://localhost:3000/api/impresoras-ec';
+  private apiUrl = 'http://localhost:4000/api/impresoras-ec';
 
   constructor(private http: HttpClient) {}
 
@@ -37,36 +41,56 @@ export class ImpresorasComponent implements OnInit {
     });
   }
 
-  filtrarImpresoras() {
-    this.impresorasFiltradas = this.impresoras.filter(i =>
-      i.custodio.toLowerCase().includes(this.busquedaGlobal.toLowerCase()) ||
-      i.oficina.toLowerCase().includes(this.busquedaGlobal.toLowerCase())
-    );
+filtrarImpresoras() {
+  if (!this.busquedaGlobal) {
+    this.impresorasFiltradas = this.impresoras;
+    return;
   }
 
+  const busqueda = this.busquedaGlobal.toLowerCase();
+
+  this.impresorasFiltradas = this.impresoras.filter(i => {
+    // Usamos el operador || '' para que si es undefined, se convierta en texto vacío
+    const custodio = (i.custodio || '').toLowerCase();
+    const oficina = (i.oficina || '').toLowerCase();
+
+    return custodio.includes(busqueda) || oficina.includes(busqueda);
+  });
+}
+
   abrirModalRegistro(impresora: any = null) {
-    this.modoEdicion = !!impresora;
-    this.impresoraActual = impresora ? { ...impresora } : {};
-    this.mostrarModalRegistro = true;
+  if (impresora) {
+    console.log("Editando impresora:", impresora); // <--- MIRA LA CONSOLA (F12)
+    console.log("ID detectado:", impresora._id);   // <--- SI ESTO SALE UNDEFINED, AHÍ ESTÁ EL PROBLEMA
+    this.impresoraActual = { ...impresora };
+    this.modoEdicion = true;
+  } else {
+    this.impresoraActual = {};
+    this.modoEdicion = false;
   }
+  this.mostrarModalRegistro = true;
+}
 
   cerrarModalRegistro() {
     this.mostrarModalRegistro = false;
   }
+guardar() {
+  console.log("Modo edición:", this.modoEdicion);
+  console.log("ID actual:", this.impresoraActual._id);
 
-  guardar() {
-    if (this.modoEdicion) {
-      this.http.put(`${this.apiUrl}/${this.impresoraActual._id}`, this.impresoraActual)
-        .subscribe(() => { this.obtenerImpresoras(); this.cerrarModalRegistro(); });
-    } else {
-      this.http.post(this.apiUrl, this.impresoraActual)
-        .subscribe(() => { this.obtenerImpresoras(); this.cerrarModalRegistro(); });
-    }
+  if (this.modoEdicion && this.impresoraActual._id) {
+    // RUTA PUT: http://localhost:4000/api/impresoras-ec/ID_REAL
+    this.http.put(`${this.apiUrl}/${this.impresoraActual._id}`, this.impresoraActual)
+      .subscribe(() => { this.obtenerImpresoras(); this.cerrarModalRegistro(); });
+  } else {
+    // RUTA POST: http://localhost:4000/api/impresoras-ec
+    this.http.post(this.apiUrl, this.impresoraActual)
+      .subscribe(() => { this.obtenerImpresoras(); this.cerrarModalRegistro(); });
   }
-
-  eliminar(id: string) {
+}
+  eliminar(_id: string) {
     if (confirm('¿Estás seguro de eliminar esta impresora?')) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => this.obtenerImpresoras());
+      this.http.delete(`${this.apiUrl}/${_id}`).subscribe(() => this.obtenerImpresoras());
     }
   }
 

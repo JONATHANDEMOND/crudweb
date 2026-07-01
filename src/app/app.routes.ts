@@ -3,6 +3,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { TablaComponent } from './components/tabla/tabla.component';
 import { FormularioComponent } from './components/formulario/formulario.component';
 import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
+import { ImpresorasEdificioCentralComponent } from './components/impresoras-edificio-central/impresoras-edificio-central.component';
+import { ImpresorasSitioRemotoComponent } from './components/impresoras-sitio-remoto/impresoras-sitio-remoto.component';
 
 // Importaciones del Edificio Central
 import { TablaListadoComponent } from './components/tabla-listado/tabla-listado.component';
@@ -19,6 +21,9 @@ export const routes: Routes = [
 
   // Inventario Edificio Central
   { path: 'listadoedfcent', component: TablaListadoComponent, canActivate: [authGuard] },
+  // 2. AGREGA ESTAS NUEVAS RUTAS
+  { path: 'impresoras-ec', component: ImpresorasEdificioCentralComponent, canActivate: [authGuard] },
+  { path: 'impresoras-sr', component: ImpresorasSitioRemotoComponent, canActivate: [authGuard] },
 
   // Registro de Equipos (Edificio Central)
   { path: 'registro-central', component: FormularioCentralComponent, canActivate: [authGuard] },

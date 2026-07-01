@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';// Asegúrate de importar FormsMo
   templateUrl: './impresoras-edificio-central.component.html', // Verifica que este nombre sea EXACTAMENTE igual al nombre del archivo en la carpeta
   styleUrls: ['./impresoras-edificio-central.component.css']  // Verifica también que el nombre del CSS coincida
 })
-export class ImpresorasComponent implements OnInit {
+export class ImpresorasEdificioCentralComponent implements OnInit {
   impresoras: any[] = [];
   impresorasFiltradas: any[] = [];
   busquedaGlobal: string = '';
@@ -22,7 +22,7 @@ export class ImpresorasComponent implements OnInit {
   modoEdicion: boolean = false;
 
   // CAMBIA ESTA RUTA según corresponda: '/api/impresoras-ec' o '/api/impresoras-sr'
-  private apiUrl = 'http://localhost:3000/api/impresoras-ec';
+  private apiUrl = 'http://localhost:4000/api/impresoras-ec';
 
   constructor(private http: HttpClient) {}
 
@@ -55,12 +55,27 @@ export class ImpresorasComponent implements OnInit {
   }
 
   guardar() {
+    // Si modoEdicion es verdadero, usamos el _id de MongoDB
     if (this.modoEdicion) {
+      // IMPORTANTE: Asegúrate de usar _id (con guion bajo)
       this.http.put(`${this.apiUrl}/${this.impresoraActual._id}`, this.impresoraActual)
-        .subscribe(() => { this.obtenerImpresoras(); this.cerrarModalRegistro(); });
+        .subscribe({
+          next: () => {
+            this.obtenerImpresoras();
+            this.cerrarModalRegistro();
+          },
+          error: (err) => console.error("Error al actualizar:", err)
+        });
     } else {
+      // Al guardar uno nuevo, NO enviamos el _id, MongoDB lo genera solo
       this.http.post(this.apiUrl, this.impresoraActual)
-        .subscribe(() => { this.obtenerImpresoras(); this.cerrarModalRegistro(); });
+        .subscribe({
+          next: () => {
+            this.obtenerImpresoras();
+            this.cerrarModalRegistro();
+          },
+          error: (err) => console.error("Error al guardar:", err)
+        });
     }
   }
 
