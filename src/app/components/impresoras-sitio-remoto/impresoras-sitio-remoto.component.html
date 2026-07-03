@@ -1,6 +1,6 @@
 <p>impresoras-sitio-remoto works!</p>
 <div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-2">
-  <h4 class="text-primary fw-bold mb-0"><i class="fas fa-print me-2"></i>Inventario Impresoras - Edificio Central</h4>
+  <h4 class="text-primary fw-bold mb-0"><i class="fas fa-print me-2"></i>Inventario Impresoras - Sitios Remotos</h4>
   <button class="btn btn-success shadow-sm fw-bold" (click)="abrirModalRegistro()">
     <i class="fas fa-plus-circle me-1"></i> REGISTRAR IMPRESORA
   </button>
@@ -8,11 +8,7 @@
 
 <div class="row mb-3 px-2">
   <div class="col-md-3">
-    <input type="text"
-           class="form-control"
-           placeholder="🔍 Buscar impresora..."
-           [(ngModel)]="busquedaGlobal"
-           (input)="filtrarImpresoras()">
+    <input type="text" class="form-control" placeholder="🔍 Buscar impresora..." [(ngModel)]="busquedaGlobal" (input)="filtrarImpresoras()">
   </div>
 </div>
 
@@ -23,7 +19,7 @@
         <tr>
           <th>Custodio</th>
           <th>Oficina / Ubicación</th>
-          <th>Piso</th>
+
           <th>Marca / Modelo</th>
           <th>No. de Serie</th>
           <th>Código AB</th>
@@ -34,33 +30,30 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of impresorasFiltradas">
-          <td class="col-user">
-            <div class="primary-text">{{item.custodio}}</div>
-          </td>
+          <td><div class="primary-text">{{item.custodio}}</div></td>
           <td>
             <div class="primary-text">{{item.oficina}}</div>
             <div class="secondary-text">{{item.ubicacion}}</div>
           </td>
-          <td><span class="badge bg-secondary">{{item.piso}}</span></td>
+
           <td class="primary-text">{{item.marcaModelo}}</td>
           <td><span class="code-pill">{{item.numeroSerie}}</span></td>
           <td><span class="code-pill">{{item.codigoAB}}</span></td>
           <td><span class="text-primary fw-bold">{{item.direccionIP}}</span></td>
-
           <td>
             <div class="form-check form-switch d-flex justify-content-center">
-              <input class="form-check-input" type="checkbox" role="switch"
-                     [(ngModel)]="item.mantenimientoRealizado"
-                     (change)="marcarMantenimiento(item)"
-                     style="cursor: pointer; transform: scale(1.3);">
+              <input class="form-check-input" type="checkbox" role="switch" [(ngModel)]="item.mantenimientoRealizado" (change)="marcarMantenimiento(item)" style="cursor: pointer; transform: scale(1.3);">
             </div>
           </td>
-
           <td class="actions-cell">
             <div class="btn-group-actions">
-              <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i></button>
-              <button class="btn-ui delete" (click)="eliminar(item._id)"><i class="fas fa-trash"></i></button>
-            </div>
+  <button class="btn-ui btn-edit" (click)="abrirModalRegistro(item)" title="Editar">
+    <i class="fas fa-edit">Editar</i>
+  </button>
+  <button class="btn-ui btn-delete" (click)="eliminar(item._id)" title="Eliminar">
+    <i class="fas fa-trash">Eliminar</i>
+  </button>
+</div>
           </td>
         </tr>
       </tbody>
@@ -68,6 +61,7 @@
   </div>
 </div>
 
+<!-- MODAL REGISTRO -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -80,31 +74,68 @@
       </div>
       <div class="modal-body p-4 bg-light">
         <form (ngSubmit)="guardar()" #formulario="ngForm">
-
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label fw-bold">Custodio</label>
               <input type="text" class="form-control" name="custodio" [(ngModel)]="impresoraActual.custodio" required>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Oficina</label>
-              <input type="text" class="form-control" name="oficina" [(ngModel)]="impresoraActual.oficina" required>
+              <label class="form-label fw-bold">Dependencia (Oficina)</label>
+              <select class="form-control form-select" name="oficina" [(ngModel)]="impresoraActual.oficina" required>
+                <option value="" disabled>Seleccione dependencia</option>
+                <option value="ADOQUINERA">ADOQUINERA</option>
+  <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
+  <option value="BIOINSUMOS">BIOINSUMOS</option>
+  <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
+  <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
+  <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
+  <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
+  <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
+  <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
+  <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
+  <option value="CEDES MEJIA">CEDES MEJIA</option>
+  <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
+  <option value="CEDES SOLANDA">CEDES SOLANDA</option>
+  <option value="CEDES IESSFUT">CEDES IESSFUT</option>
+  <option value="CEMBA">CEMBA</option>
+  <option value="CC EL BOSQUE">CC EL BOSQUE PEAJE</option>
+  <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
+  <option value="CEVA CACAO">CEVA CACAO</option>
+  <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
+  <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
+  <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
+  <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
+  <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
+  <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
+  <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
+  <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
+  <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
+  <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
+  <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
+  <option value="NANEGALITO">NANEGALITO</option>
+  <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
+  <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
+  <option value="PSICOLA">PSICOLA</option>
+  <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
+  <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
+  <option value="VIVERO">VIVERO</option>
+  <option value="WARMI ALANGASI">WARMI ALANGASI</option>
+  <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
+  <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
+  <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
+  <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
+  <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
+  <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
+  <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
+  <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
+  <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
+              </select>
             </div>
           </div>
 
           <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Ubicación</label>
-              <input type="text" class="form-control" name="ubicacion" [(ngModel)]="impresoraActual.ubicacion">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Piso</label>
-              <input type="text" class="form-control" name="piso" [(ngModel)]="impresoraActual.piso">
-            </div>
-          </div>
 
-          <div class="row">
-            <div class="col-md-12 mb-3">
+            <div class="col-md-6 mb-3">
               <label class="form-label fw-bold">Marca / Modelo</label>
               <input type="text" class="form-control" name="marcaModelo" [(ngModel)]="impresoraActual.marcaModelo">
             </div>
@@ -121,13 +152,13 @@
             </div>
             <div class="col-md-4 mb-3">
               <label class="form-label fw-bold text-primary">Dirección IP</label>
-              <input type="text" class="form-control" name="direccionIP" [(ngModel)]="impresoraActual.direccionIP" placeholder="Ej: 192.168.1.50">
+              <input type="text" class="form-control" name="direccionIP" [(ngModel)]="impresoraActual.direccionIP" placeholder="192.168.x.x">
             </div>
           </div>
 
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
-            <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">
+          <div class="d-flex justify-content-end gap-3 mt-4 border-top pt-3">
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4 fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
+            <button type="submit" class="btn btn-lg px-5 fw-bold" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">
               {{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}
             </button>
           </div>

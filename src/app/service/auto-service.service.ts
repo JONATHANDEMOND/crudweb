@@ -88,4 +88,39 @@ postUsuario(usuario: any): Observable<any> {
   actualizarEquipo(id: string, datos: any) {
     return this.http.put(`${this.API_URL}/autos/${id}`, datos);
   }
+  //--metodos impresras edificio central//
+getImpresorasEC(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/impresoras-ec`);
+}
+
+postImpresoraEC(impresora: any): Observable<any> {
+  return this.http.post<any>(`${this.API_URL}/impresoras-ec`, impresora);
+}
+
+updateImpresoraEC(id: string, impresora: any): Observable<any> {
+  return this.http.put<any>(`${this.API_URL}/impresoras-ec/${id}`, impresora);
+}
+
+deleteImpresoraEC(id: string): Observable<any> {
+  return this.http.delete<any>(`${this.API_URL}/impresoras-ec/${id}`);
+}
+//--metodos impresras sitios remotos//
+
+
+
+getImpresorasSR(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/impresoras-sr`);
+}
+
+postImpresoraSR(impresora: any): Observable<any> {
+  return this.http.post<any>(`${this.API_URL}/impresoras-sr`, impresora);
+}
+
+updateImpresoraSR(id: string, impresora: any): Observable<any> {
+  return this.http.put<any>(`${this.API_URL}/impresoras-sr/${id}`, impresora);
+}
+
+deleteImpresoraSR(id: string): Observable<any> {
+  return this.http.delete<any>(`${this.API_URL}/impresoras-sr/${id}`);
+}
 }
