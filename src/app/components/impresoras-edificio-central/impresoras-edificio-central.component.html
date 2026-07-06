@@ -47,19 +47,27 @@
           <td><span class="text-primary fw-bold">{{item.direccionIP}}</span></td>
 
           <td>
-            <div class="form-check form-switch d-flex justify-content-center">
-              <input class="form-check-input" type="checkbox" role="switch"
-                     [(ngModel)]="item.mantenimientoRealizado"
-                     (change)="marcarMantenimiento(item)"
-                     style="cursor: pointer; transform: scale(1.3);">
-            </div>
-          </td>
+  <div class="form-check form-switch d-flex justify-content-center">
+    <input class="form-check-input" type="checkbox" role="switch"
+           [(ngModel)]="item.mantenimientoRealizado"
+           (change)="marcarMantenimiento(item)"
+           style="cursor: pointer; transform: scale(1.3);">
+  </div>
+  <!-- Fecha reflejada en tiempo real abajo del switch -->
+  <div class="text-center mt-1" style="font-size: 0.75rem; color: #555; font-weight: bold;">
+    {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
+  </div>
+</td>
 
-          <td class="actions-cell">
+            <td class="actions-cell">
             <div class="btn-group-actions">
-              <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i></button>
-              <button class="btn-ui delete" (click)="eliminar(item._id)"><i class="fas fa-trash"></i></button>
-            </div>
+  <button class="btn-ui btn-edit" (click)="abrirModalRegistro(item)" title="Editar">
+    <i class="fas fa-edit">Editar</i>
+  </button>
+  <button class="btn-ui btn-delete" (click)="eliminar(item._id)" title="Eliminar">
+    <i class="fas fa-trash">Eliminar</i>
+  </button>
+</div>
           </td>
         </tr>
       </tbody>
@@ -86,8 +94,39 @@
               <input type="text" class="form-control" name="custodio" [(ngModel)]="impresoraActual.custodio" required>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Oficina</label>
-              <input type="text" class="form-control" name="oficina" [(ngModel)]="impresoraActual.oficina" required>
+               <label class="form-label fw-bold">Dependencia (Oficina)</label>
+              <select class="form-control form-select" name="oficina" [(ngModel)]="impresoraActual.oficina" required>
+                <option value="" disabled>Seleccione dependencia</option>
+               <option value="PREFECTURA">PREFECTURA</option>
+                            <option value="VICEPREFECTURA">VICEPREFECTURA</option>
+                            <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
+                            <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
+                            <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
+                            <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
+                            <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
+                            <option value="CONTRALORIA">CONTRALORIA</option>
+                            <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
+                            <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
+                            <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
+                            <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
+                            <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
+                            <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
+                            <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
+                            <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
+                            <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
+                            <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
+                            <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
+                            <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
+                            <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
+                            <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
+                            <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
+                            <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
+                            <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
+                            <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
+                            <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
+                            <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
+                            <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+              </select>
             </div>
           </div>
 

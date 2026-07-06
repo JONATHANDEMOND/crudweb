@@ -74,11 +74,17 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   }
 
   marcarMantenimiento(item: any) {
-    if (item._id) {
-      this.autoService.updateImpresoraSR(item._id, item).subscribe({
-        next: () => console.log('Mantenimiento actualizado'),
-        error: () => item.mantenimientoRealizado = !item.mantenimientoRealizado
-      });
-    }
+  if (item._id) {
+    item.fechaUltimoMantenimiento = item.mantenimientoRealizado ? new Date().toISOString() : null;
+
+    this.autoService.updateImpresoraSR(item._id, item).subscribe({
+      next: () => console.log('Mantenimiento SR guardado con fecha:', item.fechaUltimoMantenimiento),
+      error: (err) => {
+        console.error('Error al actualizar mantenimiento SR:', err);
+        item.mantenimientoRealizado = !item.mantenimientoRealizado;
+        item.fechaUltimoMantenimiento = item.mantenimientoRealizado ? new Date().toISOString() : null;
+      }
+    });
   }
+}
 }

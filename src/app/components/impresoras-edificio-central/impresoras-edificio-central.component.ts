@@ -72,12 +72,20 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
     }
   }
 
-  marcarMantenimiento(item: any) {
-    if (item._id) {
-      this.autoService.updateImpresoraEC(item._id, item).subscribe({
-        next: () => console.log('Mantenimiento actualizado'),
-        error: () => item.mantenimientoRealizado = !item.mantenimientoRealizado
-      });
-    }
+ marcarMantenimiento(item: any) {
+  if (item._id) {
+    // El ngModel ya cambió el valor del switch. Asignamos la fecha según ese estado:
+    item.fechaUltimoMantenimiento = item.mantenimientoRealizado ? new Date().toISOString() : null;
+
+    this.autoService.updateImpresoraEC(item._id, item).subscribe({
+      next: () => console.log('Mantenimiento EC guardado con fecha:', item.fechaUltimoMantenimiento),
+      error: (err) => {
+        console.error('Error al actualizar mantenimiento EC:', err);
+        // Si falla, revertimos los cambios en la interfaz
+        item.mantenimientoRealizado = !item.mantenimientoRealizado;
+        item.fechaUltimoMantenimiento = item.mantenimientoRealizado ? new Date().toISOString() : null;
+      }
+    });
   }
+}
 }

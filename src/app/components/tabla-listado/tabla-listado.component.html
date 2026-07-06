@@ -20,7 +20,7 @@
     <table class="modern-table">
       <thead>
         <tr>
-          <th>ID</th>
+
           <th>Responsable / Dependencia</th>
           <th>Modelo Equipo</th>
           <th>Cód. CPU</th>
@@ -33,7 +33,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
-          <td class="col-id">{{item.id}}</td>
+
           <td class="col-user">
             <div class="primary-text link-detail" style="cursor: pointer; color: var(--primary);" (click)="abrirDetalles(item)">
               {{item.usuario}}
@@ -45,14 +45,27 @@
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
           <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
           <td><span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span></td>
-          <td>
-            <div class="form-check form-switch d-flex justify-content-center">
-              <input class="form-check-input" type="checkbox" role="switch"
-                     [(ngModel)]="item.mantenimientoRealizado"
-                     (change)="marcarMantenimiento(item)"
-                     style="cursor: pointer; transform: scale(1.3);">
-            </div>
-          </td>
+      <td>
+        <div class="form-check form-switch d-flex justify-content-center">
+    <!-- OPTIMIZACIÓN: Deshabilitado dinámico mientras se conecta con el servidor -->
+    <input class="form-check-input" type="checkbox" role="switch"
+           [(ngModel)]="item.mantenimientoRealizado"
+           (change)="marcarMantenimiento(item)"
+           [disabled]="item.guardandoMantenimiento"
+           style="cursor: pointer; transform: scale(1.3);">
+  </div>
+
+  <!-- Indicador visual rápido -->
+  <div class="text-center mt-1" style="font-size: 0.75rem; font-weight: bold;"
+       [style.color]="item.guardandoMantenimiento ? '#999' : '#555'">
+    <span *ngIf="item.guardandoMantenimiento">
+      <i class="fas fa-spinner fa-spin me-1"></i> Guardando...
+    </span>
+    <span *ngIf="!item.guardandoMantenimiento">
+      {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
+    </span>
+  </div>
+</td>
 
           <td class="actions-cell">
 

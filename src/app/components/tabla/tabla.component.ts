@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class TablaComponent implements OnInit {
   servicio = inject(AutoServiceService);
 
+
   autos: any[] = [];
   vehiculosFiltrados: any[] = [];
   busquedaGlobal: string = ''; // Nueva variable para el buscador universal
@@ -97,6 +98,7 @@ export class TablaComponent implements OnInit {
     this.modoEdicion = false;
     this.limpiarFormulario();
   }
+
 
   cargarEnFormulario(item: any) {
     // Aquí capturamos el _id de MongoDB y lo guardamos en nuestra variable 'id'
@@ -197,21 +199,72 @@ export class TablaComponent implements OnInit {
   // ----------------------------------------------------
 
   ///MARCAR EQUIPOS MANTENIMIENTO
- marcarMantenimiento(equipo: any) {
-    // Cambiamos "tuServicio" por "servicio" y agregamos ": any" a las respuestas
+marcarMantenimiento(equipo: any) {
+  // 1. Bloqueo para evitar spam de clics
+  equipo.guardandoMantenimiento = true;
+  console.log("Enviando a:", `http://192.168.0.11:4000/api/autos/${equipo._id}`);
+
+  // 2. Preparación del historial
+  if (!equipo.historialMantenimientos) {
+    equipo.historialMantenimientos = [];
+  }
+
+  // Guardamos valores temporales para poder revertir si el servidor falla
+  const estadoSwitchAnterior = !equipo.mantenimientoRealizado;
+  const historialAnterior = [...equipo.historialMantenimientos];
+  const fechaPlanaAnterior = equipo.fechaUltimoMantenimiento;
+
+  // 3. Lógica de actualización local
+  if (equipo.mantenimientoRealizado) {
+    const nuevaFecha = new Date().toISOString();
+    equipo.historialMantenimientos.push({ fecha: nuevaFecha });
+    equipo.fechaUltimoMantenimiento = nuevaFecha;
+  } else {
+    equipo.fechaUltimoMantenimiento = null;
+    // NOTA: No limpiamos el historial al desmarcar para mantener el registro de lo que ya se hizo
+  }
+
+  // 4. Llamada al servicio
+  this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
+    next: (res: any) => {
+      console.log('Respuesta del servidor:', res);
+      equipo.guardandoMantenimiento = false;
+    },
+    error: (err: any) => {
+      console.error('ERROR DETALLADO:', err);
+
+      // 5. REVERSIÓN TOTAL en caso de error
+      equipo.mantenimientoRealizado = estadoSwitchAnterior;
+      equipo.historialMantenimientos = historialAnterior;
+      equipo.fechaUltimoMantenimiento = fechaPlanaAnterior;
+      equipo.guardandoMantenimiento = false;
+
+      alert('Error de conexión al guardar el mantenimiento. Revisa la consola (F12).');
+    }
+  });
+}
+  // ETIQUETAS
+limpiarMantenimiento(equipo: any) {
+  if (confirm('¿Está seguro de que desea eliminar todo el historial y estado de mantenimiento de este equipo?')) {
+    // 1. Limpiamos los campos
+    equipo.mantenimientoRealizado = false;
+    equipo.fechaUltimoMantenimiento = null;
+    equipo.historialMantenimientos = [];
+
+    // 2. Enviamos la actualización al servidor
     this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
       next: (res: any) => {
-        console.log('Mantenimiento actualizado exitosamente', res);
+        console.log('Mantenimiento limpiado exitosamente');
+        // Opcional: Cerrar el modal si prefieres
+        // this.equipoSeleccionado = null;
       },
       error: (err: any) => {
-        console.error('Error al guardar el estado', err);
-        // Si hay error en la red, regresamos el switch a su estado original
-        equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado;
+        console.error('Error al limpiar el mantenimiento', err);
+        alert('No se pudo limpiar el mantenimiento. Intente de nuevo.');
       }
     });
   }
-  // ETIQUETAS
-
+}
 
   // ----------------------------------------------------
   imprimirEtiqueta(equipo: any) {

@@ -176,19 +176,53 @@ export class TablaListadoComponent implements OnInit {
   contarHDD() { return this.vehiculosFiltrados.filter(x => x.tipoDisco === 'HDD').length; }
   // ----------------------------------------------------
 
- marcarMantenimiento(equipo: any) {
-    // Cambiamos "tuServicio" por "servicio" y agregamos ": any" a las respuestas
-    this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
-      next: (res: any) => {
-        console.log('Mantenimiento actualizado exitosamente', res);
-      },
-      error: (err: any) => {
-        console.error('Error al guardar el estado', err);
-        // Si hay error en la red, regresamos el switch a su estado original
-        equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado;
-      }
-    });
+marcarMantenimiento(equipo: any) {
+  // OPTIMIZACIÓN 1: Si ya se está procesando una petición de este equipo, ignoramos nuevos clics
+  if (equipo.guardandoMantenimiento) return;
+  equipo.guardandoMantenimiento = true;
+
+  // Inicializamos el historial si es la primera vez que se usa
+  if (!equipo.historialMantenimientos) {
+    equipo.historialMantenimientos = [];
   }
+
+  // Guardamos copias del estado actual por si ocurre un error de red y toca revertir
+  const estadoSwitchAnterior = !equipo.mantenimientoRealizado;
+  const fechaPlanaAnterior = equipo.fechaUltimoMantenimiento;
+
+  if (equipo.mantenimientoRealizado) {
+    const nuevaFecha = new Date().toISOString();
+
+    // OPTIMIZACIÓN 2: Almacenamos en el historial y actualizamos el campo rápido de la tabla
+    equipo.historialMantenimientos.push({ fecha: nuevaFecha });
+    equipo.fechaUltimoMantenimiento = nuevaFecha;
+  } else {
+    // Si se desmarca, limpiamos la fecha visual de la tabla (el historial acumulado se conserva)
+    equipo.fechaUltimoMantenimiento = null;
+  }
+
+  // 2. Enviamos la actualización limpia al backend
+  this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
+    next: (res: any) => {
+      console.log('Mantenimiento procesado de forma óptima', res);
+      // Liberamos el botón para permitir futuros mantenimientos
+      equipo.guardandoMantenimiento = false;
+    },
+    error: (err: any) => {
+      console.error('Error de red. Revirtiendo cambios...', err);
+
+      // OPTIMIZACIÓN 3: Reversión exacta ante caídas del servidor
+      equipo.mantenimientoRealizado = estadoSwitchAnterior;
+      equipo.fechaUltimoMantenimiento = fechaPlanaAnterior;
+
+      if (!estadoSwitchAnterior && equipo.historialMantenimientos.length > 0) {
+        equipo.historialMantenimientos.pop(); // Remueve el elemento fallido del historial
+      }
+
+      equipo.guardandoMantenimiento = false;
+    }
+  });
+}
 
   // ETIQUETAS
   // ----------------------------------------------------
