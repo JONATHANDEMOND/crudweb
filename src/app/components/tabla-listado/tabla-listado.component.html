@@ -5,7 +5,7 @@
   </button>
 </div>
 
-<div  class="row mb-3 px-2">
+<div class="row mb-3 px-2">
   <div class="col-md-3">
     <input type="text"
            class="form-control"
@@ -20,9 +20,9 @@
     <table class="modern-table">
       <thead>
         <tr>
-
           <th>Responsable / Dependencia</th>
           <th>Modelo Equipo</th>
+          <th>Procesador</th>
           <th>Cód. CPU</th>
           <th>Cód. Monitor</th>
           <th>Estado UPS</th>
@@ -33,46 +33,62 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
-
           <td class="col-user">
             <div class="primary-text link-detail" style="cursor: pointer; color: var(--primary);" (click)="abrirDetalles(item)">
               {{item.usuario}}
             </div>
-            <div  class="secondary-text">{{item.dependencia}}</div>
+            <div class="secondary-text">{{item.dependencia}}</div>
           </td>
           <td class="primary-text">{{item.modelo}}</td>
+          <td class="primary-text">{{item.procesador}}</td>
           <td><span class="code-pill">{{item.codigoBien}}</span></td>
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
           <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
           <td><span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span></td>
-      <td>
-        <div class="form-check form-switch d-flex justify-content-center">
-    <!-- OPTIMIZACIÓN: Deshabilitado dinámico mientras se conecta con el servidor -->
-    <input class="form-check-input" type="checkbox" role="switch"
-           [(ngModel)]="item.mantenimientoRealizado"
-           (change)="marcarMantenimiento(item)"
-           [disabled]="item.guardandoMantenimiento"
-           style="cursor: pointer; transform: scale(1.3);">
-  </div>
 
-  <!-- Indicador visual rápido -->
-  <div class="text-center mt-1" style="font-size: 0.75rem; font-weight: bold;"
-       [style.color]="item.guardandoMantenimiento ? '#999' : '#555'">
-    <span *ngIf="item.guardandoMantenimiento">
-      <i class="fas fa-spinner fa-spin me-1"></i> Guardando...
-    </span>
-    <span *ngIf="!item.guardandoMantenimiento">
-      {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
-    </span>
-  </div>
-</td>
+          <!-- Columna Mantenimiento -->
+          <td>
+            <div class="form-check form-switch d-flex justify-content-center">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     [(ngModel)]="item.mantenimientoRealizado"
+                     (change)="marcarMantenimiento(item)"
+                     [disabled]="item.guardandoMantenimiento"
+                     style="cursor: pointer; transform: scale(1.3);">
+            </div>
+            <div class="text-center mt-1" style="font-size: 0.75rem; font-weight: bold;"
+                 [style.color]="item.guardandoMantenimiento ? '#999' : '#555'">
+              <span *ngIf="item.guardandoMantenimiento">
+                <i class="fas fa-spinner fa-spin me-1"></i> Realizado...
+              </span>
+              <span *ngIf="!item.guardandoMantenimiento">
+                {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
+              </span>
+            </div>
+          </td>
 
-          <td class="actions-cell">
+          <!-- Columna Acciones -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 shadow-sm px-3" (click)="abrirModalRegistro(item)" title="Editar registro">
+                <i class="fas fa-edit"></i> <span>Editar</span>
+              </button>
 
-            <div class="btn-group-actions">
-              <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i> <span>EDITAR</span></button>
-              <button class="btn-ui print" (click)="imprimirEtiqueta(item)"><i class="fas fa-print"></i> <span>ETIQUETA</span></button>
-              <button class="btn-ui delete" (click)="eliminar(item._id)"><i class="fas fa-trash"></i> <span>ELIMINAR</span></button>
+              <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 shadow-sm px-3" (click)="imprimirEtiqueta(item)" title="Imprimir etiqueta">
+                <i class="fas fa-print"></i> <span>Etiqueta</span>
+              </button>
+
+              <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 shadow-sm px-3" (click)="eliminar(item._id)" title="Eliminar registro">
+                <i class="fas fa-trash"></i> <span>Eliminar</span>
+              </button>
+
+              <!-- Botón que ABRE el modal de Baja -->
+              <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm px-3"
+                      (click)="abrirModalBaja(item)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalBaja"
+                      title="Dar de Baja">
+                <i class="fas fa-arrow-down"></i> <span>Baja</span>
+              </button>
             </div>
           </td>
         </tr>
@@ -81,6 +97,7 @@
   </div>
 </div>
 
+<!-- 1. MODAL DETALLES (Ficha Técnica) -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="equipoSeleccionado && !mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -97,35 +114,77 @@
               <div class="col-md-4"><strong>Dependencia:</strong> {{equipoSeleccionado.dependencia}}</div>
               <div class="col-md-4"><strong>Hostname:</strong> {{equipoSeleccionado.hostname}}</div>
             </div>
+
+            <div class="card mt-3 shadow-sm border-0">
+              <div class="card-body">
+                <h6 class="text-primary fw-bold border-bottom pb-2 d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-history me-2"></i>Historial de Mantenimientos</span>
+                  <button class="btn btn-sm btn-outline-danger" (click)="limpiarMantenimiento(equipoSeleccionado)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </h6>
+                <div class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
+                  <span class="me-3 fw-bold">Estado:</span>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch"
+                           [(ngModel)]="equipoSeleccionado.mantenimientoRealizado"
+                           (change)="marcarMantenimiento(equipoSeleccionado)"
+                           [disabled]="equipoSeleccionado.guardandoMantenimiento">
+                  </div>
+                </div>
+                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                  <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Fecha y Hora</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let mant of equipoSeleccionado.historialMantenimientos; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ mant.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                      </tr>
+                      <tr *ngIf="!equipoSeleccionado.historialMantenimientos?.length">
+                        <td colspan="2" class="text-center text-muted">No hay registros aún.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
+
         <div class="card mb-3 shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Hardware Principal</h6>
             <div class="row mt-2">
               <div class="col-md-4"><strong>Tipo:</strong> {{equipoSeleccionado.tipo}}</div>
               <div class="col-md-4"><strong>Modelo:</strong> {{equipoSeleccionado.modelo}}</div>
-              <div class="col-md-4"><strong>Disco:</strong> {{equipoSeleccionado.tipoDisco}}</div>
-            </div>
-            <div class="row mt-2">
-              <div class="col-md-6"><strong>Cód. CPU:</strong> {{equipoSeleccionado.codigoBien}}</div>
-              <div class="col-md-6"><strong>Serie (CPU):</strong> {{equipoSeleccionado.numeroSerie}}</div>
+              <div class="col-md-4"><strong>Procesador:</strong> {{equipoSeleccionado.procesador}}</div>
+              <div class="col-md-4 mt-2"><strong>Disco:</strong> {{equipoSeleccionado.tipoDisco}}</div>
+              <div class="col-md-4 mt-2"><strong>Cód. CPU:</strong> {{equipoSeleccionado.codigoBien}}</div>
+              <div class="col-md-4 mt-2"><strong>Serie (CPU):</strong> {{equipoSeleccionado.numeroSerie}}</div>
             </div>
           </div>
         </div>
+
         <div class="card shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
             <div class="row mt-2">
               <div class="col-md-6"><strong>Cód. Monitor:</strong> {{equipoSeleccionado.codigoBienMonitor}}</div>
               <div class="col-md-6"><strong>Serie Monitor:</strong> {{equipoSeleccionado.numeroSerieMonitor}}</div>
-              <div class="col-md-6"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
-              <div class="col-md-6"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
               <div class="col-md-6 mt-2"><strong>Cód. UPS:</strong> {{equipoSeleccionado.codigoBienUps}}</div>
               <div class="col-md-6 mt-2"><strong>Estado UPS:</strong> {{equipoSeleccionado.estadoups}}</div>
             </div>
           </div>
         </div>
+
       </div>
       <div class="modal-footer border-0 bg-light">
         <button class="btn btn-outline-secondary fw-bold" (click)="equipoSeleccionado = null">CERRAR</button>
@@ -134,6 +193,7 @@
   </div>
 </div>
 
+<!-- 2. MODAL REGISTRO / EDICIÓN -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -155,48 +215,49 @@
                 <div class="col-md-5 mb-3">
                   <label class="form-label fw-bold">Dependencia</label>
                   <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
-                    <option value="" disabled>Seleccione dependencia</option>
-                      <option value="" disabled selected>Seleccione una dependencia</option>
-                            <option value="PREFECTURA">PREFECTURA</option>
-                            <option value="VICEPREFECTURA">VICEPREFECTURA</option>
-                            <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
-                            <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
-                            <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
-                            <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
-                            <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
-                            <option value="CONTRALORIA">CONTRALORIA</option>
-                            <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
-                            <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
-                            <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
-                            <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
-                            <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
-                            <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
-                            <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
-                            <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
-                            <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
-                            <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
-                            <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
-                            <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
-                            <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
-                            <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
-                            <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
-                            <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
-                            <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
-                            <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
-                            <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
-                            <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
-                            <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+                    <option value="" disabled selected>Seleccione una dependencia</option>
+                    <option value="PREFECTURA">PREFECTURA</option>
+                    <option value="VICEPREFECTURA">VICEPREFECTURA</option>
+                    <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
+                    <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
+                    <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
+                    <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
+                    <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
+                    <option value="CONTRALORIA">CONTRALORIA</option>
+                    <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
+                    <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
+                    <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
+                    <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
+                    <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
+                    <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
+                    <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
+                    <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
+                    <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
+                    <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
+                    <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
+                    <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
+                    <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
+                    <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
+                    <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
+                    <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
+                    <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
+                    <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
+                    <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
+                    <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
+                    <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware y Periféricos</h6>
               <div class="row">
                 <div class="col-md-4 mb-3"><label class="form-label fw-bold">Hostname</label><input type="text" class="form-control" name="hostname" [(ngModel)]="hostname"></div>
                 <div class="col-md-4 mb-3"><label class="form-label fw-bold">Modelo</label><input type="text" class="form-control" name="modelo" [(ngModel)]="modelo"></div>
+                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Procesador</label><input type="text" class="form-control" name="procesador" [(ngModel)]="procesador"></div>
                 <div class="col-md-4 mb-3"><label class="form-label fw-bold">Tipo</label><select class="form-control form-select" name="tipo" [(ngModel)]="tipo"><option value="LAPTOP">LAPTOP</option><option value="ESCRITORIO">ESCRITORIO</option></select></div>
                 <div class="col-md-4 mb-3"><label class="form-label fw-bold">Disco</label><select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco"><option value="HDD">HDD</option><option value="SSD">SSD</option><option value="M2">M.2</option></select></div>
               </div>
@@ -208,6 +269,7 @@
               </div>
             </div>
           </div>
+
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
@@ -219,17 +281,129 @@
               </div>
               <div class="row">
                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
-                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
               </div>
             </div>
           </div>
+
           <div class="d-flex justify-content-end gap-2 mt-3">
             <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
             <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">{{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}</button>
           </div>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. MODAL DE BAJA Y REEMPLAZO (Diseño compacto y único) -->
+<div class="modal fade" id="modalBaja" tabindex="-1" aria-labelledby="modalBajaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow-lg">
+
+      <!-- Cabecera -->
+      <div class="modal-header bg-danger text-white py-2">
+        <h6 class="modal-title fw-bold" id="modalBajaLabel">
+          <i class="fas fa-tools me-2"></i> Trámite de Baja y Reemplazo
+        </h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-3">
+        <p class="text-muted mb-3" style="font-size: 0.85em;">
+          Gestión de baja para el equipo: <strong class="text-dark">{{ equipoSeleccionados?.codigoBien || equipoSeleccionados?.codigoAB || 'N/A' }}</strong>.
+        </p>
+
+        <!-- Botonera de Selección de Periférico -->
+        <div class="mb-3 text-center">
+          <label class="form-label fw-bold text-secondary mb-2" style="font-size: 0.85em;">¿Qué elemento vas a dar de baja?</label>
+          <div class="btn-group btn-group-sm w-100 shadow-sm" role="group">
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaCompleto" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Completo">
+            <label class="btn btn-outline-danger" for="bajaCompleto"><i class="fas fa-desktop me-1"></i> Todo</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaMonitor" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Monitor">
+            <label class="btn btn-outline-danger" for="bajaMonitor"><i class="fas fa-tv me-1"></i> Monitor</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaUPS" autocomplete="off" [(ngModel)]="datosBaja.componente" value="UPS">
+            <label class="btn btn-outline-danger" for="bajaUPS"><i class="fas fa-plug me-1"></i> UPS</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaTeclado" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Teclado">
+            <label class="btn btn-outline-danger" for="bajaTeclado"><i class="fas fa-keyboard me-1"></i> Teclado</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaMouse" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Mouse">
+            <label class="btn btn-outline-danger" for="bajaMouse"><i class="fas fa-mouse me-1"></i> Mouse</label>
+          </div>
+        </div>
+
+        <!-- SECCIÓN DE REEMPLAZO -->
+        <div class="card bg-light border-warning mb-3 shadow-sm" *ngIf="datosBaja.componente && datosBaja.componente !== 'Completo'">
+          <div class="card-header bg-warning text-dark fw-bold py-1" style="font-size: 0.85em;">
+            <i class="fas fa-exchange-alt me-1"></i> Datos del Nuevo {{ datosBaja.componente }} (Reemplazo)
+          </div>
+          <div class="card-body p-2">
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nuevo Cód. Bien</label>
+                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: 123456" [(ngModel)]="datosBaja.nuevoCodigo">
+              </div>
+              <div class="col-6">
+                <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nueva Serie</label>
+                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: SN-987" [(ngModel)]="datosBaja.nuevaSerie">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de Baja Técnica -->
+        <div class="row g-2 mb-2">
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Motivo de la Baja</label>
+            <select class="form-select form-select-sm" [(ngModel)]="datosBaja.motivo">
+              <option value="">Seleccionar...</option>
+              <option value="Daño irreparable">Daño irreparable</option>
+              <option value="Costo reparación supera valor">Costo supera valor</option>
+              <option value="Fin de vida útil">Fin de vida útil</option>
+              <option value="Pérdida / Robo">Pérdida / Robo</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">N° Informe Técnico</label>
+            <input type="text" class="form-control form-control-sm" placeholder="Ej: INF-001" [(ngModel)]="datosBaja.informe">
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Observación Técnica</label>
+          <textarea class="form-control form-control-sm" rows="2" placeholder="Diagnóstico..." [(ngModel)]="datosBaja.observacion"></textarea>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Fecha</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="datosBaja.fecha">
+        </div>
+
+        <!-- SECCIÓN PARA SUBIR ARCHIVO O ANEXO DE BAJA -->
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">
+            <i class="fas fa-paperclip me-1 text-danger"></i> Adjuntar Documento / Acta de Baja
+          </label>
+          <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)">
+          <div class="form-text text-muted" style="font-size: 0.7em;">
+            Sube el archivo PDF o imagen del informe técnico firmado.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="modal-footer bg-light py-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-sm btn-danger fw-bold" (click)="confirmarBaja()">
+          <i class="fas fa-check-circle me-1"></i> ACEPTAR Y GUARDAR
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

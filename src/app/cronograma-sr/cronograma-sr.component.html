@@ -1,0 +1,101 @@
+<div class="container-fluid py-4" style="background-color: #f8f9fa; min-height: 100vh;">
+
+  <div class="d-flex align-items-center mb-4">
+    <div class="bg-success p-3 rounded shadow-sm text-white me-3">
+      <i class="fas fa-calendar-alt fa-2x"></i>
+    </div>
+    <div>
+      <h2 class="fw-bold mb-0">Planificador de Cronogramas</h2>
+      <p class="text-muted mb-0">Gestión de Mantenimientos - Sitios Remotos</p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body bg-white rounded p-4">
+
+      <div class="row align-items-end g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label fw-bold text-secondary">Total a mantener</label>
+          <h4 class="text-dark mb-0"><i class="fas fa-boxes me-2 text-primary"></i>{{ inventarioTotal.length }} equipos</h4>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold text-secondary">Fecha de Inicio</label>
+          <input type="date" class="form-control border-success shadow-sm" [(ngModel)]="fechaInicio">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold text-secondary">Equipos diarios</label>
+          <input type="number" class="form-control shadow-sm" [(ngModel)]="equiposPorDia" min="1">
+        </div>
+      </div>
+
+      <div class="row border-top pt-3">
+        <div class="col-md-9">
+          <label class="form-label fw-bold text-secondary mb-3"><i class="fas fa-calendar-check me-2"></i>Días de salida a Sitios Remotos</label>
+          <div class="d-flex flex-wrap gap-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="chkLunes" [(ngModel)]="diasLaborables[1]">
+              <label class="form-check-label" for="chkLunes">Lunes</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="chkMartes" [(ngModel)]="diasLaborables[2]">
+              <label class="form-check-label" for="chkMartes">Martes</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="chkMiercoles" [(ngModel)]="diasLaborables[3]">
+              <label class="form-check-label" for="chkMiercoles">Miércoles</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="chkJueves" [(ngModel)]="diasLaborables[4]">
+              <label class="form-check-label" for="chkJueves">Jueves</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="chkViernes" [(ngModel)]="diasLaborables[5]">
+              <label class="form-check-label" for="chkViernes">Viernes</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 text-end mt-3 mt-md-0 d-flex align-items-end justify-content-end">
+          <button class="btn btn-success px-4 py-2 shadow-sm fw-bold w-100" (click)="generarCronograma()">
+            <i class="fas fa-cogs me-2"></i> Generar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="fechaFin" class="alert alert-info shadow-sm mb-4 border-start border-4 border-info d-flex align-items-center">
+    <i class="fas fa-flag-checkered fa-2x me-3 text-info"></i>
+    <div>
+      <h5 class="mb-0 fw-bold">El mantenimiento finalizará el:</h5>
+      <span class="fs-5">{{ fechaFin | date:'dd/MM/yyyy' }}</span>
+      <small class="ms-2 text-muted">(Omitiendo los días desmarcados)</small>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-4 col-md-6" *ngFor="let dia of cronogramaGenerado; let i = index">
+      <div class="card h-100 shadow-sm border-0 dia-card">
+        <div class="card-header bg-white border-bottom-0 pt-3 pb-0 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold m-0 text-success"><i class="fas fa-calendar-day me-2"></i>Día {{ i + 1 }}</h6>
+          <span class="badge bg-light text-dark border">{{ dia.fecha | date:'EEEE, dd/MM/yyyy' }}</span>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item px-0 py-2 border-light d-flex justify-content-between align-items-center" *ngFor="let item of dia.equipos">
+              <div>
+                <strong class="text-dark">{{ item.codigoBien || item.codigoAB || 'Sin Código' }}</strong><br>
+                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ item.dependencia || item.oficina || 'N/A' }}</small>
+              </div>
+              <i class="fas fs-5" [ngClass]="item.direccionIP || item.ip ? 'fa-print text-warning' : 'fa-desktop text-primary'" title="{{ item.direccionIP || item.ip ? 'Impresora' : 'Computadora' }}"></i>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

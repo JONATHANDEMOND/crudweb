@@ -36,12 +36,25 @@
             <i class="fas fa-city me-2"></i>  IMPRESORAS E.C.
           </a>
         </li>
+        <li class="nav-item mb-1 mb-lg-0">
+          <a class="nav-link px-3" routerLink="dashboard" routerLinkActive="active-link">
+            <i class="fas fa-chart-line me-2"></i>  DASHBOARD
+          </a>
+        </li>
 
 
         @if (esAdmin) {
           <li class="nav-item mb-1 mb-lg-0">
             <a class="nav-link px-3 admin-link" routerLink="admin-users" routerLinkActive="active-link">
               <i class="fas fa-user-shield me-2"></i> USUARIOS
+            </a>
+          </li>
+        }
+       
+        @if (esAdmin) {
+          <li class="nav-item mb-1 mb-lg-0">
+            <a class="nav-link px-3 admin-link" routerLink="cronograma" routerLinkActive="active-link">
+              <i class="fas fa-calendar-alt me-2"></i> CRONOGRAMA
             </a>
           </li>
         }

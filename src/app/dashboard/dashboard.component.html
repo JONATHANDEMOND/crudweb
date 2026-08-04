@@ -1,0 +1,129 @@
+<div class="container-fluid py-4">
+
+  <div class="dashboard-header mb-4">
+    <div class="icon-header">
+      <i class="fas fa-chart-line"></i>
+    </div>
+    <div>
+      <h2>Dashboard Estadístico</h2>
+      <span>Gestión de Inventario y Mantenimiento - CSTM</span>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card primary">
+        <div class="stat-icon"><i class="fas fa-desktop"></i></div>
+        <div class="stat-info"><small>Total PCs</small><h2>{{ totalPCs  }}</h2></div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card info">
+        <div class="stat-icon"><i class="fas fa-print"></i></div>
+        <div class="stat-info"><small>Total Impresoras</small><h2>{{ totalImpresoras  }}</h2></div>
+      </div>
+    </div>
+    <div class="col-lg-2 col-md-4">
+      <div class="stat-card danger">
+        <div class="stat-icon"><i class="fas fa-battery-quarter"></i></div>
+        <div class="stat-info"><small>UPS Críticos</small><h2>{{ upsMalosGlobal  }}</h2></div>
+      </div>
+    </div>
+    <div class="col-lg-2 col-md-4">
+      <div class="stat-card warning">
+        <div class="stat-icon"><i class="fas fa-tools"></i></div>
+        <div class="stat-info"><small>Sin Mantenimiento</small><h2>{{ mantenimientoSin }}</h2></div>
+      </div>
+    </div>
+    <div class="col-lg-2 col-md-4">
+      <div class="stat-card dark">
+        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-info"><small>Mant. Vencido</small><h2>{{ mantenimientoVencido  }}</h2></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="chart-card">
+        <div class="chart-header" style="background-color: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+          <i class="fas fa-file-pdf text-danger fs-5"></i>
+          <span class="fs-5 fw-bold text-dark">Generación de Informes Mensuales (PDF)</span>
+        </div>
+        <div class="chart-body d-flex flex-wrap gap-3 p-4">
+          <button class="btn btn-primary px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Edificio Central')">
+            <i class="fas fa-desktop me-2"></i> Informe PCs Edificio Central
+          </button>
+          <button class="btn btn-info text-white px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Sitios Remotos')">
+            <i class="fas fa-laptop me-2"></i> Informe PCs Sitios Remotos
+          </button>
+          <button class="btn btn-warning text-dark px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Impresoras Edificio Central')">
+            <i class="fas fa-print me-2"></i> Informe Impresoras EC
+          </button>
+          <button class="btn btn-danger px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Impresoras Sitios Remotos')">
+            <i class="fas fa-network-wired me-2"></i> Informe Impresoras SR
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="chart-card">
+        <div class="chart-header">
+          <i class="fas fa-chart-bar"></i>
+          <span>Comparativa General: Edificio Central vs Sitios Remotos</span>
+        </div>
+        <div class="chart-body">
+          <canvas id="chartComparativo"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="zona-title"><h4>Edificio Central</h4></div>
+  <div class="row g-4 mb-5">
+    <div class="col-lg-4 col-md-6">
+      <div class="chart-card">
+        <div class="chart-header"><i class="fas fa-hdd"></i><span>PCs - Almacenamiento</span></div>
+        <div class="chart-body"><canvas id="chartDiscosEC"></canvas></div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="chart-card">
+        <div class="chart-header"><i class="fas fa-battery-full"></i><span>PCs - Estado UPS</span></div>
+        <div class="chart-body"><canvas id="chartUpsEC"></canvas></div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="chart-card">
+        <div class="chart-header"><i class="fas fa-print"></i><span>Impresoras - Modelos</span></div>
+        <div class="chart-body"><canvas id="chartImpEC"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="zona-title"><h4>Sitios Remotos</h4></div>
+  <div class="row g-4 mb-4">
+    <div class="col-lg-4 col-md-6">
+      <div class="chart-card">
+        <div class="chart-header"><i class="fas fa-hdd"></i><span>PCs - Almacenamiento</span></div>
+        <div class="chart-body"><canvas id="chartDiscosSR"></canvas></div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="chart-card">
+        <div class="chart-header"><i class="fas fa-battery-full"></i><span>PCs - Estado UPS</span></div>
+        <div class="chart-body"><canvas id="chartUpsSR"></canvas></div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="chart-card">
+        <div class="chart-header"><i class="fas fa-print"></i><span>Impresoras - Modelos</span></div>
+        <div class="chart-body"><canvas id="chartImpSR"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -12,6 +12,8 @@ import { FormularioCentralComponent } from './components/formulario-central/form
 
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { CronogramaSrComponent } from './cronograma-sr/cronograma-sr.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -24,12 +26,14 @@ export const routes: Routes = [
   // 2. AGREGA ESTAS NUEVAS RUTAS
   { path: 'impresoras-ec', component: ImpresorasEdificioCentralComponent, canActivate: [authGuard] },
   { path: 'impresoras-sr', component: ImpresorasSitioRemotoComponent, canActivate: [authGuard] },
+  {path: 'dashboard',component: DashboardComponent, canActivate: [authGuard]},
 
   // Registro de Equipos (Edificio Central)
   { path: 'registro-central', component: FormularioCentralComponent, canActivate: [authGuard] },
 
   // Administración de Usuarios
   { path: 'admin-users', component: AdminUsersComponent, canActivate: [adminGuard] },
+  {path: 'cronograma', component: CronogramaSrComponent, canActivate: [adminGuard]},
 
   // Redirección inicial por defecto
   { path: '', redirectTo: 'login', pathMatch: 'full' },

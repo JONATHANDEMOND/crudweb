@@ -38,7 +38,7 @@
           </td>
           <td>
             <div class="primary-text">{{item.oficina}}</div>
-            <div class="secondary-text">{{item.ubicacion}}</div>
+
           </td>
           <td><span class="badge bg-secondary">{{item.piso}}</span></td>
           <td class="primary-text">{{item.marcaModelo}}</td>
@@ -62,10 +62,10 @@
             <td class="actions-cell">
             <div class="btn-group-actions">
   <button class="btn-ui btn-edit" (click)="abrirModalRegistro(item)" title="Editar">
-    <i class="fas fa-edit">Editar</i>
+    <i class="fas fa-edit"></i>
   </button>
   <button class="btn-ui btn-delete" (click)="eliminar(item._id)" title="Eliminar">
-    <i class="fas fa-trash">Eliminar</i>
+    <i class="fas fa-trash"></i>
   </button>
 </div>
           </td>
@@ -131,15 +131,42 @@
           </div>
 
           <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Ubicación</label>
-              <input type="text" class="form-control" name="ubicacion" [(ngModel)]="impresoraActual.ubicacion">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Piso</label>
-              <input type="text" class="form-control" name="piso" [(ngModel)]="impresoraActual.piso">
-            </div>
-          </div>
+           
+            <div class="col-md-3 mb-2">
+    <div class="input-group shadow-sm">
+      <span class="input-group-text bg-white text-primary">
+        <i class="fas fa-building"></i>
+      </span>
+      <select class="form-select" [(ngModel)]="pisoSeleccionado" (change)="filtrarImpresoras()">
+        <option value="">Todos los pisos</option>
+        <option value="Planta Baja">Planta Baja</option>
+        <option value="Piso 5">Piso E2</option>
+        <option value="Piso 5">Piso 1</option>
+        <option value="Piso 1">Piso 2</option>
+        <option value="Piso 2">Piso 3</option>
+        <option value="Piso 3">Piso 4</option>
+        <option value="Piso 4">Piso 5</option>
+        <option value="Piso 5">Piso 6</option>
+        <option value="Piso 5">Piso 7</option>
+        <option value="Piso 5">Piso 8</option>
+        <option value="Piso 5">Piso 9</option>
+        <option value="Piso 5">Piso 10</option>
+        <option value="Piso 5">Piso 11</option>
+        <option value="Piso 5">Piso 12</option>
+        <option value="Piso 5">Piso 13</option>
+        <option value="Piso 5">Piso 14</option>
+        <option value="Piso 5">Piso 15</option>
+        <option value="Piso 5">Piso 16</option>
+        <option value="Piso 5">Piso 17</option>
+        <option value="Piso 5">Piso 18</option>
+        <option value="Piso 5">Piso 19</option>
+        <option value="Piso 5">Piso 20</option>
+        <option value="Piso 5">Piso 21</option>
+        <option value="Piso 5">Piso 22</option>
+        </select>
+    </div>
+  </div>
+</div>
 
           <div class="row">
             <div class="col-md-12 mb-3">

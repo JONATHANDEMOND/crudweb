@@ -5,7 +5,7 @@
   </button>
 </div>
 
-<div  class="row mb-3 px-2">
+<div class="row mb-3 px-2">
   <div class="col-md-3">
     <input type="text"
            class="form-control"
@@ -20,7 +20,6 @@
     <table class="modern-table">
       <thead>
         <tr>
-
           <th>Responsable / Dependencia</th>
           <th>Modelo Equipo</th>
           <th>Cód. CPU</th>
@@ -33,46 +32,61 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of vehiculosFiltrados; trackBy: trackById">
-
           <td class="col-user">
             <div class="primary-text link-detail" style="cursor: pointer; color: var(--primary);" (click)="abrirDetalles(item)">
               {{item.usuario}}
             </div>
-            <div  class="secondary-text">{{item.dependencia}}</div>
+            <div class="secondary-text">{{item.dependencia}}</div>
           </td>
           <td class="primary-text">{{item.modelo}}</td>
           <td><span class="code-pill">{{item.codigoBien}}</span></td>
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
           <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
           <td><span class="storage-pill" [ngClass]="item.tipoDisco?.toLowerCase().replace(' ', '')">{{item.tipoDisco}}</span></td>
-         <td>
-  <div class="form-check form-switch d-flex justify-content-center">
-    <!-- OPTIMIZACIÓN: Deshabilitado dinámico mientras se conecta con el servidor -->
-    <input class="form-check-input" type="checkbox" role="switch"
-           [(ngModel)]="item.mantenimientoRealizado"
-           (change)="marcarMantenimiento(item)"
-           [disabled]="item.guardandoMantenimiento"
-           style="cursor: pointer; transform: scale(1.3);">
-  </div>
 
-  <!-- Indicador visual rápido -->
-  <div class="text-center mt-1" style="font-size: 0.75rem; font-weight: bold;"
-       [style.color]="item.guardandoMantenimiento ? '#999' : '#555'">
-    <span *ngIf="item.guardandoMantenimiento">
-      <i class="fas fa-spinner fa-spin me-1"></i> Guardando...
-    </span>
-    <span *ngIf="!item.guardandoMantenimiento">
-      {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
-    </span>
-  </div>
-</td>
+          <!-- Columna Mantenimiento -->
+          <td>
+            <div class="form-check form-switch d-flex justify-content-center">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     [(ngModel)]="item.mantenimientoRealizado"
+                     (change)="marcarMantenimiento(item)"
+                     [disabled]="item.guardandoMantenimiento"
+                     style="cursor: pointer; transform: scale(1.3);">
+            </div>
+            <div class="text-center mt-1" style="font-size: 0.75rem; font-weight: bold;"
+                 [style.color]="item.guardandoMantenimiento ? '#999' : '#555'">
+              <span *ngIf="item.guardandoMantenimiento">
+                <i class="fas fa-spinner fa-spin me-1"></i> Guardado...
+              </span>
+              <span *ngIf="!item.guardandoMantenimiento">
+                {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
+              </span>
+            </div>
+          </td>
 
-          <td class="actions-cell">
+          <!-- Columna Acciones -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 shadow-sm px-3" (click)="abrirModalRegistro(item)" title="Editar registro">
+                <i class="fas fa-edit"></i> <span>Editar</span>
+              </button>
 
-            <div class="btn-group-actions">
-              <button class="btn-ui edit" (click)="abrirModalRegistro(item)"><i class="fas fa-edit"></i> <span>EDITAR</span></button>
-              <button class="btn-ui print" (click)="imprimirEtiqueta(item)"><i class="fas fa-print"></i> <span>ETIQUETA</span></button>
-              <button class="btn-ui delete" (click)="eliminar(item._id)"><i class="fas fa-trash"></i> <span>BORRAR</span></button>
+              <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 shadow-sm px-3" (click)="imprimirEtiqueta(item)" title="Imprimir etiqueta">
+                <i class="fas fa-print"></i> <span>Etiqueta</span>
+              </button>
+
+              <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 shadow-sm px-3" (click)="eliminar(item._id)" title="Eliminar registro">
+                <i class="fas fa-trash"></i> <span>Eliminar</span>
+              </button>
+
+              <!-- Botón que ABRE el modal de Baja -->
+              <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm px-3"
+                      (click)="abrirModalBaja(item)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalBaja"
+                      title="Dar de Baja">
+                <i class="fas fa-arrow-down"></i> <span>Baja</span>
+              </button>
             </div>
           </td>
         </tr>
@@ -81,6 +95,7 @@
   </div>
 </div>
 
+<!-- Modal Detalles (Ficha Técnica) -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="equipoSeleccionado && !mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -93,58 +108,53 @@
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Información General</h6>
             <div class="row mt-2">
-
               <div class="col-md-4"><strong>Dependencia:</strong> {{equipoSeleccionado.dependencia}}</div>
               <div class="col-md-4"><strong>Hostname:</strong> {{equipoSeleccionado.hostname}}</div>
               <div class="col-md-4"><strong>Nombre:</strong> {{equipoSeleccionado.usuario}}</div>
-              <!-- Añade esto dentro del modal de Ficha Técnica, por ejemplo, debajo de "Información General" -->
-<!-- Historial de Mantenimientos -->
-<div class="card mb-3 shadow-sm border-0">
-  <div class="card-body">
-    <h6 class="text-primary fw-bold border-bottom pb-2 d-flex justify-content-between align-items-center">
-      <span><i class="fas fa-history me-2"></i>Historial de Mantenimientos</span>
-      <!-- Botón para limpiar todo -->
-      <button class="btn btn-sm btn-outline-danger" (click)="limpiarMantenimiento(equipoSeleccionado)">
-        <i class="fas fa-trash-alt"></i>
-      </button>
-    </h6>
-
-    <!-- Switch de mantenimiento dentro del modal -->
-    <div class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
-      <span class="me-3 fw-bold">Estado:</span>
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch"
-               [(ngModel)]="equipoSeleccionado.mantenimientoRealizado"
-               (change)="marcarMantenimiento(equipoSeleccionado)"
-               [disabled]="equipoSeleccionado.guardandoMantenimiento">
-      </div>
-    </div>
-
-    <!-- Tabla de historial -->
-    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-      <table class="table table-sm table-hover">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Fecha y Hora</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let mant of equipoSeleccionado.historialMantenimientos; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ mant.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-          </tr>
-          <tr *ngIf="!equipoSeleccionado.historialMantenimientos?.length">
-            <td colspan="2" class="text-center text-muted">No hay registros aún.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
             </div>
+
+            <div class="card mt-3 mb-3 shadow-sm border-0">
+              <div class="card-body">
+                <h6 class="text-primary fw-bold border-bottom pb-2 d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-history me-2"></i>Historial de Mantenimientos</span>
+                  <button class="btn btn-sm btn-outline-danger" (click)="limpiarMantenimiento(equipoSeleccionado)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </h6>
+                <div class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
+                  <span class="me-3 fw-bold">Estado:</span>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch"
+                           [(ngModel)]="equipoSeleccionado.mantenimientoRealizado"
+                           (change)="marcarMantenimiento(equipoSeleccionado)"
+                           [disabled]="equipoSeleccionado.guardandoMantenimiento">
+                  </div>
+                </div>
+                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                  <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Fecha y Hora</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let mant of equipoSeleccionado.historialMantenimientos; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ mant.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                      </tr>
+                      <tr *ngIf="!equipoSeleccionado.historialMantenimientos?.length">
+                        <td colspan="2" class="text-center text-muted">No hay registros aún.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
+
         <div class="card mb-3 shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Hardware Principal</h6>
@@ -159,19 +169,21 @@
             </div>
           </div>
         </div>
+
         <div class="card shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
             <div class="row mt-2">
               <div class="col-md-6"><strong>Cód. Monitor:</strong> {{equipoSeleccionado.codigoBienMonitor}}</div>
               <div class="col-md-6"><strong>Serie Monitor:</strong> {{equipoSeleccionado.numeroSerieMonitor}}</div>
-              <div class="col-md-6"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
-              <div class="col-md-6"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
+              <div class="col-md-6 mt-2"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
               <div class="col-md-6 mt-2"><strong>Cód. UPS:</strong> {{equipoSeleccionado.codigoBienUps}}</div>
               <div class="col-md-6 mt-2"><strong>Estado UPS:</strong> {{equipoSeleccionado.estadoups}}</div>
             </div>
           </div>
         </div>
+
       </div>
       <div class="modal-footer border-0 bg-light">
         <button class="btn btn-outline-secondary fw-bold" (click)="equipoSeleccionado = null">CERRAR</button>
@@ -180,6 +192,7 @@
   </div>
 </div>
 
+<!-- Modal Registro/Edición -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -201,59 +214,59 @@
                 <div class="col-md-5 mb-3">
                   <label class="form-label fw-bold">Dependencia</label>
                   <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
-                    <option value="" disabled>Seleccione dependencia</option>
-
-                             <option value="ADOQUINERA">ADOQUINERA</option>
-  <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
-  <option value="BIOINSUMOS">BIOINSUMOS</option>
-  <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
-  <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
-  <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
-  <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
-  <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
-  <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
-  <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
-  <option value="CEDES MEJIA">CEDES MEJIA</option>
-  <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
-  <option value="CEDES SOLANDA">CEDES SOLANDA</option>
-  <option value="CEDES IESSFUT">CEDES IESSFUT</option>
-  <option value="CEMBA">CEMBA</option>
-  <option value="CC EL BOSQUE">CC EL BOSQUE PEAJE</option>
-  <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
-  <option value="CEVA CACAO">CEVA CACAO</option>
-  <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
-  <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
-  <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
-  <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
-  <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
-  <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
-  <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
-  <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
-  <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
-  <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
-  <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
-  <option value="NANEGALITO">NANEGALITO</option>
-  <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
-  <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
-  <option value="PSICOLA">PSICOLA</option>
-  <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
-  <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
-  <option value="VIVERO">VIVERO</option>
-  <option value="WARMI ALANGASI">WARMI ALANGASI</option>
-  <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
-  <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
-  <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
-  <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
-  <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
-  <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
-  <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
-  <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
-  <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
+                    <option value="" disabled selected>Seleccione una dependencia</option>
+                    <option value="ADOQUINERA">ADOQUINERA</option>
+                    <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
+                    <option value="BIOINSUMOS">BIOINSUMOS</option>
+                    <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
+                    <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
+                    <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
+                    <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
+                    <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
+                    <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
+                    <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
+                    <option value="CEDES MEJIA">CEDES MEJIA</option>
+                    <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
+                    <option value="CEDES SOLANDA">CEDES SOLANDA</option>
+                    <option value="CEDES IESSFUT">CEDES IESSFUT</option>
+                    <option value="CEMBA">CEMBA</option>
+                    <option value="CC EL BOSQUE">CC EL BOSQUE PEAJE</option>
+                    <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
+                    <option value="CEVA CACAO">CEVA CACAO</option>
+                    <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
+                    <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
+                    <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
+                    <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
+                    <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
+                    <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
+                    <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
+                    <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
+                    <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
+                    <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
+                    <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
+                    <option value="NANEGALITO">NANEGALITO</option>
+                    <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
+                    <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
+                    <option value="PSICOLA">PSICOLA</option>
+                    <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
+                    <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
+                    <option value="VIVERO">VIVERO</option>
+                    <option value="WARMI ALANGASI">WARMI ALANGASI</option>
+                    <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
+                    <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
+                    <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
+                    <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
+                    <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
+                    <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
+                    <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
+                    <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
+                    <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware y Periféricos</h6>
@@ -271,6 +284,7 @@
               </div>
             </div>
           </div>
+
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
@@ -282,17 +296,129 @@
               </div>
               <div class="row">
                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
-                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
+                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
                 <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
               </div>
             </div>
           </div>
+
           <div class="d-flex justify-content-end gap-2 mt-3">
             <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
             <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">{{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}</button>
           </div>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Dar de Baja y Reemplazo -->
+<div class="modal fade" id="modalBaja" tabindex="-1" aria-labelledby="modalBajaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow-lg">
+
+      <!-- Cabecera -->
+      <div class="modal-header bg-danger text-white py-2">
+        <h6 class="modal-title fw-bold" id="modalBajaLabel">
+          <i class="fas fa-tools me-2"></i> Trámite de Baja y Reemplazo
+        </h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-3">
+        <p class="text-muted mb-3" style="font-size: 0.85em;">
+          Gestión de baja para el equipo: <strong class="text-dark">{{ equipoSeleccionados?.codigoBien || equipoSeleccionados?.codigoAB || 'N/A' }}</strong>.
+        </p>
+
+        <!-- Botonera de Selección de Periférico -->
+        <div class="mb-3 text-center">
+          <label class="form-label fw-bold text-secondary mb-2" style="font-size: 0.85em;">¿Qué elemento vas a dar de baja?</label>
+          <div class="btn-group btn-group-sm w-100 shadow-sm" role="group">
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaCompletoSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Completo">
+            <label class="btn btn-outline-danger" for="bajaCompletoSR"><i class="fas fa-desktop me-1"></i> Todo</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaMonitorSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Monitor">
+            <label class="btn btn-outline-danger" for="bajaMonitorSR"><i class="fas fa-tv me-1"></i> Monitor</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaUPSSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="UPS">
+            <label class="btn btn-outline-danger" for="bajaUPSSR"><i class="fas fa-plug me-1"></i> UPS</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaTecladoSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Teclado">
+            <label class="btn btn-outline-danger" for="bajaTecladoSR"><i class="fas fa-keyboard me-1"></i> Teclado</label>
+
+            <input type="radio" class="btn-check" name="opcionBaja" id="bajaMouseSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Mouse">
+            <label class="btn btn-outline-danger" for="bajaMouseSR"><i class="fas fa-mouse me-1"></i> Mouse</label>
+          </div>
+        </div>
+
+        <!-- SECCIÓN DE REEMPLAZO -->
+        <div class="card bg-light border-warning mb-3 shadow-sm" *ngIf="datosBaja.componente && datosBaja.componente !== 'Completo'">
+          <div class="card-header bg-warning text-dark fw-bold py-1" style="font-size: 0.85em;">
+            <i class="fas fa-exchange-alt me-1"></i> Datos del Nuevo {{ datosBaja.componente }} (Reemplazo)
+          </div>
+          <div class="card-body p-2">
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nuevo Cód. Bien</label>
+                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: 123456" [(ngModel)]="datosBaja.nuevoCodigo">
+              </div>
+              <div class="col-6">
+                <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nueva Serie</label>
+                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: SN-987" [(ngModel)]="datosBaja.nuevaSerie">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de Baja Técnica -->
+        <div class="row g-2 mb-2">
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Motivo de la Baja</label>
+            <select class="form-select form-select-sm" [(ngModel)]="datosBaja.motivo">
+              <option value="">Seleccionar...</option>
+              <option value="Daño irreparable">Daño irreparable</option>
+              <option value="Costo reparación supera valor">Costo supera valor</option>
+              <option value="Fin de vida útil">Fin de vida útil</option>
+              <option value="Pérdida / Robo">Pérdida / Robo</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">N° Informe Técnico</label>
+            <input type="text" class="form-control form-control-sm" placeholder="Ej: INF-001" [(ngModel)]="datosBaja.informe">
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Observación Técnica</label>
+          <textarea class="form-control form-control-sm" rows="2" placeholder="Diagnóstico..." [(ngModel)]="datosBaja.observacion"></textarea>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Fecha</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="datosBaja.fecha">
+        </div>
+
+        <!-- SECCIÓN PARA SUBIR ARCHIVO O ANEXO DE BAJA -->
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">
+            <i class="fas fa-paperclip me-1 text-danger"></i> Adjuntar Documento / Acta de Baja
+          </label>
+          <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)">
+          <div class="form-text text-muted" style="font-size: 0.7em;">
+            Sube el archivo PDF o imagen del informe técnico firmado.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="modal-footer bg-light py-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-sm btn-danger fw-bold" (click)="confirmarBaja()">
+          <i class="fas fa-check-circle me-1"></i> ACEPTAR Y GUARDAR
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

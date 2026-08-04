@@ -10,8 +10,8 @@ export class AutoServiceService {
   constructor(private http: HttpClient) { }
 
   // Apuntamos al nuevo servidor real en Node.js + MongoDB
+  private API_URL = 'http://192.168.0.11:4000/api';
 
- private API_URL = 'http://192.168.0.11:4000/api';
   // --- MÉTODOS DE LECTURA (GET) ---
 
   getAutos(): Observable<any> {
@@ -21,17 +21,18 @@ export class AutoServiceService {
   getEdificioCentral(): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/edificioCentral`);
   }
-//USUARIOS //
+
+  // USUARIOS //
   getUsuarios(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URL}/usuarios`);
   }
 
-postUsuario(usuario: any): Observable<any> {
-  return this.http.post<any>(`${this.API_URL}/usuarios`, usuario);
-}
+  postUsuario(usuario: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/usuarios`, usuario);
+  }
+
   // --- MÉTODO LOGIN ---
   login(user: string, pass: string): Observable<any> {
-    // Limpiamos los espacios en blanco accidentales
     const userLimpio = user.trim();
     const passLimpio = pass.trim();
 
@@ -54,7 +55,6 @@ postUsuario(usuario: any): Observable<any> {
   }
 
   // --- MÉTODOS DE ESCRITURA (POST/PUT/DELETE) ---
-  // Ahora estos métodos se conectan directamente a la base de datos real
 
   postAuto(auto: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/autos`, auto);
@@ -80,47 +80,46 @@ postUsuario(usuario: any): Observable<any> {
     return this.http.put<any>(`${this.API_URL}/edificioCentral/${id}`, equipo);
   }
 
-
-
   deleteUsuario(id: any): Observable<any> {
     return this.http.delete<any>(`${this.API_URL}/usuarios/${id}`);
   }
-  actualizarEquipo(id: string, datos: any) {
-    return this.http.put(`${this.API_URL}/autos/${id}`, datos);
+
+  // CORREGIDO: Ahora apunta correctamente a edificioCentral
+  actualizarEquipo(id: string, datos: any): Observable<any> {
+    return this.updateEdificioCentral(id, datos);
   }
-  //--metodos impresras edificio central//
-getImpresorasEC(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.API_URL}/impresoras-ec`);
-}
 
-postImpresoraEC(impresora: any): Observable<any> {
-  return this.http.post<any>(`${this.API_URL}/impresoras-ec`, impresora);
-}
+  // -- Métodos impresoras Edificio Central --
+  getImpresorasEC(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/impresoras-ec`);
+  }
 
-updateImpresoraEC(id: string, impresora: any): Observable<any> {
-  return this.http.put<any>(`${this.API_URL}/impresoras-ec/${id}`, impresora);
-}
+  postImpresoraEC(impresora: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/impresoras-ec`, impresora);
+  }
 
-deleteImpresoraEC(id: string): Observable<any> {
-  return this.http.delete<any>(`${this.API_URL}/impresoras-ec/${id}`);
-}
-//--metodos impresras sitios remotos//
+  updateImpresoraEC(id: string, impresora: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/impresoras-ec/${id}`, impresora);
+  }
 
+  deleteImpresoraEC(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/impresoras-ec/${id}`);
+  }
 
+  // -- Métodos impresoras Sitios Remotos --
+  getImpresorasSR(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/impresoras-sr`);
+  }
 
-getImpresorasSR(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.API_URL}/impresoras-sr`);
-}
+  postImpresoraSR(impresora: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/impresoras-sr`, impresora);
+  }
 
-postImpresoraSR(impresora: any): Observable<any> {
-  return this.http.post<any>(`${this.API_URL}/impresoras-sr`, impresora);
-}
+  updateImpresoraSR(id: string, impresora: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/impresoras-sr/${id}`, impresora);
+  }
 
-updateImpresoraSR(id: string, impresora: any): Observable<any> {
-  return this.http.put<any>(`${this.API_URL}/impresoras-sr/${id}`, impresora);
-}
-
-deleteImpresoraSR(id: string): Observable<any> {
-  return this.http.delete<any>(`${this.API_URL}/impresoras-sr/${id}`);
-}
+  deleteImpresoraSR(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/impresoras-sr/${id}`);
+  }
 }

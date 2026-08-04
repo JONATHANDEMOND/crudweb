@@ -18,11 +18,21 @@ export class TablaComponent implements OnInit {
   autos: any[] = [];
   vehiculosFiltrados: any[] = [];
   busquedaGlobal: string = ''; // Nueva variable para el buscador universal
-
+  // Variables para el Modal de Baja
+  equipoSeleccionados: any = null;
+  datosBaja = {
+    componente: 'Completo',
+    motivo: '',
+    informe: '',
+    observacion: '',
+    nuevoCodigo: '', // <--- NUEVO
+      nuevaSerie: '',   // <--- NUEVO
+    fecha: new Date().toISOString().substring(0, 10) // Fecha de hoy por defecto
+  };
   equipoSeleccionado: any = null;
   mostrarModalRegistro: boolean = false;
   modoEdicion: boolean = false; // NUEVA VARIABLE PARA CONTROLAR EDICIÓN
-
+  archivoBaja: File | null = null;
   fechaActual = new Date();
   tecnicoLogeado: string = '';
 
@@ -41,9 +51,12 @@ export class TablaComponent implements OnInit {
     this.cargarTecnico();
   }
 
-  cargarDatos() {
+ cargarDatos() {
     this.servicio.getAutos().subscribe(p => {
-      this.autos = p;
+      // 1. Guardamos en this.autos SOLO los equipos que NO estén de baja
+      this.autos = p.filter((equipo: any) => equipo.estadoFisico !== 'De Baja');
+
+      // 2. Actualizamos la lista filtrada que se muestra en la tabla
       this.vehiculosFiltrados = [...this.autos];
     });
   }
@@ -187,6 +200,120 @@ export class TablaComponent implements OnInit {
       });
     }
   }
+  // Abre el modal y guarda temporalmente el equipo elegido
+  abrirModalBaja(equipo: any) {
+    this.equipoSeleccionados = equipo;
+    this.archivoBaja = null; // Limpiar archivo previo
+    // Reseteamos el formulario por si se abrió antes
+    this.datosBaja = {
+      componente: 'Completo',
+      motivo: '',
+      informe: '',
+      observacion: '',
+      nuevoCodigo: '', // <--- NUEVO
+      nuevaSerie: '',  // <--- NUEVO
+      fecha: new Date().toISOString().substring(0, 10)
+    };
+  }
+  ///////////////esta función para capturar el archivo cuando el usuario lo seleccione
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.archivoBaja = file;
+      console.log('Archivo adjunto seleccionado:', file.name);
+    }
+  }
+
+// Envía los datos al Backend (Formato JSON compatible)
+  confirmarBaja() {
+    if (!this.datosBaja.motivo || !this.datosBaja.observacion || !this.datosBaja.componente) {
+      alert('El componente, motivo y observación son obligatorios.');
+      return;
+    }
+
+    let actualizacionBaja: any = {};
+    const nuevoCod = this.datosBaja.nuevoCodigo || 'S/N';
+    const nuevaSer = this.datosBaja.nuevaSerie || 'S/N';
+
+    if (this.datosBaja.componente === 'Completo') {
+      actualizacionBaja.estadoFisico = 'De Baja';
+      actualizacionBaja.datosBajaTecnica = this.datosBaja;
+    } else {
+      actualizacionBaja[`historialBaja${this.datosBaja.componente}`] = this.datosBaja;
+
+      if (this.datosBaja.componente === 'Monitor') {
+        actualizacionBaja.codigoBienMonitor = nuevoCod;
+        actualizacionBaja.numeroSerieMonitor = nuevaSer;
+      } else if (this.datosBaja.componente === 'Teclado') {
+        actualizacionBaja.codigoBienTeclado = nuevoCod;
+        actualizacionBaja.numeroSerieTeclado = nuevaSer;
+      } else if (this.datosBaja.componente === 'Mouse') {
+        actualizacionBaja.codigoBienMouse = nuevoCod;
+        actualizacionBaja.numeroSerieMouse = nuevaSer;
+      } else if (this.datosBaja.componente === 'UPS') {
+        actualizacionBaja.codigoBienUps = nuevoCod;
+        actualizacionBaja.numeroSerieUps = nuevaSer;
+        actualizacionBaja.estadoups = 'Bueno';
+      }
+    }
+
+    // Enviamos el objeto JSON limpio que la API de Node.js procesa sin problemas
+    this.servicio.updateAuto(this.equipoSeleccionados._id, actualizacionBaja).subscribe({
+      next: (respuesta: any) => {
+        console.log('RESPUESTA DEL SERVIDOR:', respuesta);
+
+        // 1. Cerramos el modal de Bootstrap de forma segura
+        const modalElement = document.getElementById('modalBaja');
+        if (modalElement) {
+          modalElement.classList.remove('show');
+          modalElement.style.display = 'none';
+          document.body.classList.remove('modal-open');
+          const backdrop = document.getElementsByClassName('modal-backdrop');
+          while (backdrop.length > 0) {
+            backdrop[0].parentNode?.removeChild(backdrop[0]);
+          }
+        }
+
+        // 2. ACTUALIZACIÓN LOCAL INMEDIATA EN LA TABLA
+        if (this.datosBaja.componente === 'Completo') {
+          this.autos = this.autos.filter((e: any) => e._id !== this.equipoSeleccionados._id);
+        } else {
+          const index = this.autos.findIndex((e: any) => e._id === this.equipoSeleccionados._id);
+          if (index !== -1) {
+            if (this.datosBaja.componente === 'Monitor') {
+              this.autos[index].codigoBienMonitor = nuevoCod;
+              this.autos[index].numeroSerieMonitor = nuevaSer;
+            } else if (this.datosBaja.componente === 'Teclado') {
+              this.autos[index].codigoBienTeclado = nuevoCod;
+              this.autos[index].numeroSerieTeclado = nuevaSer;
+            } else if (this.datosBaja.componente === 'Mouse') {
+              this.autos[index].codigoBienMouse = nuevoCod;
+              this.autos[index].numeroSerieMouse = nuevaSer;
+            } else if (this.datosBaja.componente === 'UPS') {
+              this.autos[index].codigoBienUps = nuevoCod;
+              this.autos[index].numeroSerieUps = nuevaSer;
+              this.autos[index].estadoups = 'Bueno';
+            }
+          }
+        }
+
+        // 3. Forzamos a Angular a redibujar la tabla
+        this.vehiculosFiltrados = [];
+        setTimeout(() => {
+          this.vehiculosFiltrados = [...this.autos];
+        }, 30);
+
+        alert('Trámite de baja procesado y actualizado correctamente.');
+
+        // 4. Recargamos los datos del servidor
+        this.cargarDatos();
+      },
+      error: (error) => {
+        console.error('Error al procesar la baja:', error);
+        alert('Hubo un error al procesar el trámite en el servidor.');
+      }
+    });
+  }
 
   filtrarEquiposs2() { /* Tu código original */ }
   trackById(index: number, item: any) { return item._id || item.id; }
@@ -200,6 +327,14 @@ export class TablaComponent implements OnInit {
 
   ///MARCAR EQUIPOS MANTENIMIENTO
 marcarMantenimiento(equipo: any) {
+  // 0. VALIDACIÓN CRÍTICA: Si el equipo no tiene ID, detenemos el proceso
+  if (!equipo._id) {
+    alert('Este equipo es nuevo y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
+    // Revertimos el switch para que no se quede marcado por error
+    setTimeout(() => equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado, 100);
+    return;
+  }
+
   // 1. Bloqueo para evitar spam de clics
   equipo.guardandoMantenimiento = true;
   console.log("Enviando a:", `http://192.168.0.11:4000/api/autos/${equipo._id}`);
@@ -209,7 +344,6 @@ marcarMantenimiento(equipo: any) {
     equipo.historialMantenimientos = [];
   }
 
-  // Guardamos valores temporales para poder revertir si el servidor falla
   const estadoSwitchAnterior = !equipo.mantenimientoRealizado;
   const historialAnterior = [...equipo.historialMantenimientos];
   const fechaPlanaAnterior = equipo.fechaUltimoMantenimiento;
@@ -221,7 +355,6 @@ marcarMantenimiento(equipo: any) {
     equipo.fechaUltimoMantenimiento = nuevaFecha;
   } else {
     equipo.fechaUltimoMantenimiento = null;
-    // NOTA: No limpiamos el historial al desmarcar para mantener el registro de lo que ya se hizo
   }
 
   // 4. Llamada al servicio
@@ -232,20 +365,28 @@ marcarMantenimiento(equipo: any) {
     },
     error: (err: any) => {
       console.error('ERROR DETALLADO:', err);
-
-      // 5. REVERSIÓN TOTAL en caso de error
+      // 5. REVERSIÓN TOTAL
       equipo.mantenimientoRealizado = estadoSwitchAnterior;
       equipo.historialMantenimientos = historialAnterior;
       equipo.fechaUltimoMantenimiento = fechaPlanaAnterior;
       equipo.guardandoMantenimiento = false;
-
       alert('Error de conexión al guardar el mantenimiento. Revisa la consola (F12).');
     }
   });
 }
-  // ETIQUETAS
+  // LIMPIAR MANTENIMIENTO
 limpiarMantenimiento(equipo: any) {
+  // Validación de seguridad
+  if (!equipo._id) {
+    alert('Error: El equipo no tiene un ID válido. Recarga la página.');
+    return;
+  }
+
   if (confirm('¿Está seguro de que desea eliminar todo el historial y estado de mantenimiento de este equipo?')) {
+
+    // BLOQUEAMOS LA INTERFAZ MIENTRAS SE LIMPIA
+    equipo.guardandoMantenimiento = true;
+
     // 1. Limpiamos los campos
     equipo.mantenimientoRealizado = false;
     equipo.fechaUltimoMantenimiento = null;
@@ -255,11 +396,13 @@ limpiarMantenimiento(equipo: any) {
     this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
       next: (res: any) => {
         console.log('Mantenimiento limpiado exitosamente');
-        // Opcional: Cerrar el modal si prefieres
-        // this.equipoSeleccionado = null;
+        // DESBLOQUEAMOS LA INTERFAZ AL TERMINAR
+        equipo.guardandoMantenimiento = false;
       },
       error: (err: any) => {
         console.error('Error al limpiar el mantenimiento', err);
+        // DESBLOQUEAMOS LA INTERFAZ SI FALLA
+        equipo.guardandoMantenimiento = false;
         alert('No se pudo limpiar el mantenimiento. Intente de nuevo.');
       }
     });
