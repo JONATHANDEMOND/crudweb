@@ -5,7 +5,7 @@ import { FormularioComponent } from './components/formulario/formulario.componen
 import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
 import { ImpresorasEdificioCentralComponent } from './components/impresoras-edificio-central/impresoras-edificio-central.component';
 import { ImpresorasSitioRemotoComponent } from './components/impresoras-sitio-remoto/impresoras-sitio-remoto.component';
-
+import { Error404Component } from './pages/error404/error404.component';
 // Importaciones del Edificio Central
 import { TablaListadoComponent } from './components/tabla-listado/tabla-listado.component';
 import { FormularioCentralComponent } from './components/formulario-central/formulario-central.component'; // <-- ¡FALTABA ESTA LÍNEA!
@@ -14,6 +14,7 @@ import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CronogramaSrComponent } from './cronograma-sr/cronograma-sr.component';
+import { HistorialBajasComponent } from './historial-bajas/historial-bajas.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -30,14 +31,18 @@ export const routes: Routes = [
 
   // Registro de Equipos (Edificio Central)
   { path: 'registro-central', component: FormularioCentralComponent, canActivate: [authGuard] },
+  { path: 'proyectores-edificio', component: ProyectoresEcComponent },
+{ path: 'proyectores-remotos', component: ProyectoresSrComponent },
+{ path: 'scanners-edificio', component: ScannersEcComponent },
+{ path: 'scanners-remotos', component: ScannersSrComponent },
 
   // Administración de Usuarios
   { path: 'admin-users', component: AdminUsersComponent, canActivate: [adminGuard] },
   {path: 'cronograma', component: CronogramaSrComponent, canActivate: [adminGuard]},
-
+  {path: 'bajas', component: HistorialBajasComponent, canActivate: [adminGuard]},
   // Redirección inicial por defecto
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   // Comodín para rutas inexistentes (Error 404 encubierto)
-  { path: '**', redirectTo: 'login' }
+  { path: '**', component: Error404Component }
 ];

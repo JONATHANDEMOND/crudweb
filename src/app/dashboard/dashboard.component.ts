@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // <-- IMPORTACIÓN NECESARIA PARA ngModel
 import { AutoServiceService } from '../service/auto-service.service';
 import Chart from 'chart.js/auto';
 import jsPDF from 'jspdf';
@@ -8,7 +9,7 @@ import autoTable from 'jspdf-autotable';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule], // <-- AGREGADO AQUÍ
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -19,6 +20,13 @@ export class DashboardComponent implements OnInit {
   sitiosRemotos: any[] = [];
   impresorasEC: any[] = [];
   impresorasSR: any[] = [];
+
+  // VARIABLE PARA EL FILTRO DE BAJAS
+  filtroBajas = {
+    tipo: 'todo',
+    desde: '',
+    hasta: ''
+  };
 
   equiposTotales: any[] = [];
   impresorasTotales: any[] = [];
@@ -91,7 +99,7 @@ export class DashboardComponent implements OnInit {
 
     this.mantenimientoVencido = todosLosEquipos.filter(e => {
       if (!e.fechaUltimoMantenimiento) return false;
-      return new Date(e.fechaUltimoMantenimiento) < haceUnAno; // Si la fecha es menor a hace un año
+      return new Date(e.fechaUltimoMantenimiento) < haceUnAno;
     }).length;
 
     // Generamos el gráfico comparativo global
@@ -192,5 +200,82 @@ export class DashboardComponent implements OnInit {
 
     autoTable(doc, { startY: 42, head: [columnas], body: datosTabla, theme: 'striped', headStyles: { fillColor: [0, 51, 153] }, styles: { fontSize: 9 }, alternateRowStyles: { fillColor: [240, 240, 240] } });
     doc.save(`Informe_${tipo.replace(/\s+/g, '_')}_${new Date().getMonth() + 1}_${new Date().getFullYear()}.pdf`);
+  }
+
+  generarInformeBajas() {
+    if (this.filtroBajas.tipo === 'rango') {
+      if (!this.filtroBajas.desde || !this.filtroBajas.hasta) {
+        alert("Por favor, selecciona la fecha de inicio (Desde) y de fin (Hasta).");
+        return;
+      }
+      if (this.filtroBajas.desde > this.filtroBajas.hasta) {
+        alert("La fecha 'Desde' no puede ser mayor que 'Hasta'.");
+        return;
+      }
+    }
+
+    this.servicio.getBajas().subscribe({
+      next: (bajasObtenidas: any[]) => {
+        let datosFiltrados = bajasObtenidas;
+
+        if (this.filtroBajas.tipo === 'rango') {
+          const fechaDesde = new Date(this.filtroBajas.desde + 'T00:00:00');
+          const fechaHasta = new Date(this.filtroBajas.hasta + 'T23:59:59');
+
+          datosFiltrados = bajasObtenidas.filter(b => {
+            const fechaBaja = new Date(b.fecha);
+            return fechaBaja >= fechaDesde && fechaBaja <= fechaHasta;
+          });
+        }
+
+        if (datosFiltrados.length === 0) {
+          alert("No se encontraron bajas registradas en este período.");
+          return;
+        }
+
+        const doc = new jsPDF('landscape');
+        doc.setFontSize(16); doc.setTextColor(40);
+        doc.text('Dirección de Tecnologías de la Información', 14, 15);
+        doc.setFontSize(12); doc.text(`Coordinación de Soporte Técnico y Mantenimiento (CSTM)`, 14, 22);
+        doc.setFontSize(14); doc.setTextColor(220, 53, 69);
+
+        let subtitulo = this.filtroBajas.tipo === 'todo'
+          ? 'Informe General de Equipos dados de Baja (Histórico)'
+          : `Informe de Equipos dados de Baja (Desde ${this.filtroBajas.desde} al ${this.filtroBajas.hasta})`;
+        doc.text(subtitulo, 14, 32);
+
+        doc.setFontSize(10); doc.setTextColor(100); doc.text(`Generado el: ${new Date().toLocaleDateString('es-EC')}`, 14, 38);
+
+        let columnas = ['Fecha Baja', 'Código Bien', 'Componente', 'Motivo', 'Informe Técnico', 'Observación'];
+
+        let datosTabla = datosFiltrados.map(item => {
+          let fechaFormat = item.fecha ? new Date(item.fecha).toLocaleDateString('es-EC') : 'N/A';
+          return [
+            fechaFormat,
+            item.codigoBien || item.codigoAB || 'N/A',
+            item.componente || 'N/A',
+            item.motivo || 'N/A',
+            item.informe || 'N/A',
+            item.observacion || 'N/A'
+          ];
+        });
+
+        autoTable(doc, {
+          startY: 42,
+          head: [columnas],
+          body: datosTabla,
+          theme: 'striped',
+          headStyles: { fillColor: [220, 53, 69] },
+          styles: { fontSize: 9 },
+          alternateRowStyles: { fillColor: [245, 245, 245] }
+        });
+
+        doc.save(`Informe_Bajas_${new Date().getTime()}.pdf`);
+      },
+      error: (err) => {
+        console.error("Error al obtener las bajas", err);
+        alert("Ocurrió un error al obtener el registro de bajas desde el servidor.");
+      }
+    });
   }
 }

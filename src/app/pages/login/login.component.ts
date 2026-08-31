@@ -25,26 +25,21 @@ export class LoginComponent {
     if (!this.user || !this.pass) return;
 
     this.servicio.login(this.user, this.pass).subscribe({
-      // Se agregó ": any" para corregir el error TS7006
-      next: (usuario: any) => {
-        if (usuario) {
+      next: (response: any) => {
+        if (response) {
           localStorage.setItem('isLogged', 'true');
-          localStorage.setItem('login', JSON.stringify(usuario));
-          localStorage.setItem('role', usuario.role);
+          localStorage.setItem('login', JSON.stringify(response));
+          localStorage.setItem('role', response.role);
 
-          const ruta = usuario.role === 'admin' ? '/admin-users' : '/listado';
+          const ruta = response.role === 'admin' ? '/admin-users' : '/listado';
 
           this.router.navigate([ruta]).then(() => {
-            // Esta línea refresca el navegador para aplicar los cambios de sesión
             window.location.reload();
           });
-        } else {
-          this.error = true;
         }
       },
-      // Se agregó ": any" para corregir el error TS7006
       error: (err: any) => {
-        console.error("Error de red:", err);
+        console.error("Error de autenticación:", err);
         this.error = true;
       }
     });

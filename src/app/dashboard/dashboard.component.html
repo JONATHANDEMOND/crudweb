@@ -63,6 +63,9 @@
           <button class="btn btn-danger px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Impresoras Sitios Remotos')">
             <i class="fas fa-network-wired me-2"></i> Informe Impresoras SR
           </button>
+          <button class="btn btn-secondary text-white px-4 py-2 d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#modalFiltroBajas">
+            <i class="fas fa-trash-alt me-2"></i> Informe de Bajas
+          </button>
         </div>
       </div>
     </div>
@@ -126,4 +129,46 @@
     </div>
   </div>
 
+</div>
+<!-- MODAL FILTRO DE BAJAS -->
+<div class="modal fade" id="modalFiltroBajas" tabindex="-1" aria-labelledby="modalFiltroBajasLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-secondary text-white py-2">
+        <h6 class="modal-title fw-bold" id="modalFiltroBajasLabel">
+          <i class="fas fa-calendar-alt me-2"></i> Filtro - Informe de Bajas
+        </h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4 bg-light">
+        <div class="mb-3">
+          <label class="form-label fw-bold text-secondary mb-2">Seleccione el período</label>
+          <select class="form-select form-select-sm shadow-sm" [(ngModel)]="filtroBajas.tipo">
+            <option value="todo">Histórico Completo (Todas las bajas)</option>
+            <option value="rango">Filtrar por Rango de Fechas</option>
+          </select>
+        </div>
+
+        <!-- Rango de fechas (Solo visible si selecciona "rango") -->
+        <div class="row g-3" *ngIf="filtroBajas.tipo === 'rango'">
+          <div class="col-6">
+            <label class="form-label mb-1 fw-bold text-secondary" style="font-size: 0.85em;">Desde:</label>
+            <input type="date" class="form-control form-control-sm shadow-sm" [(ngModel)]="filtroBajas.desde">
+          </div>
+          <div class="col-6">
+            <label class="form-label mb-1 fw-bold text-secondary" style="font-size: 0.85em;">Hasta:</label>
+            <input type="date" class="form-control form-control-sm shadow-sm" [(ngModel)]="filtroBajas.hasta">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-white py-2 d-flex flex-column flex-sm-row gap-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold w-100 w-sm-auto" data-bs-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-sm btn-primary fw-bold w-100 w-sm-auto" (click)="generarInformeBajas()" data-bs-dismiss="modal">
+          <i class="fas fa-print me-1"></i> GENERAR INFORME
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

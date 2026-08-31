@@ -405,64 +405,116 @@ marcarMantenimiento(equipo: any) {
 
   // ETIQUETAS
   // ----------------------------------------------------
-  imprimirEtiqueta(equipo: any) {
-    const fechaHoy = new Date().toLocaleDateString('es-EC');
-    const fechaManual = prompt("Ingrese la fecha para la etiqueta:", fechaHoy);
-    if (fechaManual === null) return;
+imprimirEtiqueta(equipo: any) {
+  const fechaHoy = new Date().toLocaleDateString('es-EC');
+  const fechaManual = prompt("Ingrese la fecha para la etiqueta:", fechaHoy);
+  if (fechaManual === null) return;
 
-    const WindowPrt = window.open('', '', 'width=400,height=300');
-    if (WindowPrt) {
-      WindowPrt.document.write(`
-      <html>
-      <head>
-        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-        <style>
-          @page { size: 78mm 38mm; margin: 0; }
-          * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
-          body {
-            width: 78mm; height: 38mm; margin: 0; padding: 0;
-            font-family: 'Arial Narrow', Arial, sans-serif;
-            position: relative; overflow: hidden; background: white;
-          }
-          .header { position: absolute; top: 0.5mm; left: -5mm; width: 100%; text-align: center; }
-          .header h1 { margin: 0; font-size: 8.5pt; font-weight: bold; line-height: 0.7; }
-          .header p { margin: 0.2mm 0 0 0; font-size: 3.5pt; font-weight: bold; border-bottom: 0.3px solid black; display: inline-block; width: 65%; padding-bottom: 0.1mm; line-height: 0.7; }
-          .data-section { position: absolute; top: 4.5mm; left: 3mm; width: 62mm; }
-          .row { display: flex; font-size: 5.2pt; line-height: 0.85; margin-bottom: 0.2mm; }
-          .label { font-weight: bold; width: 11mm; color: #000; }
-          .val { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: normal; }
-          .barcode-container { position: absolute; top: 10.5mm; left: -5mm; width: 100%; text-align: center; display: flex; justify-content: center; }
-          #barcode { height: 4.5mm !important; width: 55%; }
-          .footer { position: absolute; top: 20.5mm; left: 3mm; width: 62mm; display: flex; font-size: 4.5pt; font-weight: bold; border-top: 0.3px solid black; padding-top: 0.2mm; }
-          .footer-tec { width: 65%; text-align: left; }
-          .footer-date { width: 35%; text-align: left; padding-left: 2mm; }
-          .mantenimiento { position: absolute; bottom: 1.5mm; left: 3mm; width: 62mm; border: 0.4px solid black; text-align: center; font-size: 5pt; font-weight: bold; padding: 0.1mm 0; text-transform: uppercase; line-height: 0.8; }
-        </style>
-      </head>
-      <body>
+  const WindowPrt = window.open('', '', 'width=400,height=300');
+  if (WindowPrt) {
+    WindowPrt.document.write(`
+    <html>
+    <head>
+      <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+      <style>
+        @page { size: 79mm 35mm; margin: 0; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; }
+        html, body {
+  width: 79mm;
+  height: 35mm;
+  overflow: hidden;
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+        .label {
+  width: 35mm;
+  height: 79mm;
+  padding: 0.8mm 2mm;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: rotate(90deg); /* ESTA ES LA LÍNEA QUE LO HACE GIRAR */
+}
+
+        .header { text-align: center; height: 6mm; overflow: hidden; }
+        .header h1 { font-size: 8.5pt; font-weight: 800; line-height: 1; }
+        .header p {
+          margin: 0.3mm auto 0; font-size: 3.4pt; font-weight: bold; text-transform: uppercase;
+          border-bottom: 0.3px solid #000; display: inline-block; padding-bottom: 0.2mm; line-height: 1;
+        }
+
+        .data-section { height: 9mm; overflow: hidden; margin-top: 0.3mm; }
+        .row { display: flex; font-size: 5pt; line-height: 1.1; }
+        .label-txt { font-weight: bold; width: 13mm; flex-shrink: 0; }
+        .val { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .barcode-container {
+          height: 9mm;
+          display: flex; justify-content: center; align-items: center;
+          overflow: hidden;
+        }
+        #barcode { height: 7mm !important; max-width: 68mm; }
+
+        .footer {
+          height: 4mm;
+          display: flex; justify-content: space-between; align-items: center;
+          font-size: 4.4pt; font-weight: bold;
+          border-top: 0.3px solid #000;
+          overflow: hidden;
+        }
+
+        .mantenimiento {
+          height: 5mm;
+          display: flex; align-items: center; justify-content: center;
+          border: 0.4px solid #000; border-radius: 0.5mm;
+          font-size: 4.8pt; font-weight: bold;
+          text-transform: uppercase;
+          overflow: hidden;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="label">
         <div class="header">
-          <h2>CSTM</h2>
-          <p>PREFECTURA DE PICHINCHA - SOPORTE TÉCNICO</p>
+          <h1>CSTM</h1>
+          <p>Prefectura de Pichincha - Soporte Técnico</p>
         </div>
+
         <div class="data-section">
-          <div class="row"><span class="label">BIEN:</span><span class="val">${equipo.codigoBien}</span></div>
-          <div class="row"><span class="label">TIPO:</span><span class="val">${equipo.tipo || 'ESCRITORIO'}</span></div>
-          <div class="row"><span class="label">UBICACIÓN:</span><span class="val">${equipo.dependencia}</span></div>
+          <div class="row"><span class="label-txt">BIEN:</span><span class="val">${equipo.codigoBien}</span></div>
+          <div class="row"><span class="label-txt">TIPO:</span><span class="val">${equipo.tipo || 'ESCRITORIO'}</span></div>
+          <div class="row"><span class="label-txt">UBICACIÓN:</span><span class="val">${equipo.dependencia}</span></div>
         </div>
+
         <div class="barcode-container"><svg id="barcode"></svg></div>
+
         <div class="footer">
-          <div class="footer-tec">TÉC: ${this.tecnicoLogeado.toUpperCase()}</div>
-          <div class="footer-date">${fechaManual}</div>
+          <span>TÉC: ${this.tecnicoLogeado.toUpperCase()}</span>
+          <span>${fechaManual}</span>
         </div>
-        <div class="mantenimiento">CONTROL MANTENIMIENTO</div>
-        <script>
-          JsBarcode("#barcode", "${equipo.codigoBien}", { format: "CODE128", width: 0.55, height: 8, displayValue: true, fontSize: 4.2, margin: 0 });
-          setTimeout(() => { window.print(); window.close(); }, 500);
-        </script>
-      </body>
-      </html>
-      `);
-      WindowPrt.document.close();
-    }
+
+        <div class="mantenimiento">Control Mantenimiento</div>
+      </div>
+
+      <script>
+        JsBarcode("#barcode", "${equipo.codigoBien}", {
+          format: "CODE128",
+          width: 0.55,
+          height: 16,
+          displayValue: true,
+          fontSize: 4.5,
+          margin: 0
+        });
+        setTimeout(() => { window.print(); window.close(); }, 500);
+      </script>
+    </body>
+    </html>
+    `);
+    WindowPrt.document.close();
   }
+}
 }

@@ -1,23 +1,41 @@
-<div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-2">
-  <h4 class="text-primary fw-bold mb-0"><i class="fas fa-building me-2"></i>Inventario - Sitios Remotos</h4>
-  <button class="btn btn-success shadow-sm fw-bold" (click)="abrirModalRegistro()">
-    <i class="fas fa-plus-circle me-1"></i> REGISTRAR EQUIPO
-  </button>
-</div>
+<!-- CABECERA Y BUSCADOR MEJORADOS (Responsivo con Grid) -->
+<div class="row align-items-center mb-4 mt-3 px-3 gy-3">
+  <!-- Título con tipografía fluida -->
+  <div class="col-12 col-xl-5">
+    <h4 class="text-primary fw-bold mb-0 text-center text-xl-start" style="font-size: clamp(1.2rem, 2.5vw, 1.5rem);">
+      <i class="fas fa-building me-2"></i>Inventario - Sitios Remotos
+    </h4>
+  </div>
 
-<div class="row mb-3 px-2">
-  <div class="col-md-3">
-    <input type="text"
-           class="form-control"
-           placeholder="🔍 Buscar en todo el inventario..."
-           [(ngModel)]="busquedaGlobal"
-           (input)="filtrarEquipos()">
+  <!-- Controles (Buscador y Botón) -->
+  <div class="col-12 col-xl-7">
+    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-xl-end align-items-center">
+
+      <!-- Buscador moderno con ícono integrado -->
+      <div class="input-group shadow-sm w-100" style="max-width: 450px;">
+        <span class="input-group-text bg-white border-end-0 text-muted">
+          <i class="fas fa-search"></i>
+        </span>
+        <input type="text"
+               class="form-control border-start-0 ps-0"
+               placeholder="Buscar equipo, usuario, código..."
+               [(ngModel)]="busquedaGlobal"
+               (input)="filtrarEquipos()"
+               style="box-shadow: none;">
+      </div>
+
+      <!-- Botón de Registro -->
+      <button class="btn btn-success shadow-sm fw-bold text-nowrap px-4 w-100 w-sm-auto" (click)="abrirModalRegistro()">
+        <i class="fas fa-plus-circle me-1"></i> REGISTRAR EQUIPO
+      </button>
+    </div>
   </div>
 </div>
 
+<!-- CONTENEDOR DE LA TABLA CON SCROLL TÁCTIL -->
 <div class="main-container">
-  <div class="table-wrapper">
-    <table class="modern-table">
+  <div class="table-wrapper table-responsive" style="-webkit-overflow-scrolling: touch;">
+    <table class="modern-table w-100" style="min-width: 1100px;">
       <thead>
         <tr>
           <th>Responsable / Dependencia</th>
@@ -56,7 +74,7 @@
             <div class="text-center mt-1" style="font-size: 0.75rem; font-weight: bold;"
                  [style.color]="item.guardandoMantenimiento ? '#999' : '#555'">
               <span *ngIf="item.guardandoMantenimiento">
-                <i class="fas fa-spinner fa-spin me-1"></i> Guardado...
+                <i class="fas fa-spinner fa-spin me-1"></i> Guardando...
               </span>
               <span *ngIf="!item.guardandoMantenimiento">
                 {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
@@ -66,26 +84,29 @@
 
           <!-- Columna Acciones -->
           <td>
-            <div class="d-flex align-items-center gap-2">
-              <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 shadow-sm px-3" (click)="abrirModalRegistro(item)" title="Editar registro">
-                <i class="fas fa-edit"></i> <span>Editar</span>
+            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap" style="min-width: 140px;">
+              <button class="btn btn-sm btn-outline-primary shadow-sm" (click)="abrirModalRegistro(item)" title="Editar registro">
+                <i class="fas fa-edit"></i>
+                <span class="d-none d-xl-inline ms-1"></span>
               </button>
 
-              <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 shadow-sm px-3" (click)="imprimirEtiqueta(item)" title="Imprimir etiqueta">
-                <i class="fas fa-print"></i> <span>Etiqueta</span>
+              <button class="btn btn-sm btn-outline-success shadow-sm" (click)="imprimirEtiqueta(item)" title="Imprimir etiqueta">
+                <i class="fas fa-print"></i>
+                <span class="d-none d-xl-inline ms-1"></span>
               </button>
 
-              <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 shadow-sm px-3" (click)="eliminar(item._id)" title="Eliminar registro">
-                <i class="fas fa-trash"></i> <span>Eliminar</span>
+              <button class="btn btn-sm btn-outline-danger shadow-sm" (click)="eliminar(item._id)" title="Eliminar registro">
+                <i class="fas fa-trash"></i>
+                <span class="d-none d-xl-inline ms-1"></span>
               </button>
 
-              <!-- Botón que ABRE el modal de Baja -->
-              <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm px-3"
+              <button class="btn btn-sm btn-outline-warning shadow-sm"
                       (click)="abrirModalBaja(item)"
                       data-bs-toggle="modal"
                       data-bs-target="#modalBaja"
                       title="Dar de Baja">
-                <i class="fas fa-arrow-down"></i> <span>Baja</span>
+                <i class="fas fa-arrow-down"></i>
+                <span class="d-none d-xl-inline ms-1"></span>
               </button>
             </div>
           </td>
@@ -95,7 +116,7 @@
   </div>
 </div>
 
-<!-- Modal Detalles (Ficha Técnica) -->
+<!-- 1. MODAL DETALLES (Ficha Técnica) -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="equipoSeleccionado && !mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -103,22 +124,22 @@
         <h5 class="modal-title fw-bold"><i class="fas fa-id-card me-2"></i>Ficha Técnica: {{equipoSeleccionado.usuario}}</h5>
         <button type="button" class="btn-close btn-close-white" (click)="equipoSeleccionado = null"></button>
       </div>
-      <div class="modal-body p-4 bg-light">
+      <div class="modal-body p-3 p-md-4 bg-light">
         <div class="card mb-3 shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Información General</h6>
-            <div class="row mt-2">
-              <div class="col-md-4"><strong>Dependencia:</strong> {{equipoSeleccionado.dependencia}}</div>
-              <div class="col-md-4"><strong>Hostname:</strong> {{equipoSeleccionado.hostname}}</div>
-              <div class="col-md-4"><strong>Nombre:</strong> {{equipoSeleccionado.usuario}}</div>
+            <div class="row mt-2 g-2">
+              <div class="col-12 col-md-4"><strong>Dependencia:</strong> {{equipoSeleccionado.dependencia}}</div>
+              <div class="col-12 col-md-4"><strong>Hostname:</strong> {{equipoSeleccionado.hostname}}</div>
+              <div class="col-12 col-md-4"><strong>Nombre:</strong> {{equipoSeleccionado.usuario}}</div>
             </div>
 
             <div class="card mt-3 mb-3 shadow-sm border-0">
               <div class="card-body">
-                <h6 class="text-primary fw-bold border-bottom pb-2 d-flex justify-content-between align-items-center">
+                <h6 class="text-primary fw-bold border-bottom pb-2 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
                   <span><i class="fas fa-history me-2"></i>Historial de Mantenimientos</span>
-                  <button class="btn btn-sm btn-outline-danger" (click)="limpiarMantenimiento(equipoSeleccionado)">
-                    <i class="fas fa-trash-alt"></i>
+                  <button class="btn btn-sm btn-outline-danger w-100 w-sm-auto" (click)="limpiarMantenimiento(equipoSeleccionado)">
+                    <i class="fas fa-trash-alt me-1"></i> Limpiar
                   </button>
                 </h6>
                 <div class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
@@ -127,11 +148,12 @@
                     <input class="form-check-input" type="checkbox" role="switch"
                            [(ngModel)]="equipoSeleccionado.mantenimientoRealizado"
                            (change)="marcarMantenimiento(equipoSeleccionado)"
-                           [disabled]="equipoSeleccionado.guardandoMantenimiento">
+                           [disabled]="equipoSeleccionado.guardandoMantenimiento"
+                           style="transform: scale(1.3);">
                   </div>
                 </div>
                 <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-                  <table class="table table-sm table-hover">
+                  <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
                       <tr>
                         <th>#</th>
@@ -158,14 +180,14 @@
         <div class="card mb-3 shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Hardware Principal</h6>
-            <div class="row mt-2">
-              <div class="col-md-4"><strong>Tipo:</strong> {{equipoSeleccionado.tipo}}</div>
-              <div class="col-md-4"><strong>Modelo:</strong> {{equipoSeleccionado.modelo}}</div>
-              <div class="col-md-4"><strong>Disco:</strong> {{equipoSeleccionado.tipoDisco}}</div>
+            <div class="row mt-2 g-2">
+              <div class="col-12 col-md-4"><strong>Tipo:</strong> {{equipoSeleccionado.tipo}}</div>
+              <div class="col-12 col-md-4"><strong>Modelo:</strong> {{equipoSeleccionado.modelo}}</div>
+              <div class="col-12 col-md-4"><strong>Disco:</strong> {{equipoSeleccionado.tipoDisco}}</div>
             </div>
-            <div class="row mt-2">
-              <div class="col-md-6"><strong>Cód. CPU:</strong> {{equipoSeleccionado.codigoBien}}</div>
-              <div class="col-md-6"><strong>Serie (CPU):</strong> {{equipoSeleccionado.numeroSerie}}</div>
+            <div class="row mt-2 g-2">
+              <div class="col-12 col-md-6"><strong>Cód. CPU:</strong> {{equipoSeleccionado.codigoBien}}</div>
+              <div class="col-12 col-md-6"><strong>Serie (CPU):</strong> {{equipoSeleccionado.numeroSerie}}</div>
             </div>
           </div>
         </div>
@@ -173,26 +195,26 @@
         <div class="card shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-primary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
-            <div class="row mt-2">
-              <div class="col-md-6"><strong>Cód. Monitor:</strong> {{equipoSeleccionado.codigoBienMonitor}}</div>
-              <div class="col-md-6"><strong>Serie Monitor:</strong> {{equipoSeleccionado.numeroSerieMonitor}}</div>
-              <div class="col-md-6 mt-2"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
-              <div class="col-md-6 mt-2"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
-              <div class="col-md-6 mt-2"><strong>Cód. UPS:</strong> {{equipoSeleccionado.codigoBienUps}}</div>
-              <div class="col-md-6 mt-2"><strong>Estado UPS:</strong> {{equipoSeleccionado.estadoups}}</div>
+            <div class="row mt-2 g-2">
+              <div class="col-12 col-md-6"><strong>Cód. Monitor:</strong> {{equipoSeleccionado.codigoBienMonitor}}</div>
+              <div class="col-12 col-md-6"><strong>Serie Monitor:</strong> {{equipoSeleccionado.numeroSerieMonitor}}</div>
+              <div class="col-12 col-md-6"><strong>Cód. Mouse:</strong> {{equipoSeleccionado.codigoBienMouse}}</div>
+              <div class="col-12 col-md-6"><strong>Cód. Teclado:</strong> {{equipoSeleccionado.codigoBienTeclado}}</div>
+              <div class="col-12 col-md-6"><strong>Cód. UPS:</strong> {{equipoSeleccionado.codigoBienUps}}</div>
+              <div class="col-12 col-md-6"><strong>Estado UPS:</strong> {{equipoSeleccionado.estadoups}}</div>
             </div>
           </div>
         </div>
 
       </div>
       <div class="modal-footer border-0 bg-light">
-        <button class="btn btn-outline-secondary fw-bold" (click)="equipoSeleccionado = null">CERRAR</button>
+        <button class="btn btn-outline-secondary fw-bold w-100 w-sm-auto" (click)="equipoSeleccionado = null">CERRAR</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Registro/Edición -->
+<!-- 2. MODAL REGISTRO / EDICIÓN -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -203,15 +225,15 @@
         </h5>
         <button type="button" class="btn-close btn-close-white" (click)="cerrarModalRegistro()"></button>
       </div>
-      <div class="modal-body p-4 bg-light">
+      <div class="modal-body p-3 p-md-4 bg-light">
         <form (ngSubmit)="guardar(formulario)" #formulario="ngForm">
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Información General</h6>
-              <div class="row">
-                <div class="col-md-2 mb-3" *ngIf="modoEdicion"><label class="form-label fw-bold">ID</label><input type="text" class="form-control" name="id" [(ngModel)]="id" disabled></div>
-                <div class="col-md-5 mb-3"><label class="form-label fw-bold">Usuario</label><input type="text" class="form-control" name="usuario" [(ngModel)]="usuario" required></div>
-                <div class="col-md-5 mb-3">
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-2" *ngIf="modoEdicion"><label class="form-label fw-bold">ID</label><input type="text" class="form-control" name="id" [(ngModel)]="id" disabled></div>
+                <div class="col-12" [ngClass]="modoEdicion ? 'col-md-5' : 'col-md-6'"><label class="form-label fw-bold">Usuario</label><input type="text" class="form-control" name="usuario" [(ngModel)]="usuario" required></div>
+                <div class="col-12" [ngClass]="modoEdicion ? 'col-md-5' : 'col-md-6'">
                   <label class="form-label fw-bold">Dependencia</label>
                   <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
                     <option value="" disabled selected>Seleccione una dependencia</option>
@@ -270,17 +292,19 @@
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Hardware y Periféricos</h6>
-              <div class="row">
-                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Hostname</label><input type="text" class="form-control" name="hostname" [(ngModel)]="hostname"></div>
-                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Modelo</label><input type="text" class="form-control" name="modelo" [(ngModel)]="modelo"></div>
-                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Tipo</label><select class="form-control form-select" name="tipo" [(ngModel)]="tipo"><option value="LAPTOP">LAPTOP</option><option value="ESCRITORIO">ESCRITORIO</option></select></div>
-                <div class="col-md-4 mb-3"><label class="form-label fw-bold">Disco</label><select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco"><option value="HDD">HDD</option><option value="SSD">SSD</option><option value="M2">M.2</option></select></div>
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-4"><label class="form-label fw-bold">Hostname</label><input type="text" class="form-control" name="hostname" [(ngModel)]="hostname"></div>
+                <div class="col-12 col-md-4"><label class="form-label fw-bold">Modelo</label><input type="text" class="form-control" name="modelo" [(ngModel)]="modelo"></div>
+                <div class="col-12 col-md-4"><label class="form-label fw-bold">Tipo</label><select class="form-control form-select" name="tipo" [(ngModel)]="tipo"><option value="LAPTOP">LAPTOP</option><option value="ESCRITORIO">ESCRITORIO</option></select></div>
               </div>
-              <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. CPU</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Serie CPU</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie"></div>
-                <div class="col-md-6 mb-3"><label class="form-label fw-bold">Cód. Monitor</label><input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Serie Monitor</label><input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor"></div>
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-4"><label class="form-label fw-bold">Disco</label><select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco"><option value="HDD">HDD</option><option value="SSD">SSD</option><option value="M2">M.2</option></select></div>
+                <div class="col-12 col-md-4"><label class="form-label fw-bold">Cód. CPU</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
+                <div class="col-12 col-md-4"><label class="form-label">Serie CPU</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie"></div>
+              </div>
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-6"><label class="form-label fw-bold">Cód. Monitor</label><input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Serie Monitor</label><input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor"></div>
               </div>
             </div>
           </div>
@@ -288,23 +312,23 @@
           <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Periféricos y UPS</h6>
-              <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Cód. Mouse</label><input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Serie Mouse</label><input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="numeroSerieMouse"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Cód. Teclado</label><input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Serie Teclado</label><input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="numeroSerieTeclado"></div>
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-6"><label class="form-label">Cód. Mouse</label><input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Serie Mouse</label><input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="numeroSerieMouse"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Cód. Teclado</label><input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Serie Teclado</label><input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="numeroSerieTeclado"></div>
               </div>
-              <div class="row">
-                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
-                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
-                <div class="col-md-4 mb-3"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
+                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
+                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
               </div>
             </div>
           </div>
 
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button" class="btn btn-outline-secondary fw-bold" (click)="cerrarModalRegistro()">CANCELAR</button>
-            <button type="submit" class="btn fw-bold px-4" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">{{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}</button>
+          <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-outline-secondary fw-bold w-100 w-sm-auto" (click)="cerrarModalRegistro()">CANCELAR</button>
+            <button type="submit" class="btn fw-bold px-4 w-100 w-sm-auto" [ngClass]="modoEdicion ? 'btn-primary' : 'btn-success'">{{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR' }}</button>
           </div>
         </form>
       </div>
@@ -312,9 +336,9 @@
   </div>
 </div>
 
-<!-- Modal para Dar de Baja y Reemplazo -->
+<!-- 3. MODAL DE BAJA Y REEMPLAZO -->
 <div class="modal fade" id="modalBaja" tabindex="-1" aria-labelledby="modalBajaLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg">
 
       <!-- Cabecera -->
@@ -333,21 +357,21 @@
         <!-- Botonera de Selección de Periférico -->
         <div class="mb-3 text-center">
           <label class="form-label fw-bold text-secondary mb-2" style="font-size: 0.85em;">¿Qué elemento vas a dar de baja?</label>
-          <div class="btn-group btn-group-sm w-100 shadow-sm" role="group">
+          <div class="d-flex flex-wrap justify-content-center gap-1 shadow-sm rounded" role="group">
             <input type="radio" class="btn-check" name="opcionBaja" id="bajaCompletoSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Completo">
-            <label class="btn btn-outline-danger" for="bajaCompletoSR"><i class="fas fa-desktop me-1"></i> Todo</label>
+            <label class="btn btn-sm btn-outline-danger flex-fill" for="bajaCompletoSR"><i class="fas fa-desktop me-1"></i> Todo</label>
 
             <input type="radio" class="btn-check" name="opcionBaja" id="bajaMonitorSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Monitor">
-            <label class="btn btn-outline-danger" for="bajaMonitorSR"><i class="fas fa-tv me-1"></i> Monitor</label>
+            <label class="btn btn-sm btn-outline-danger flex-fill" for="bajaMonitorSR"><i class="fas fa-tv me-1"></i> Monitor</label>
 
             <input type="radio" class="btn-check" name="opcionBaja" id="bajaUPSSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="UPS">
-            <label class="btn btn-outline-danger" for="bajaUPSSR"><i class="fas fa-plug me-1"></i> UPS</label>
+            <label class="btn btn-sm btn-outline-danger flex-fill" for="bajaUPSSR"><i class="fas fa-plug me-1"></i> UPS</label>
 
             <input type="radio" class="btn-check" name="opcionBaja" id="bajaTecladoSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Teclado">
-            <label class="btn btn-outline-danger" for="bajaTecladoSR"><i class="fas fa-keyboard me-1"></i> Teclado</label>
+            <label class="btn btn-sm btn-outline-danger flex-fill" for="bajaTecladoSR"><i class="fas fa-keyboard me-1"></i> Tecl</label>
 
             <input type="radio" class="btn-check" name="opcionBaja" id="bajaMouseSR" autocomplete="off" [(ngModel)]="datosBaja.componente" value="Mouse">
-            <label class="btn btn-outline-danger" for="bajaMouseSR"><i class="fas fa-mouse me-1"></i> Mouse</label>
+            <label class="btn btn-sm btn-outline-danger flex-fill" for="bajaMouseSR"><i class="fas fa-mouse me-1"></i> Mouse</label>
           </div>
         </div>
 
@@ -358,11 +382,11 @@
           </div>
           <div class="card-body p-2">
             <div class="row g-2">
-              <div class="col-6">
+              <div class="col-12 col-sm-6">
                 <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nuevo Cód. Bien</label>
                 <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: 123456" [(ngModel)]="datosBaja.nuevoCodigo">
               </div>
-              <div class="col-6">
+              <div class="col-12 col-sm-6">
                 <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nueva Serie</label>
                 <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: SN-987" [(ngModel)]="datosBaja.nuevaSerie">
               </div>
@@ -372,7 +396,7 @@
 
         <!-- Formulario de Baja Técnica -->
         <div class="row g-2 mb-2">
-          <div class="col-md-6">
+          <div class="col-12 col-md-6">
             <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Motivo de la Baja</label>
             <select class="form-select form-select-sm" [(ngModel)]="datosBaja.motivo">
               <option value="">Seleccionar...</option>
@@ -382,7 +406,7 @@
               <option value="Pérdida / Robo">Pérdida / Robo</option>
             </select>
           </div>
-          <div class="col-md-6">
+          <div class="col-12 col-md-6">
             <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">N° Informe Técnico</label>
             <input type="text" class="form-control form-control-sm" placeholder="Ej: INF-001" [(ngModel)]="datosBaja.informe">
           </div>
@@ -412,9 +436,9 @@
       </div>
 
       <!-- Botones de Acción -->
-      <div class="modal-footer bg-light py-2">
-        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-dismiss="modal">CANCELAR</button>
-        <button type="button" class="btn btn-sm btn-danger fw-bold" (click)="confirmarBaja()">
+      <div class="modal-footer bg-light py-2 d-flex flex-column flex-sm-row gap-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold w-100 w-sm-auto" data-bs-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-sm btn-danger fw-bold w-100 w-sm-auto" (click)="confirmarBaja()">
           <i class="fas fa-check-circle me-1"></i> ACEPTAR Y GUARDAR
         </button>
       </div>

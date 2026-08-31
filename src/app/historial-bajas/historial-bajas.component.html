@@ -1,0 +1,181 @@
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-2">
+  <h4 class="text-danger fw-bold mb-0">
+    <i class="fas fa-trash-alt me-2"></i>Historial General de Bajas
+  </h4>
+  <button class="btn btn-outline-secondary shadow-sm fw-bold" (click)="cargarTodasLasBajas()">
+    <i class="fas fa-sync-alt me-1"></i> ACTUALIZAR LISTA
+  </button>
+</div>
+
+<div class="row mb-3 px-2">
+  <div class="col-md-5">
+    <input type="text"
+           class="form-control border-danger"
+           placeholder="🔍 Buscar por código, elemento, informe o responsable..."
+           [(ngModel)]="busquedaGlobal"
+           (input)="filtrarBajas()">
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="table-wrapper table-responsive">
+    <table class="modern-table table table-hover align-middle">
+      <thead class="table-danger">
+        <tr>
+          <th>Clasificación</th>
+          <th>Elemento Dado de Baja</th>
+          <th>Responsable / Dependencia</th>
+          <th>Cód. Bien / AB</th>
+          <th>Motivo de Baja</th>
+          <th>N° Informe</th>
+          <th>Fecha</th>
+          <th class="text-center">Detalles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of bajasFiltradas">
+          <td>
+            <span class="badge"
+                  [ngClass]="{'bg-primary': item.tipoCategoria === 'Equipo PC',
+                              'bg-warning text-dark': item.tipoCategoria === 'Periférico',
+                              'bg-dark': item.tipoCategoria === 'Impresora'}">
+              <i class="fas"
+                 [ngClass]="{'fa-desktop': item.tipoCategoria === 'Equipo PC',
+                             'fa-mouse': item.tipoCategoria === 'Periférico',
+                             'fa-print': item.tipoCategoria === 'Impresora'}"></i>
+              {{item.tipoCategoria}}
+            </span>
+            <div style="font-size: 0.75rem; color: #666; margin-top: 3px;">{{item.origenBD}}</div>
+          </td>
+
+          <td><span class="fw-bold text-dark">{{item.componenteBaja}}</span></td>
+
+          <td>
+            <div class="fw-bold text-dark">{{item.usuario || item.custodio}}</div>
+            <div style="font-size: 0.8rem; color: #777;">{{item.dependencia || item.oficina}}</div>
+          </td>
+
+          <td><span class="code-pill">{{item.codigoBien || item.codigoAB || 'S/N'}}</span></td>
+
+          <td>
+            <span class="text-danger fw-bold" style="font-size: 0.9em;">
+              <i class="fas fa-exclamation-triangle me-1"></i> {{item.motivoBaja || 'No especificado'}}
+            </span>
+          </td>
+
+          <td>{{item.informeBaja || 'S/N'}}</td>
+
+          <td>
+            <span class="badge bg-light text-dark border">{{ item.fechaBaja ? (item.fechaBaja | date:'dd/MM/yyyy') : 'N/A' }}</span>
+          </td>
+
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-danger shadow-sm" (click)="abrirDetalles(item)" title="Ver Ficha de Baja">
+              <i class="fas fa-eye"></i> Detalles
+            </button>
+          </td>
+        </tr>
+
+        <!-- Estado Vacío -->
+        <tr *ngIf="bajasFiltradas.length === 0">
+          <td colspan="8" class="text-center py-4 text-muted">
+            <i class="fas fa-box-open fa-2x mb-2 d-block"></i>
+            No se encontraron registros de baja en la base de datos.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL DE DETALLES DE BAJA -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="itemSeleccionado">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow-lg border-0">
+
+      <div class="modal-header bg-danger text-white border-0 py-3">
+        <h5 class="modal-title fw-bold">
+          <i class="fas fa-file-signature me-2"></i> Acta Resumen de Baja
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarDetalles()"></button>
+      </div>
+
+      <div class="modal-body p-4 bg-light">
+
+        <!-- Tarjeta de Datos Técnicos de la Baja -->
+        <div class="card border-danger mb-3 shadow-sm">
+          <div class="card-header bg-danger text-white fw-bold py-2">
+            Detalles de la Resolución Técnica
+          </div>
+          <div class="card-body bg-white">
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <strong class="text-secondary">Elemento:</strong>
+                <p class="mb-0 fw-bold">{{itemSeleccionado.componenteBaja}}</p>
+              </div>
+              <div class="col-md-6 mb-2">
+                <strong class="text-secondary">Motivo Oficial:</strong>
+                <p class="mb-0 fw-bold text-danger">{{itemSeleccionado.motivoBaja}}</p>
+              </div>
+              <div class="col-md-6 mb-2">
+                <strong class="text-secondary">Informe Respaldo:</strong>
+                <p class="mb-0 fw-bold">{{itemSeleccionado.informeBaja || 'Sin Informe Registrado'}}</p>
+              </div>
+              <div class="col-md-6 mb-2">
+                <strong class="text-secondary">Fecha de Trámite:</strong>
+                <p class="mb-0">{{itemSeleccionado.fechaBaja | date:'dd/MM/yyyy'}}</p>
+              </div>
+              <div class="col-md-12 mt-2">
+                <strong class="text-secondary">Observación / Diagnóstico:</strong>
+                <div class="p-2 bg-light border rounded mt-1 text-dark" style="font-size: 0.9em;">
+                  {{itemSeleccionado.observacionBaja || 'Sin observaciones detalladas.'}}
+                </div>
+              </div>
+              <!-- NUEVA SECCIÓN: VISUALIZADOR DE ACTA / DOCUMENTO -->
+              <div class="col-md-12 mt-3 pt-3 border-top" *ngIf="itemSeleccionado.documentoBaja">
+                <strong class="text-secondary d-block mb-2"><i class="fas fa-paperclip me-1"></i> Respaldo Digital del Trámite:</strong>
+                <div class="d-flex gap-2">
+                  <!-- Botón para Visualización Rápida -->
+                  <button class="btn btn-sm btn-outline-primary shadow-sm fw-bold px-3" (click)="verDocumento(itemSeleccionado.documentoBaja)">
+                    <i class="fas fa-file-pdf me-1"></i> VER DOCUMENTO
+                  </button>
+
+                  <!-- Botón para Descarga Directa -->
+                  <a [href]="itemSeleccionado.documentoBaja" download="Acta_Baja_{{itemSeleccionado.codigoBien || itemSeleccionado.codigoAB}}" class="btn btn-sm btn-outline-success shadow-sm fw-bold px-3">
+                    <i class="fas fa-download me-1"></i> DESCARGAR
+                  </a>
+                </div>
+              </div>
+
+              <div class="col-md-12 mt-3 pt-3 border-top text-center" *ngIf="!itemSeleccionado.documentoBaja">
+                <span class="text-muted" style="font-size: 0.85em;">
+                  <i class="fas fa-info-circle me-1"></i> No se subió ningún documento o acta digital para esta baja.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Identificación del Activo Padre -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-dark text-white fw-bold py-2">
+            Información del Equipo/Asignación Base ({{itemSeleccionado.origenBD}})
+          </div>
+          <div class="card-body bg-white">
+            <div class="row g-2">
+              <div class="col-md-6"><strong>Responsable:</strong> {{itemSeleccionado.usuario || itemSeleccionado.custodio}}</div>
+              <div class="col-md-6"><strong>Dependencia:</strong> {{itemSeleccionado.dependencia || itemSeleccionado.oficina}}</div>
+              <div class="col-md-6"><strong>Modelo Base:</strong> {{itemSeleccionado.modelo || itemSeleccionado.marcaModelo || 'N/A'}}</div>
+              <div class="col-md-6"><strong>Código Principal:</strong> <span class="badge bg-secondary">{{itemSeleccionado.codigoBien || itemSeleccionado.codigoAB}}</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer border-0 bg-light">
+        <button class="btn btn-secondary fw-bold px-4" (click)="cerrarDetalles()">CERRAR ACTA</button>
+      </div>
+
+    </div>
+  </div>
+</div>

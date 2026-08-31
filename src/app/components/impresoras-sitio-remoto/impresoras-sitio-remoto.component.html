@@ -1,4 +1,3 @@
-
 <div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-2">
   <h4 class="text-primary fw-bold mb-0"><i class="fas fa-print me-2"></i>Inventario Impresoras - Sitios Remotos</h4>
   <button class="btn btn-success shadow-sm fw-bold" (click)="abrirModalRegistro()">
@@ -19,7 +18,6 @@
         <tr>
           <th>Custodio</th>
           <th>Oficina / Ubicación</th>
-
           <th>Marca / Modelo</th>
           <th>No. de Serie</th>
           <th>Código AB</th>
@@ -35,31 +33,40 @@
             <div class="primary-text">{{item.oficina}}</div>
             <div class="secondary-text">{{item.ubicacion}}</div>
           </td>
-
           <td class="primary-text">{{item.marcaModelo}}</td>
           <td><span class="code-pill">{{item.numeroSerie}}</span></td>
           <td><span class="code-pill">{{item.codigoAB}}</span></td>
           <td><span class="text-primary fw-bold">{{item.direccionIP}}</span></td>
           <td>
-  <div class="form-check form-switch d-flex justify-content-center">
-    <input class="form-check-input" type="checkbox" role="switch"
-           [(ngModel)]="item.mantenimientoRealizado"
-           (change)="marcarMantenimiento(item)"
-           style="cursor: pointer; transform: scale(1.3);">
-  </div>
-  <div class="text-center mt-1" style="font-size: 0.75rem; color: #555; font-weight: bold;">
-    {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
-  </div>
-</td>
+            <div class="form-check form-switch d-flex justify-content-center">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     [(ngModel)]="item.mantenimientoRealizado"
+                     (change)="marcarMantenimiento(item)"
+                     style="cursor: pointer; transform: scale(1.3);">
+            </div>
+            <div class="text-center mt-1" style="font-size: 0.75rem; color: #555; font-weight: bold;">
+              {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
+            </div>
+          </td>
           <td class="actions-cell">
-            <div class="btn-group-actions">
-  <button class="btn-ui btn-edit" (click)="abrirModalRegistro(item)" title="Editar">
-    <i class="fas fa-edit"></i>
-  </button>
-  <button class="btn-ui btn-delete" (click)="eliminar(item._id)" title="Eliminar">
-    <i class="fas fa-trash"></i>
-  </button>
-</div>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              <button class="btn btn-sm btn-outline-primary shadow-sm" (click)="abrirModalRegistro(item)" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <button class="btn btn-sm btn-outline-danger shadow-sm" (click)="eliminar(item._id)" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+
+              <!-- Botón que ABRE el modal de Baja -->
+              <button class="btn btn-sm btn-outline-warning shadow-sm"
+                      (click)="abrirModalBaja(item)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalBaja"
+                      title="Dar de Baja">
+                <i class="fas fa-arrow-down"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -90,57 +97,56 @@
               <select class="form-control form-select" name="oficina" [(ngModel)]="impresoraActual.oficina" required>
                 <option value="" disabled>Seleccione dependencia</option>
                 <option value="ADOQUINERA">ADOQUINERA</option>
-  <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
-  <option value="BIOINSUMOS">BIOINSUMOS</option>
-  <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
-  <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
-  <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
-  <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
-  <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
-  <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
-  <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
-  <option value="CEDES MEJIA">CEDES MEJIA</option>
-  <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
-  <option value="CEDES SOLANDA">CEDES SOLANDA</option>
-  <option value="CEDES IESSFUT">CEDES IESSFUT</option>
-  <option value="CEMBA">CEMBA</option>
-  <option value="CC EL BOSQUE">CC EL BOSQUE PEAJE</option>
-  <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
-  <option value="CEVA CACAO">CEVA CACAO</option>
-  <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
-  <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
-  <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
-  <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
-  <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
-  <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
-  <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
-  <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
-  <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
-  <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
-  <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
-  <option value="NANEGALITO">NANEGALITO</option>
-  <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
-  <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
-  <option value="PSICOLA">PSICOLA</option>
-  <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
-  <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
-  <option value="VIVERO">VIVERO</option>
-  <option value="WARMI ALANGASI">WARMI ALANGASI</option>
-  <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
-  <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
-  <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
-  <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
-  <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
-  <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
-  <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
-  <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
-  <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
+                <option value="BICENTENARIO TABUACUNDO">BICENTENARIO TABUACUNDO</option>
+                <option value="BIOINSUMOS">BIOINSUMOS</option>
+                <option value="BODEGA SECRETARIA GENERAL">BODEGA SECRETARIA GENERAL</option>
+                <option value="BICENTENARIO CALDERON">BICENTENARIO CALDERON</option>
+                <option value="BICENTENARIO CALDERON-WARMI">BICENTENARIO CALDERON-WARMI</option>
+                <option value="BICENTENARIO CALDERON-MEDIACION">BICENTENARIO CALDERON-MEDIACION</option>
+                <option value="CEDES CAYAMBE">CEDES CAYAMBE</option>
+                <option value="CEDES LOS BANCOS">CEDES LOS BANCOS</option>
+                <option value="CEDES TABACUNDO">CEDES TABACUNDO</option>
+                <option value="CEDES MEJIA">CEDES MEJIA</option>
+                <option value="CEDES RUMIÑAHUI">CEDES RUMIÑAHUI</option>
+                <option value="CEDES SOLANDA">CEDES SOLANDA</option>
+                <option value="CEDES IESSFUT">CEDES IESSFUT</option>
+                <option value="CEMBA">CEMBA</option>
+                <option value="CC EL BOSQUE">CC EL BOSQUE PEAJE</option>
+                <option value="CENTRO ORFEBRE">CENTRO ORFEBRE</option>
+                <option value="CEVA CACAO">CEVA CACAO</option>
+                <option value="DIRECCION PUERTO QUITO">DIRECCION PUERTO QUITO</option>
+                <option value="ENTRE BOSQUES">ENTRE BOSQUES</option>
+                <option value="FISCALIZACION ALOAG UNION TOACHI">FISCALIZACION ALOAG UNION TOACHI</option>
+                <option value="HACIENDA SAN MARCOS">HACIENDA SAN MARCOS</option>
+                <option value="INDUSTRIAS PICHINCHA TABACUNDO">INDUSTRIAS PICHINCHA TABACUNDO</option>
+                <option value="CAMPAMENTO LOS BANCOS">CAMPAMENTO LOS BANCOS</option>
+                <option value="MECANICA CENTRAL">MECANICA CENTRAL</option>
+                <option value="MECANICA PUERTO QUITO">MECANICA PUERTO QUITO</option>
+                <option value="MEDIACION BANCOS">MEDIACION BANCOS</option>
+                <option value="MITAD DEL MUNDO BODEGA">MITAD DEL MUNDO BODEGA</option>
+                <option value="MITAD DEL MUNDO FISCALIZACION">MITAD DEL MUNDO FISCALIZACION</option>
+                <option value="NANEGALITO">NANEGALITO</option>
+                <option value="PEAJE INTERVALLES">PEAJE INTERVALLES</option>
+                <option value="PEAJE RUMIÑAHUI">PEAJE RUMIÑAHUI</option>
+                <option value="PSICOLA">PSICOLA</option>
+                <option value="PALZA DEL VALLE">PALZA DEL VALLE</option>
+                <option value="RUTA ESCONDIDA">RUTA ESCONDIDA</option>
+                <option value="VIVERO">VIVERO</option>
+                <option value="WARMI ALANGASI">WARMI ALANGASI</option>
+                <option value="WARMI CONOCOTO">WARMI CONOCOTO</option>
+                <option value="WARMI LOS BANCOS">WARMI LOS BANCOS</option>
+                <option value="CEDES MEJIA-WARMI">CEDES MEJIA-WARMI</option>
+                <option value="WARMI PEDRO VICENTE">WARMI PEDRO VICENTE</option>
+                <option value="CEDES RUMIÑAHUI-WARMI">CEDES RUMIÑAHUI-WARMI</option>
+                <option value="CEDES SOLANDA-WARMI">CEDES SOLANDA-WARMI</option>
+                <option value="BICENTENARIO TABACUNDO-WARMI">BICENTENARIO TABACUNDO-WARMI</option>
+                <option value="BICENTENARIO TABACUNDO-MEDIACION">BICENTENARIO TABACUNDO-MEDIACION</option>
+                <option value="ZONA 5 TABACUNDO">ZONA 5 TABACUNDO</option>
               </select>
             </div>
           </div>
 
           <div class="row">
-
             <div class="col-md-6 mb-3">
               <label class="form-label fw-bold">Marca / Modelo</label>
               <input type="text" class="form-control" name="marcaModelo" [(ngModel)]="impresoraActual.marcaModelo">
@@ -170,6 +176,77 @@
           </div>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Dar de Baja (Impresoras) -->
+<div class="modal fade" id="modalBaja" tabindex="-1" aria-labelledby="modalBajaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow-lg">
+
+      <!-- Cabecera -->
+      <div class="modal-header bg-danger text-white py-2">
+        <h6 class="modal-title fw-bold" id="modalBajaLabel">
+          <i class="fas fa-print me-2"></i> Trámite de Baja de Impresora
+        </h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-3">
+        <p class="text-muted mb-3" style="font-size: 0.85em;">
+          Gestión de baja para la impresora: <strong class="text-dark">{{ equipoSeleccionados?.codigoAB || equipoSeleccionados?.numeroSerie || 'N/A' }}</strong>.
+        </p>
+
+        <!-- Formulario de Baja Técnica -->
+        <div class="row g-2 mb-2">
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Motivo de la Baja</label>
+            <select class="form-select form-select-sm" [(ngModel)]="datosBaja.motivo">
+              <option value="">Seleccionar...</option>
+              <option value="Daño irreparable">Daño irreparable</option>
+              <option value="Costo reparación supera valor">Costo supera valor</option>
+              <option value="Fin de vida útil">Fin de vida útil</option>
+              <option value="Pérdida / Robo">Pérdida / Robo</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">N° Informe Técnico</label>
+            <input type="text" class="form-control form-control-sm" placeholder="Ej: INF-001" [(ngModel)]="datosBaja.informe">
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Observación Técnica</label>
+          <textarea class="form-control form-control-sm" rows="2" placeholder="Diagnóstico..." [(ngModel)]="datosBaja.observacion"></textarea>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Fecha</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="datosBaja.fecha">
+        </div>
+
+        <!-- SECCIÓN PARA SUBIR ARCHIVO O ANEXO DE BAJA -->
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">
+            <i class="fas fa-paperclip me-1 text-danger"></i> Adjuntar Documento / Acta de Baja
+          </label>
+          <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)">
+          <div class="form-text text-muted" style="font-size: 0.7em;">
+            Sube el archivo PDF o imagen del informe técnico firmado.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="modal-footer bg-light py-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-sm btn-danger fw-bold" (click)="confirmarBaja()">
+          <i class="fas fa-check-circle me-1"></i> ACEPTAR Y GUARDAR
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

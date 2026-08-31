@@ -66,31 +66,38 @@
             </div>
           </td>
 
-          <!-- Columna Acciones -->
-          <td>
-            <div class="d-flex align-items-center gap-2">
-              <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 shadow-sm px-3" (click)="abrirModalRegistro(item)" title="Editar registro">
-                <i class="fas fa-edit"></i> <span>Editar</span>
-              </button>
+         <!-- Columna Acciones -->
+<td>
+  <!-- Quitamos flex-nowrap y ponemos flex-wrap para que se acomoden si es necesario -->
+  <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap" style="min-width: 140px;">
 
-              <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 shadow-sm px-3" (click)="imprimirEtiqueta(item)" title="Imprimir etiqueta">
-                <i class="fas fa-print"></i> <span>Etiqueta</span>
-              </button>
+    <button class="btn btn-sm btn-outline-primary shadow-sm" (click)="abrirModalRegistro(item)" title="Editar registro">
+      <i class="fas fa-edit"></i>
+      <!-- d-none d-xl-inline oculta el texto en celular/tablet y lo muestra en PC -->
+      <span class="d-none d-xl-inline ms-1"></span>
+    </button>
 
-              <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 shadow-sm px-3" (click)="eliminar(item._id)" title="Eliminar registro">
-                <i class="fas fa-trash"></i> <span>Eliminar</span>
-              </button>
+    <button class="btn btn-sm btn-outline-success shadow-sm" (click)="imprimirEtiqueta(item)" title="Imprimir etiqueta">
+      <i class="fas fa-print"></i>
+      <span class="d-none d-xl-inline ms-1"></span>
+    </button>
 
-              <!-- Botón que ABRE el modal de Baja -->
-              <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 shadow-sm px-3"
-                      (click)="abrirModalBaja(item)"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalBaja"
-                      title="Dar de Baja">
-                <i class="fas fa-arrow-down"></i> <span>Baja</span>
-              </button>
-            </div>
-          </td>
+    <button class="btn btn-sm btn-outline-danger shadow-sm" (click)="eliminar(item._id)" title="Eliminar registro">
+      <i class="fas fa-trash"></i>
+      <span class="d-none d-xl-inline ms-1"></span>
+    </button>
+
+    <button class="btn btn-sm btn-outline-warning shadow-sm"
+            (click)="abrirModalBaja(item)"
+            data-bs-toggle="modal"
+            data-bs-target="#modalBaja"
+            title="Dar de Baja">
+      <i class="fas fa-arrow-down"></i>
+      <span class="d-none d-xl-inline ms-1"></span>
+    </button>
+
+  </div>
+</td>
         </tr>
       </tbody>
     </table>
@@ -216,35 +223,34 @@
                   <label class="form-label fw-bold">Dependencia</label>
                   <select class="form-control form-select" name="dependencia" [(ngModel)]="dependencia" required>
                     <option value="" disabled selected>Seleccione una dependencia</option>
-                    <option value="PREFECTURA">PREFECTURA</option>
-                    <option value="VICEPREFECTURA">VICEPREFECTURA</option>
-                    <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
-                    <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
-                    <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
-                    <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
-                    <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
-                    <option value="CONTRALORIA">CONTRALORIA</option>
-                    <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
-                    <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
-                    <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
-                    <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
-                    <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
-                    <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
-                    <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
-                    <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
-                    <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
-                    <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
-                    <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
-                    <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
-                    <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
-                    <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
-                    <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
-                    <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
-                    <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
-                    <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
-                    <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
-                    <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
-                    <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+                  <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
+<option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
+<option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
+<option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
+<option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
+<option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
+<option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
+<option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
+<option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
+<option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
+<option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
+<option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
+<option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
+<option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
+<option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
+<option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
+<option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
+<option value="DIRECCION DE VIALIDAD E INFRAESTRUCTURA">DIRECCION DE VIALIDAD E INFRAESTRUCTURA</option>
+<option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
+<option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+<option value="DIRECCION ZONAL DE NOROCCIDENTE">DIRECCION ZONAL DE NOROCCIDENTE</option>
+<option value="GERENCIA DE INDUSTRIAS PICHINCHA">GERENCIA DE INDUSTRIAS PICHINCHA</option>
+<option value="GERENCIA DE PEAJES PICHINCHA">GERENCIA DE PEAJES PICHINCHA</option>
+<option value="PREFECTURA">PREFECTURA</option>
+<option value="PROCURADURIA SINDICA PROVINCIAL">PROCURADURIA SINDICA PROVINCIAL</option>
+<option value="SECRETARIA GENERAL DEL CONSEJO PROVINCIAL">SECRETARIA GENERAL DEL CONSEJO PROVINCIAL</option>
+<option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
+<option value="VICEPREFECTURA">VICEPREFECTURA</option>
                   </select>
                 </div>
               </div>

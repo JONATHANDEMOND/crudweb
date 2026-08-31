@@ -38,7 +38,6 @@
           </td>
           <td>
             <div class="primary-text">{{item.oficina}}</div>
-
           </td>
           <td><span class="badge bg-secondary">{{item.piso}}</span></td>
           <td class="primary-text">{{item.marcaModelo}}</td>
@@ -47,27 +46,36 @@
           <td><span class="text-primary fw-bold">{{item.direccionIP}}</span></td>
 
           <td>
-  <div class="form-check form-switch d-flex justify-content-center">
-    <input class="form-check-input" type="checkbox" role="switch"
-           [(ngModel)]="item.mantenimientoRealizado"
-           (change)="marcarMantenimiento(item)"
-           style="cursor: pointer; transform: scale(1.3);">
-  </div>
-  <!-- Fecha reflejada en tiempo real abajo del switch -->
-  <div class="text-center mt-1" style="font-size: 0.75rem; color: #555; font-weight: bold;">
-    {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
-  </div>
-</td>
+            <div class="form-check form-switch d-flex justify-content-center">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     [(ngModel)]="item.mantenimientoRealizado"
+                     (change)="marcarMantenimiento(item)"
+                     style="cursor: pointer; transform: scale(1.3);">
+            </div>
+            <!-- Fecha reflejada en tiempo real abajo del switch -->
+            <div class="text-center mt-1" style="font-size: 0.75rem; color: #555; font-weight: bold;">
+              {{ item.mantenimientoRealizado && item.fechaUltimoMantenimiento ? (item.fechaUltimoMantenimiento | date:'dd/MM/yyyy HH:mm') : 'Sin Mantenimiento' }}
+            </div>
+          </td>
 
-            <td class="actions-cell">
-            <div class="btn-group-actions">
-  <button class="btn-ui btn-edit" (click)="abrirModalRegistro(item)" title="Editar">
-    <i class="fas fa-edit"></i>
-  </button>
-  <button class="btn-ui btn-delete" (click)="eliminar(item._id)" title="Eliminar">
-    <i class="fas fa-trash"></i>
-  </button>
-</div>
+          <td class="actions-cell">
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              <button class="btn btn-sm btn-outline-primary shadow-sm" (click)="abrirModalRegistro(item)" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger shadow-sm" (click)="eliminar(item._id)" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+
+              <!-- Botón que ABRE el modal de Baja -->
+              <button class="btn btn-sm btn-outline-warning shadow-sm"
+                      (click)="abrirModalBaja(item)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalBaja"
+                      title="Dar de Baja">
+                <i class="fas fa-arrow-down"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -75,6 +83,7 @@
   </div>
 </div>
 
+<!-- Modal Registro / Edición -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.6);" *ngIf="mostrarModalRegistro">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content shadow-lg border-0">
@@ -97,76 +106,74 @@
                <label class="form-label fw-bold">Dependencia (Oficina)</label>
               <select class="form-control form-select" name="oficina" [(ngModel)]="impresoraActual.oficina" required>
                 <option value="" disabled>Seleccione dependencia</option>
-               <option value="PREFECTURA">PREFECTURA</option>
-                            <option value="VICEPREFECTURA">VICEPREFECTURA</option>
-                            <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
-                            <option value="SECRETARIA DEL CONSEJO PROVINCIAL">SECRETARIA DEL CONSEJO PROVINCIAL</option>
-                            <option value="PROCURADURIA SINDICA">PROCURADURIA SINDICA</option>
-                            <option value="SECRETARIA GENERAL">SECRETARIA GENERAL</option>
-                            <option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
-                            <option value="CONTRALORIA">CONTRALORIA</option>
-                            <option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
-                            <option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
-                            <option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
-                            <option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
-                            <option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
-                            <option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
-                            <option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
-                            <option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
-                            <option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
-                            <option value="DIRECCION DE INFRAESTRUCTURA">DIRECCION DE INFRAESTRUCTURA</option>
-                            <option value="DIRECCION DE LEGALIZACION DE TIERRAS">DIRECCION DE LEGALIZACION DE TIERRAS</option>
-                            <option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
-                            <option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
-                            <option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
-                            <option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
-                            <option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
-                            <option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
-                            <option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
-                            <option value="DIRECCION DE VIALIDAD">DIRECCION DE VIALIDAD</option>
-                            <option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
-                            <option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+               <option value="AUDITORIA INTERNA">AUDITORIA INTERNA</option>
+<option value="DIRECCION ADMINISTRATIVA Y TALENTO HUMANO">DIRECCION ADMINISTRATIVA Y TALENTO HUMANO</option>
+<option value="DIRECCION DE AMBIENTE">DIRECCION DE AMBIENTE</option>
+<option value="DIRECCION DE COMUNICACION">DIRECCION DE COMUNICACION</option>
+<option value="DIRECCION DE CONTRATACIÓN PÚBLICA">DIRECCION DE CONTRATACIÓN PÚBLICA</option>
+<option value="DIRECCION DE CULTURA Y PATRIMONIO">DIRECCION DE CULTURA Y PATRIMONIO</option>
+<option value="DIRECCION DE DERECHOS">DIRECCION DE DERECHOS</option>
+<option value="DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO">DIRECCION DE DESARROLLO ECONÓMICO Y FOMENTO PRODUCTIVO</option>
+<option value="DIRECCION DE FISCALIZACION">DIRECCION DE FISCALIZACION</option>
+<option value="DIRECCIÓN DE IGUALDAD DE GÉNERO">DIRECCIÓN DE IGUALDAD DE GÉNERO</option>
+<option value="DIRECCION DE PARTICIPACION CIUDADANA">DIRECCION DE PARTICIPACION CIUDADANA</option>
+<option value="DIRECCION DE PLANIFICACION">DIRECCION DE PLANIFICACION</option>
+<option value="DIRECCION DE RELACIONES INTERNACIONALES">DIRECCION DE RELACIONES INTERNACIONALES</option>
+<option value="DIRECCION DE RIEGO Y DRENAJE">DIRECCION DE RIEGO Y DRENAJE</option>
+<option value="DIRECCION DE RIESGOS">DIRECCION DE RIESGOS</option>
+<option value="DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES">DIRECCION DE TECNOLOGIAS DE INFORMACION Y COMUNICACIONES</option>
+<option value="DIRECCION DE TURISMO">DIRECCION DE TURISMO</option>
+<option value="DIRECCION DE VIALIDAD E INFRAESTRUCTURA">DIRECCION DE VIALIDAD E INFRAESTRUCTURA</option>
+<option value="DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO">DIRECCION DEL CANAL DE RIEGO CAYAMBE PEDRO MONCAYO</option>
+<option value="DIRECCION FINANCIERA">DIRECCION FINANCIERA</option>
+<option value="DIRECCION ZONAL DE NOROCCIDENTE">DIRECCION ZONAL DE NOROCCIDENTE</option>
+<option value="GERENCIA DE INDUSTRIAS PICHINCHA">GERENCIA DE INDUSTRIAS PICHINCHA</option>
+<option value="GERENCIA DE PEAJES PICHINCHA">GERENCIA DE PEAJES PICHINCHA</option>
+<option value="PREFECTURA">PREFECTURA</option>
+<option value="PROCURADURIA SINDICA PROVINCIAL">PROCURADURIA SINDICA PROVINCIAL</option>
+<option value="SECRETARIA GENERAL DEL CONSEJO PROVINCIAL">SECRETARIA GENERAL DEL CONSEJO PROVINCIAL</option>
+<option value="SECRETARIA PARTICULAR">SECRETARIA PARTICULAR</option>
+<option value="VICEPREFECTURA">VICEPREFECTURA</option>
               </select>
             </div>
           </div>
 
           <div class="row">
-           
             <div class="col-md-3 mb-2">
-    <div class="input-group shadow-sm">
-      <span class="input-group-text bg-white text-primary">
-        <i class="fas fa-building"></i>
-      </span>
-      <select class="form-select" [(ngModel)]="pisoSeleccionado" (change)="filtrarImpresoras()">
-        <option value="">Todos los pisos</option>
-        <option value="Planta Baja">Planta Baja</option>
-        <option value="Piso 5">Piso E2</option>
-        <option value="Piso 5">Piso 1</option>
-        <option value="Piso 1">Piso 2</option>
-        <option value="Piso 2">Piso 3</option>
-        <option value="Piso 3">Piso 4</option>
-        <option value="Piso 4">Piso 5</option>
-        <option value="Piso 5">Piso 6</option>
-        <option value="Piso 5">Piso 7</option>
-        <option value="Piso 5">Piso 8</option>
-        <option value="Piso 5">Piso 9</option>
-        <option value="Piso 5">Piso 10</option>
-        <option value="Piso 5">Piso 11</option>
-        <option value="Piso 5">Piso 12</option>
-        <option value="Piso 5">Piso 13</option>
-        <option value="Piso 5">Piso 14</option>
-        <option value="Piso 5">Piso 15</option>
-        <option value="Piso 5">Piso 16</option>
-        <option value="Piso 5">Piso 17</option>
-        <option value="Piso 5">Piso 18</option>
-        <option value="Piso 5">Piso 19</option>
-        <option value="Piso 5">Piso 20</option>
-        <option value="Piso 5">Piso 21</option>
-        <option value="Piso 5">Piso 22</option>
-        </select>
-    </div>
-  </div>
-</div>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white text-primary">
+                  <i class="fas fa-building"></i>
+                </span>
+                <select class="form-select" [(ngModel)]="pisoSeleccionado" (change)="filtrarImpresoras()">
+                  <option value="">Todos los pisos</option>
+                  <option value="Planta Baja">Planta Baja</option>
+                  <option value="Piso E2">Piso E2</option>
+                  <option value="Piso 1">Piso 1</option>
+                  <option value="Piso 2">Piso 2</option>
+                  <option value="Piso 3">Piso 3</option>
+                  <option value="Piso 4">Piso 4</option>
+                  <option value="Piso 5">Piso 5</option>
+                  <option value="Piso 6">Piso 6</option>
+                  <option value="Piso 7">Piso 7</option>
+                  <option value="Piso 8">Piso 8</option>
+                  <option value="Piso 9">Piso 9</option>
+                  <option value="Piso 10">Piso 10</option>
+                  <option value="Piso 11">Piso 11</option>
+                  <option value="Piso 12">Piso 12</option>
+                  <option value="Piso 13">Piso 13</option>
+                  <option value="Piso 14">Piso 14</option>
+                  <option value="Piso 15">Piso 15</option>
+                  <option value="Piso 16">Piso 16</option>
+                  <option value="Piso 17">Piso 17</option>
+                  <option value="Piso 18">Piso 18</option>
+                  <option value="Piso 19">Piso 19</option>
+                  <option value="Piso 20">Piso 20</option>
+                  <option value="Piso 21">Piso 21</option>
+                  <option value="Piso 22">Piso 22</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
           <div class="row">
             <div class="col-md-12 mb-3">
@@ -198,6 +205,77 @@
           </div>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Dar de Baja (Impresoras) -->
+<div class="modal fade" id="modalBaja" tabindex="-1" aria-labelledby="modalBajaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow-lg">
+
+      <!-- Cabecera -->
+      <div class="modal-header bg-danger text-white py-2">
+        <h6 class="modal-title fw-bold" id="modalBajaLabel">
+          <i class="fas fa-print me-2"></i> Trámite de Baja de Impresora
+        </h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-3">
+        <p class="text-muted mb-3" style="font-size: 0.85em;">
+          Gestión de baja para la impresora: <strong class="text-dark">{{ equipoSeleccionados?.codigoAB || equipoSeleccionados?.numeroSerie || 'N/A' }}</strong>.
+        </p>
+
+        <!-- Formulario de Baja Técnica -->
+        <div class="row g-2 mb-2">
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Motivo de la Baja</label>
+            <select class="form-select form-select-sm" [(ngModel)]="datosBaja.motivo">
+              <option value="">Seleccionar...</option>
+              <option value="Daño irreparable">Daño irreparable</option>
+              <option value="Costo reparación supera valor">Costo supera valor</option>
+              <option value="Fin de vida útil">Fin de vida útil</option>
+              <option value="Pérdida / Robo">Pérdida / Robo</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">N° Informe Técnico</label>
+            <input type="text" class="form-control form-control-sm" placeholder="Ej: INF-001" [(ngModel)]="datosBaja.informe">
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Observación Técnica</label>
+          <textarea class="form-control form-control-sm" rows="2" placeholder="Diagnóstico..." [(ngModel)]="datosBaja.observacion"></textarea>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">Fecha</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="datosBaja.fecha">
+        </div>
+
+        <!-- SECCIÓN PARA SUBIR ARCHIVO O ANEXO DE BAJA -->
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1" style="font-size: 0.8em;">
+            <i class="fas fa-paperclip me-1 text-danger"></i> Adjuntar Documento / Acta de Baja
+          </label>
+          <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)">
+          <div class="form-text text-muted" style="font-size: 0.7em;">
+            Sube el archivo PDF o imagen del informe técnico firmado.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="modal-footer bg-light py-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-sm btn-danger fw-bold" (click)="confirmarBaja()">
+          <i class="fas fa-check-circle me-1"></i> ACEPTAR Y GUARDAR
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

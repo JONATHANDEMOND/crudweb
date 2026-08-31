@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +10,17 @@ export class AutoServiceService {
 
   constructor(private http: HttpClient) { }
 
-  // Apuntamos al nuevo servidor real en Node.js + MongoDB
-  private API_URL = 'http://192.168.0.11:4000/api';
+  private API_URL = environment.apiUrl;
 
-  // --- MÉTODOS DE LECTURA (GET) ---
+  // --- FUNCIÓN DE SEGURIDAD PARA MANDAR EL ROL AL SERVIDOR ---
+  private getHeaders() {
+    const role = localStorage.getItem('role') || 'user';
+    return {
+      headers: new HttpHeaders({ 'x-role': role })
+    };
+  }
 
+  // --- MÉTODOS DE LECTURA (GET PÚBLICOS) ---
   getAutos(): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/autos`);
   }
@@ -22,104 +29,123 @@ export class AutoServiceService {
     return this.http.get<any>(`${this.API_URL}/edificioCentral`);
   }
 
-  // USUARIOS //
-  getUsuarios(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/usuarios`);
-  }
-
-  postUsuario(usuario: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/usuarios`, usuario);
-  }
-
-  // --- MÉTODO LOGIN ---
-  login(user: string, pass: string): Observable<any> {
-    const userLimpio = user.trim();
-    const passLimpio = pass.trim();
-
-    return this.getUsuarios().pipe(
-      map(usuarios => {
-        console.log("1. Usuarios desde MongoDB:", usuarios);
-        console.log(`2. Intentando entrar con -> Usuario: '${userLimpio}' | Contraseña: '${passLimpio}'`);
-
-        const usuarioEncontrado = usuarios.find(u =>
-          (u.usuario === userLimpio || u.user === userLimpio) && u.pass === passLimpio
-        );
-
-        if (!usuarioEncontrado) {
-          console.warn("3. No hubo coincidencia. Revisa bien las mayúsculas/minúsculas.");
-        }
-
-        return usuarioEncontrado || null;
-      })
-    );
-  }
-
-  // --- MÉTODOS DE ESCRITURA (POST/PUT/DELETE) ---
-
-  postAuto(auto: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/autos`, auto);
-  }
-
-  deleteAuto(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/autos/${id}`);
-  }
-
-  updateAuto(id: any, equipo: any): Observable<any> {
-    return this.http.put<any>(`${this.API_URL}/autos/${id}`, equipo);
-  }
-
-  postEdificioCentral(edificio: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/edificioCentral`, edificio);
-  }
-
-  deleteEdificioCentral(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/edificioCentral/${id}`);
-  }
-
-  updateEdificioCentral(id: any, equipo: any): Observable<any> {
-    return this.http.put<any>(`${this.API_URL}/edificioCentral/${id}`, equipo);
-  }
-
-  deleteUsuario(id: any): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/usuarios/${id}`);
-  }
-
-  // CORREGIDO: Ahora apunta correctamente a edificioCentral
-  actualizarEquipo(id: string, datos: any): Observable<any> {
-    return this.updateEdificioCentral(id, datos);
-  }
-
-  // -- Métodos impresoras Edificio Central --
   getImpresorasEC(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URL}/impresoras-ec`);
   }
 
-  postImpresoraEC(impresora: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/impresoras-ec`, impresora);
-  }
-
-  updateImpresoraEC(id: string, impresora: any): Observable<any> {
-    return this.http.put<any>(`${this.API_URL}/impresoras-ec/${id}`, impresora);
-  }
-
-  deleteImpresoraEC(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/impresoras-ec/${id}`);
-  }
-
-  // -- Métodos impresoras Sitios Remotos --
   getImpresorasSR(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URL}/impresoras-sr`);
   }
 
+  // --- MÉTODO LOGIN SEGURO (Validado en Servidor) ---
+  login(user: string, pass: string): Observable<any> {
+    const credenciales = {
+      usuario: user.trim(),
+      password: pass.trim()
+    };
+    return this.http.post<any>(`${this.API_URL}/login`, credenciales);
+  }
+
+  // ==============================================================
+  // --- MÉTODOS PROTEGIDOS (Requieren this.getHeaders() de Admin)
+  // ==============================================================
+
+  // USUARIOS //
+  getUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/usuarios`, this.getHeaders());
+  }
+
+  postUsuario(usuario: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/usuarios`, usuario, this.getHeaders());
+  }
+
+  deleteUsuario(id: any): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/usuarios/${id}`, this.getHeaders());
+  }
+
+  // AUTOS //
+  postAuto(auto: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/autos`, auto, this.getHeaders());
+  }
+
+  updateAuto(id: any, equipo: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/autos/${id}`, equipo, this.getHeaders());
+  }
+
+  deleteAuto(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/autos/${id}`, this.getHeaders());
+  }
+
+  // EDIFICIO CENTRAL //
+  postEdificioCentral(edificio: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/edificioCentral`, edificio, this.getHeaders());
+  }
+
+  updateEdificioCentral(id: any, equipo: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/edificioCentral/${id}`, equipo, this.getHeaders());
+  }
+
+  deleteEdificioCentral(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/edificioCentral/${id}`, this.getHeaders());
+  }
+
+  actualizarEquipo(id: string, datos: any): Observable<any> {
+    return this.updateEdificioCentral(id, datos);
+  }
+
+  // IMPRESORAS EDIFICIO CENTRAL //
+  postImpresoraEC(impresora: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/impresoras-ec`, impresora, this.getHeaders());
+  }
+
+  updateImpresoraEC(id: string, impresora: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/impresoras-ec/${id}`, impresora, this.getHeaders());
+  }
+
+  deleteImpresoraEC(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/impresoras-ec/${id}`, this.getHeaders());
+  }
+
+  // IMPRESORAS SITIOS REMOTOS //
   postImpresoraSR(impresora: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/impresoras-sr`, impresora);
+    return this.http.post<any>(`${this.API_URL}/impresoras-sr`, impresora, this.getHeaders());
   }
 
   updateImpresoraSR(id: string, impresora: any): Observable<any> {
-    return this.http.put<any>(`${this.API_URL}/impresoras-sr/${id}`, impresora);
+    return this.http.put<any>(`${this.API_URL}/impresoras-sr/${id}`, impresora, this.getHeaders());
   }
 
   deleteImpresoraSR(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/impresoras-sr/${id}`);
+    return this.http.delete<any>(`${this.API_URL}/impresoras-sr/${id}`, this.getHeaders());
   }
+  // --- MÉTODOS PARA BAJAS ---
+// --- MÉTODO PARA OBTENER LAS BAJAS CON SEGURIDAD ---
+  getBajas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/bajas`, this.getHeaders());
+  }
+
+// --- PROYECTORES EDIFICIO CENTRAL ---
+  getProyectoresEC(): Observable<any[]> { return this.http.get<any[]>(`${this.API_URL}/proyectores-ec`, this.getHeaders()); }
+  createProyectorEC(data: any): Observable<any> { return this.http.post(`${this.API_URL}/proyectores-ec`, data, this.getHeaders()); }
+  updateProyectorEC(id: string, data: any): Observable<any> { return this.http.put(`${this.API_URL}/proyectores-ec/${id}`, data, this.getHeaders()); }
+  deleteProyectorEC(id: string): Observable<any> { return this.http.delete(`${this.API_URL}/proyectores-ec/${id}`, this.getHeaders()); }
+
+  // --- PROYECTORES SITIOS REMOTOS ---
+  getProyectoresSR(): Observable<any[]> { return this.http.get<any[]>(`${this.API_URL}/proyectores-sr`, this.getHeaders()); }
+  createProyectorSR(data: any): Observable<any> { return this.http.post(`${this.API_URL}/proyectores-sr`, data, this.getHeaders()); }
+  updateProyectorSR(id: string, data: any): Observable<any> { return this.http.put(`${this.API_URL}/proyectores-sr/${id}`, data, this.getHeaders()); }
+  deleteProyectorSR(id: string): Observable<any> { return this.http.delete(`${this.API_URL}/proyectores-sr/${id}`, this.getHeaders()); }
+
+  // --- SCANNERS EDIFICIO CENTRAL ---
+  getScannersEC(): Observable<any[]> { return this.http.get<any[]>(`${this.API_URL}/scanners-ec`, this.getHeaders()); }
+  createScannerEC(data: any): Observable<any> { return this.http.post(`${this.API_URL}/scanners-ec`, data, this.getHeaders()); }
+  updateScannerEC(id: string, data: any): Observable<any> { return this.http.put(`${this.API_URL}/scanners-ec/${id}`, data, this.getHeaders()); }
+  deleteScannerEC(id: string): Observable<any> { return this.http.delete(`${this.API_URL}/scanners-ec/${id}`, this.getHeaders()); }
+
+  // --- SCANNERS SITIOS REMOTOS ---
+  getScannersSR(): Observable<any[]> { return this.http.get<any[]>(`${this.API_URL}/scanners-sr`, this.getHeaders()); }
+  createScannerSR(data: any): Observable<any> { return this.http.post(`${this.API_URL}/scanners-sr`, data, this.getHeaders()); }
+  updateScannerSR(id: string, data: any): Observable<any> { return this.http.put(`${this.API_URL}/scanners-sr/${id}`, data, this.getHeaders()); }
+  deleteScannerSR(id: string): Observable<any> { return this.http.delete(`${this.API_URL}/scanners-sr/${id}`, this.getHeaders()); }
+
 }

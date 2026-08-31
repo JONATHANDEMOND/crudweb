@@ -337,7 +337,7 @@ marcarMantenimiento(equipo: any) {
 
   // 1. Bloqueo para evitar spam de clics
   equipo.guardandoMantenimiento = true;
-  console.log("Enviando a:", `http://192.168.0.11:4000/api/autos/${equipo._id}`);
+ 
 
   // 2. Preparación del historial
   if (!equipo.historialMantenimientos) {
