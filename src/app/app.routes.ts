@@ -15,6 +15,10 @@ import { adminGuard } from './guards/admin.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CronogramaSrComponent } from './cronograma-sr/cronograma-sr.component';
 import { HistorialBajasComponent } from './historial-bajas/historial-bajas.component';
+import { ScannersEcComponent } from './scanners-ec/scanners-ec.component';
+import { ProyectoresEcComponent } from './proyectores-ec/proyectores-ec.component';
+import { ProyectoresSrComponent } from './proyectores-sr/proyectores-sr.component';
+import { ScannersSrComponent } from './scanners-sr/scanners-sr.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },

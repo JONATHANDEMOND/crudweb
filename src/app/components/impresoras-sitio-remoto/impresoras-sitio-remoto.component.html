@@ -18,6 +18,7 @@
         <tr>
           <th>Custodio</th>
           <th>Oficina / Ubicación</th>
+          <th>Tipo</th>
           <th>Marca / Modelo</th>
           <th>No. de Serie</th>
           <th>Código AB</th>
@@ -32,6 +33,11 @@
           <td>
             <div class="primary-text">{{item.oficina}}</div>
             <div class="secondary-text">{{item.ubicacion}}</div>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="item.tipo === 'Plotter' ? 'bg-info text-dark' : 'bg-primary'">
+              {{ item.tipo || 'Impresora' }}
+            </span>
           </td>
           <td class="primary-text">{{item.marcaModelo}}</td>
           <td><span class="code-pill">{{item.numeroSerie}}</span></td>
@@ -81,7 +87,7 @@
       <div class="modal-header text-white border-0" [ngClass]="modoEdicion ? 'bg-primary' : 'bg-success'">
         <h5 class="modal-title fw-bold">
           <i class="fas me-2" [ngClass]="modoEdicion ? 'fa-edit' : 'fa-plus-circle'"></i>
-          {{ modoEdicion ? 'Editar Impresora' : 'Registrar Nueva Impresora' }}
+          {{ modoEdicion ? 'Editar Impresora / Plotter' : 'Registrar Nueva Impresora / Plotter' }}
         </h5>
         <button type="button" class="btn-close btn-close-white" (click)="cerrarModalRegistro()"></button>
       </div>
@@ -147,9 +153,19 @@
           </div>
 
           <div class="row">
+            <!-- TIPO DE DISPOSITIVO (Impresora / Plotter) -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold text-primary">Tipo de Dispositivo</label>
+              <select class="form-control form-select" name="tipo" [(ngModel)]="impresoraActual.tipo" required>
+                <option value="" disabled>Seleccione el tipo</option>
+                <option value="Impresora">Impresora</option>
+                <option value="Plotter">Plotter</option>
+              </select>
+            </div>
+
             <div class="col-md-6 mb-3">
               <label class="form-label fw-bold">Marca / Modelo</label>
-              <input type="text" class="form-control" name="marcaModelo" [(ngModel)]="impresoraActual.marcaModelo">
+              <input type="text" class="form-control" name="marcaModelo" [(ngModel)]="impresoraActual.marcaModelo" required>
             </div>
           </div>
 

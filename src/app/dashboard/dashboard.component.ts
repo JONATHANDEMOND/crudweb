@@ -20,6 +20,10 @@ export class DashboardComponent implements OnInit {
   sitiosRemotos: any[] = [];
   impresorasEC: any[] = [];
   impresorasSR: any[] = [];
+  proyectoresEC: any[] = [];
+proyectoresSR: any[] = [];
+scannersEC: any[] = [];
+scannersSR: any[] = [];
 
   // VARIABLE PARA EL FILTRO DE BAJAS
   filtroBajas = {
@@ -50,7 +54,8 @@ export class DashboardComponent implements OnInit {
     this.cargarDatos();
   }
 
-  cargarDatos() {
+cargarDatos() {
+    // 1. Cargar Equipos e Impresoras de Edificio Central
     this.servicio.getEdificioCentral().subscribe(ec => {
       this.edificioCentral = ec;
       this.servicio.getImpresorasEC().subscribe(iec => {
@@ -60,6 +65,7 @@ export class DashboardComponent implements OnInit {
       });
     });
 
+    // 2. Cargar Equipos (Autos) e Impresoras de Sitios Remotos
     this.servicio.getAutos().subscribe(sr => {
       this.sitiosRemotos = sr;
       this.servicio.getImpresorasSR().subscribe(isr => {
@@ -68,6 +74,12 @@ export class DashboardComponent implements OnInit {
         this.actualizarTotales();
       });
     });
+
+    // 3. Cargar Proyectores y Scanners de ambas ubicaciones
+    this.servicio.getProyectoresEC().subscribe(data => this.proyectoresEC = data);
+    this.servicio.getProyectoresSR().subscribe(data => this.proyectoresSR = data);
+    this.servicio.getScannersEC().subscribe(data => this.scannersEC = data);
+    this.servicio.getScannersSR().subscribe(data => this.scannersSR = data);
   }
 
   actualizarTotales() {
@@ -169,38 +181,75 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  generarReporteDetallado(tipo: string) {
-    const doc = new jsPDF('landscape');
-    doc.setFontSize(16); doc.setTextColor(40);
-    doc.text('Dirección de Tecnologías de la Información', 14, 15);
-    doc.setFontSize(12); doc.text(`Coordinación de Soporte Técnico y Mantenimiento (CSTM)`, 14, 22);
-    doc.setFontSize(14); doc.setTextColor(0, 51, 153); doc.text(`Informe de Mantenimiento y Equipos - ${tipo}`, 14, 32);
-    doc.setFontSize(10); doc.setTextColor(100); doc.text(`Generado el: ${new Date().toLocaleDateString('es-EC')}`, 14, 38);
+ // 3. Reemplaza tu método generarReporteDetallado actual por este:
+generarReporteDetallado(tipo: string) {
+  const doc = new jsPDF('landscape');
+  doc.setFontSize(16); doc.setTextColor(40);
+  doc.text('Dirección de Tecnologías de la Información', 14, 15);
+  doc.setFontSize(12); doc.text(`Coordinación de Soporte Técnico y Mantenimiento (CSTM)`, 14, 22);
+  doc.setFontSize(14); doc.setTextColor(0, 51, 153); doc.text(`Informe de Mantenimiento y Equipos - ${tipo}`, 14, 32);
+  doc.setFontSize(10); doc.setTextColor(100); doc.text(`Generado el: ${new Date().toLocaleDateString('es-EC')}`, 14, 38);
 
-    let fuenteDatos: any[] = [];
-    if (tipo === 'Edificio Central') fuenteDatos = this.edificioCentral;
-    if (tipo === 'Sitios Remotos') fuenteDatos = this.sitiosRemotos;
-    if (tipo === 'Impresoras Edificio Central') fuenteDatos = this.impresorasEC;
-    if (tipo === 'Impresoras Sitios Remotos') fuenteDatos = this.impresorasSR;
+  let fuenteDatos: any[] = [];
 
-    const esImpresora = tipo.includes('Impresoras');
-    if (!fuenteDatos || fuenteDatos.length === 0) { alert(`No hay datos registrados en la categoría "${tipo}".`); return; }
+  // Asignación de datos según el tipo
+  if (tipo === 'Edificio Central') fuenteDatos = this.edificioCentral;
+  if (tipo === 'Sitios Remotos') fuenteDatos = this.sitiosRemotos;
+  if (tipo === 'Impresoras Edificio Central') fuenteDatos = this.impresorasEC;
+  if (tipo === 'Impresoras Sitios Remotos') fuenteDatos = this.impresorasSR;
+  if (tipo === 'Proyectores Edificio Central') fuenteDatos = this.proyectoresEC;
+  if (tipo === 'Proyectores Sitios Remotos') fuenteDatos = this.proyectoresSR;
+  if (tipo === 'Scanners Edificio Central') fuenteDatos = this.scannersEC;
+  if (tipo === 'Scanners Sitios Remotos') fuenteDatos = this.scannersSR;
 
-    let columnas = ['Código Bien', 'Tipo/Modelo', 'Dependencia', 'Usuario', 'Último Mantenimiento', esImpresora ? 'Dirección IP' : 'Estado UPS'];
-    let datosTabla = fuenteDatos.map(item => {
-      let fechaMantenimiento = 'Sin Mantenimiento';
-      if (item.fechaUltimoMantenimiento) fechaMantenimiento = new Date(item.fechaUltimoMantenimiento).toLocaleDateString('es-EC');
-      const codigo = item.codigoBien || item.codigoAB || item.numeroSerie || 'N/A';
-      const tipoModelo = item.tipo || item.marcaModelo || item.modelo || 'N/A';
-      const ubicacion = item.dependencia || item.oficina || 'N/A';
-      const responsable = item.usuario || item.custodio || 'N/A';
-      let ultimaColumna = esImpresora ? (item.ip || item.direccionIP || 'Sin IP asignada') : (item.estadoups || item.estado_ups || 'N/A');
-      return [codigo, tipoModelo, ubicacion, responsable, fechaMantenimiento, ultimaColumna];
-    });
-
-    autoTable(doc, { startY: 42, head: [columnas], body: datosTabla, theme: 'striped', headStyles: { fillColor: [0, 51, 153] }, styles: { fontSize: 9 }, alternateRowStyles: { fillColor: [240, 240, 240] } });
-    doc.save(`Informe_${tipo.replace(/\s+/g, '_')}_${new Date().getMonth() + 1}_${new Date().getFullYear()}.pdf`);
+  if (!fuenteDatos || fuenteDatos.length === 0) {
+    alert(`No hay datos registrados en la categoría "${tipo}".`);
+    return;
   }
+  // Identificadores lógicos
+  const esImpresora = tipo.includes('Impresoras');
+  const esProyector = tipo.includes('Proyectores');
+  const esScanner = tipo.includes('Scanners');
+  // Ajuste dinámico del nombre de la última columna
+  let nombreUltimaColumna = 'Estado UPS';
+  if (esImpresora) nombreUltimaColumna = 'Dirección IP';
+  if (esProyector || esScanner) nombreUltimaColumna = 'Estado/Condición'; // Puedes cambiar esto al campo extra que uses en tu BD
+
+  let columnas = ['Código Bien', 'Tipo/Modelo', 'Dependencia', 'Usuario', 'Último Mantenimiento', nombreUltimaColumna];
+
+  let datosTabla = fuenteDatos.map(item => {
+    let fechaMantenimiento = 'Sin Mantenimiento';
+    if (item.fechaUltimoMantenimiento) fechaMantenimiento = new Date(item.fechaUltimoMantenimiento).toLocaleDateString('es-EC');
+
+    const codigo = item.codigoBien || item.codigoAB || item.numeroSerie || 'N/A';
+    const tipoModelo = item.tipo || item.marcaModelo || item.modelo || 'N/A';
+    const ubicacion = item.dependencia || item.oficina || 'N/A';
+    const responsable = item.usuario || item.custodio || 'N/A';
+    // Ajuste dinámico del valor de la última columna
+    let ultimaColumna = 'N/A';
+    if (esImpresora) {
+      ultimaColumna = item.ip || item.direccionIP || 'Sin IP asignada';
+    } else if (esProyector || esScanner) {
+      ultimaColumna = item.estado || item.condicion || 'N/A'; // Ajustar según los campos de tu base de datos
+    } else {
+      ultimaColumna = item.estadoups || item.estado_ups || 'N/A';
+    }
+
+    return [codigo, tipoModelo, ubicacion, responsable, fechaMantenimiento, ultimaColumna];
+  });
+
+  autoTable(doc, {
+    startY: 42,
+    head: [columnas],
+    body: datosTabla,
+    theme: 'striped',
+    headStyles: { fillColor: [0, 51, 153] },
+    styles: { fontSize: 9 },
+    alternateRowStyles: { fillColor: [240, 240, 240] }
+  });
+
+  doc.save(`Informe_${tipo.replace(/\s+/g, '_')}_${new Date().getMonth() + 1}_${new Date().getFullYear()}.pdf`);
+}
 
   generarInformeBajas() {
     if (this.filtroBajas.tipo === 'rango') {
@@ -214,7 +263,7 @@ export class DashboardComponent implements OnInit {
       }
     }
 
-    this.servicio.getBajas().subscribe({
+    this.servicio.getTodasLasBajas().subscribe({
       next: (bajasObtenidas: any[]) => {
         let datosFiltrados = bajasObtenidas;
 

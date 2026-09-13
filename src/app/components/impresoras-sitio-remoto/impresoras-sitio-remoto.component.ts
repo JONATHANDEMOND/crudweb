@@ -16,7 +16,8 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   impresorasFiltradas: any[] = [];
   busquedaGlobal: string = '';
 
-  impresoraActual: any = {};
+  // Inicializamos impresoraActual incluyendo por defecto el tipo 'Impresora'
+  impresoraActual: any = { tipo: 'Impresora' };
   mostrarModalRegistro: boolean = false;
   modoEdicion: boolean = false;
 
@@ -24,7 +25,6 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   equipoSeleccionados: any = null;
   archivoBaja: File | null = null;
 
-  // CORRECCIÓN: Le agregamos ": any" y el campo "documento: null"
   datosBaja: any = {
     motivo: '',
     informe: '',
@@ -41,9 +41,8 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   }
 
   obtenerImpresoras() {
-    // Asegúrate de tener getImpresorasSR en tu servicio
     this.autoService.getImpresorasSR().subscribe(data => {
-      // Filtramos para que NO se muestren las impresoras que ya fueron dadas de baja
+      // Filtramos para que NO se muestren los equipos que ya fueron dados de baja
       this.impresoras = data.filter((item: any) => item.estadoFisico !== 'De Baja');
       this.impresorasFiltradas = [...this.impresoras];
     });
@@ -59,13 +58,15 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
       (i.codigoAB || '').toLowerCase().includes(busqueda) ||
       (i.custodio || '').toLowerCase().includes(busqueda) ||
       (i.marcaModelo || '').toLowerCase().includes(busqueda) ||
-      (i.oficina || '').toLowerCase().includes(busqueda)
+      (i.oficina || '').toLowerCase().includes(busqueda) ||
+      (i.tipo || '').toLowerCase().includes(busqueda) // Agregamos filtro por tipo
     );
   }
 
   abrirModalRegistro(impresora: any = null) {
     this.modoEdicion = !!impresora;
-    this.impresoraActual = impresora ? { ...impresora } : {};
+    // Si es nuevo registro, asignamos 'Impresora' por defecto; si es edición, clonamos el objeto existente
+    this.impresoraActual = impresora ? { ...impresora } : { tipo: 'Impresora' };
     this.mostrarModalRegistro = true;
   }
 
@@ -84,26 +85,24 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   }
 
   eliminar(_id: string) {
-    if (_id && confirm('¿Estás seguro de eliminar esta impresora?')) {
+    if (_id && confirm('¿Estás seguro de eliminar este equipo?')) {
       this.autoService.deleteImpresoraSR(_id).subscribe(() => this.obtenerImpresoras());
     }
   }
 
   // ==========================================
-  // --- MANTENIMIENTO DE IMPRESORAS (ACTUALIZADO) ---
+  // --- MANTENIMIENTO DE EQUIPOS ---
   // ==========================================
 
   marcarMantenimiento(item: any) {
     if (!item._id) {
-      alert('Esta impresora es nueva y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
+      alert('Este equipo es nuevo y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
       setTimeout(() => item.mantenimientoRealizado = !item.mantenimientoRealizado, 100);
       return;
     }
 
-    // 1. Bloqueo visual
     item.guardandoMantenimiento = true;
 
-    // 2. Preparación del historial
     if (!item.historialMantenimientos) {
       item.historialMantenimientos = [];
     }
@@ -112,7 +111,6 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
     const historialAnterior = [...item.historialMantenimientos];
     const fechaPlanaAnterior = item.fechaUltimoMantenimiento;
 
-    // 3. Lógica de fechas
     if (item.mantenimientoRealizado) {
       const nuevaFecha = new Date().toISOString();
       item.historialMantenimientos.push({ fecha: nuevaFecha });
@@ -121,7 +119,6 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
       item.fechaUltimoMantenimiento = null;
     }
 
-    // 4. Llamada al servicio
     this.autoService.updateImpresoraSR(item._id, item).subscribe({
       next: (res: any) => {
         console.log('Mantenimiento SR guardado:', res);
@@ -129,7 +126,6 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error al actualizar mantenimiento SR:', err);
-        // Reversión
         item.mantenimientoRealizado = estadoSwitchAnterior;
         item.historialMantenimientos = historialAnterior;
         item.fechaUltimoMantenimiento = fechaPlanaAnterior;
@@ -142,7 +138,7 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   limpiarMantenimiento(item: any) {
     if (!item._id) return;
 
-    if (confirm('¿Está seguro de que desea eliminar todo el historial de mantenimiento de esta impresora?')) {
+    if (confirm('¿Está seguro de que desea eliminar todo el historial de mantenimiento de este equipo?')) {
       item.guardandoMantenimiento = true;
       item.mantenimientoRealizado = false;
       item.fechaUltimoMantenimiento = null;
@@ -150,7 +146,7 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
 
       this.autoService.updateImpresoraSR(item._id, item).subscribe({
         next: () => {
-          console.log('Historial de impresora limpiado.');
+          console.log('Historial de equipo limpiado.');
           item.guardandoMantenimiento = false;
         },
         error: (err) => {
@@ -163,14 +159,13 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
   }
 
   // ==========================================
-  // --- TRÁMITE DE BAJA DE IMPRESORAS ---
+  // --- TRÁMITE DE BAJA DE EQUIPOS ---
   // ==========================================
 
   abrirModalBaja(equipo: any) {
     this.equipoSeleccionados = equipo;
-    this.archivoBaja = null; // Limpiar archivo previo si lo hay
+    this.archivoBaja = null;
 
-    // CORRECCIÓN: Reseteamos también el campo "documento"
     this.datosBaja = {
       motivo: '',
       informe: '',
@@ -180,7 +175,6 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
     };
   }
 
-  // CORRECCIÓN: Lógica para convertir a Base64
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -201,25 +195,21 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
     }
   }
 
-  // Envía los datos al Backend (Formato JSON compatible)
   confirmarBaja() {
     if (!this.datosBaja.motivo || !this.datosBaja.observacion) {
       alert('El motivo y la observación técnica son obligatorios.');
       return;
     }
 
-    // Al ser una impresora, siempre se da de baja el equipo completo
     let actualizacionBaja = {
       estadoFisico: 'De Baja',
       datosBajaTecnica: this.datosBaja
     };
 
-    // Usamos updateImpresoraSR para apuntar a la base de Sitios Remotos
     this.autoService.updateImpresoraSR(this.equipoSeleccionados._id, actualizacionBaja).subscribe({
       next: (respuesta: any) => {
         console.log('RESPUESTA DEL SERVIDOR:', respuesta);
 
-        // 1. Cerramos el modal de Bootstrap de forma segura
         const modalElement = document.getElementById('modalBaja');
         if (modalElement) {
           modalElement.classList.remove('show');
@@ -231,23 +221,18 @@ export class ImpresorasSitioRemotoComponent implements OnInit {
           }
         }
 
-        // 2. ACTUALIZACIÓN LOCAL INMEDIATA EN LA TABLA
-        // Quitamos la impresora del arreglo principal para que desaparezca al instante
         this.impresoras = this.impresoras.filter((e: any) => e._id !== this.equipoSeleccionados._id);
 
-        // 3. Forzamos a Angular a redibujar la tabla
         this.impresorasFiltradas = [];
         setTimeout(() => {
           this.impresorasFiltradas = [...this.impresoras];
         }, 30);
 
-        alert('Impresora remota dada de baja correctamente.');
-
-        // 4. Recargamos los datos del servidor para asegurar sincronización
+        alert('Equipo remoto dado de baja correctamente.');
         this.obtenerImpresoras();
       },
       error: (error) => {
-        console.error('Error al procesar la baja de la impresora:', error);
+        console.error('Error al procesar la baja del equipo:', error);
         alert('Hubo un error al procesar el trámite en el servidor.');
       }
     });

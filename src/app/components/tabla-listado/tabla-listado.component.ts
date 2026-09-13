@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 export class TablaListadoComponent implements OnInit {
   servicio = inject(AutoServiceService);
 
- edificioCentral: any[] = [];
+  edificioCentral: any[] = [];
   vehiculosFiltrados: any[] = [];
   busquedaGlobal: string = ''; // Nueva variable para el buscador universal
 
@@ -22,14 +22,14 @@ export class TablaListadoComponent implements OnInit {
   mostrarModalRegistro: boolean = false;
   modoEdicion: boolean = false; // NUEVA VARIABLE PARA CONTROLAR EDICIÓN
 
-equipoSeleccionados: any = null;
+  equipoSeleccionados: any = null;
   datosBaja = {
     componente: 'Completo',
     motivo: '',
     informe: '',
     observacion: '',
     nuevoCodigo: '', // <--- NUEVO
-      nuevaSerie: '',
+    nuevaSerie: '',
     fecha: new Date().toISOString().substring(0, 10) // Fecha de hoy por defecto
   };
   fechaActual = new Date();
@@ -40,16 +40,19 @@ equipoSeleccionados: any = null;
 
   id: any = ''; usuario: any = ''; dependencia: any = ''; hostname: any = '';
   tipo: any = ''; modelo: any = ''; codigoBien: any = ''; numeroSerie: any = '';
-  codigoBienMonitor: any = ''; numeroSerieMonitor: any = ''; codigoBienMouse: any = '';
-  numeroSerieMouse: any = ''; codigoBienTeclado: any = ''; numeroSerieTeclado: any = '';
-  codigoBienUps: any = ''; numeroSerieUps: any = ''; estadoups: any = ''; tipoDisco: any = '';procesador: any = '';
+  codigoBienMonitor: any = ''; numeroSerieMonitor: any = '';
+  codigoBienMonitor2: any = ''; numeroSerieMonitor2: any = ''; // <--- NUEVO MONITOR 2
+  codigoBienMouse: any = ''; numeroSerieMouse: any = '';
+  codigoBienTeclado: any = ''; numeroSerieTeclado: any = '';
+  codigoBienUps: any = ''; numeroSerieUps: any = ''; estadoups: any = ''; tipoDisco: any = ''; procesador: any = '';
+  observaciones: any = ''; // <--- NUEVA OBSERVACIÓN GENERAL
 
   ngOnInit() {
     this.cargarDatos();
     this.cargarTecnico();
   }
 
-cargarDatos() {
+  cargarDatos() {
     this.servicio.getEdificioCentral().subscribe({
       next: (edificio) => {
         // 1. Filtramos: Nos quedamos SOLO con los que NO estén de baja
@@ -69,32 +72,32 @@ cargarDatos() {
     if (log) {
       try {
         const usuarioObj = JSON.parse(log);
-        this.tecnicoLogeado = usuarioObj.nombre || usuarioObj.usuario || 'Técnico CSTM';
-      } catch (e) { this.tecnicoLogeado = 'Técnico CSTM'; }
-    } else { this.tecnicoLogeado = 'Técnico CSTM'; }
+        this.tecnicoLogeado = usuarioObj.nombre || usuarioObj.usuario || 'Técnico CIRST';
+      } catch (e) { this.tecnicoLogeado = 'Técnico CIRST'; }
+    } else { this.tecnicoLogeado = 'Técnico CIRST'; }
   }
 
 
   //BUSQUEDA GLOBAL: Filtra por cualquier campo relevante//
 
   filtrarEquipos() {
-  // Si no hay texto, mostramos todos
-  if (!this.busquedaGlobal.trim()) {
-    this.vehiculosFiltrados = [...this.edificioCentral];
-    return;
+    // Si no hay texto, mostramos todos
+    if (!this.busquedaGlobal.trim()) {
+      this.vehiculosFiltrados = [...this.edificioCentral];
+      return;
+    }
+
+    const term = this.busquedaGlobal.toLowerCase();
+
+    this.vehiculosFiltrados = this.edificioCentral.filter(item => {
+      // Object.values(item) toma todos los datos del equipo y los convierte en un array
+      // .some() verifica si AL MENOS UNO de esos datos contiene lo que escribiste
+      return Object.values(item).some(val =>
+        val !== null && val !== undefined &&
+        String(val).toLowerCase().includes(term)
+      );
+    });
   }
-
-  const term = this.busquedaGlobal.toLowerCase();
-
-  this.vehiculosFiltrados = this.edificioCentral.filter(item => {
-    // Object.values(item) toma todos los datos del equipo y los convierte en un array
-    // .some() verifica si AL MENOS UNO de esos datos contiene lo que escribiste
-    return Object.values(item).some(val =>
-      val !== null && val !== undefined &&
-      String(val).toLowerCase().includes(term)
-    );
-  });
-}
 
   // --- MODAL DETALLES ---
   abrirDetalles(item: any) {
@@ -120,8 +123,7 @@ cargarDatos() {
   }
 
   cargarEnFormulario(item: any) {
-    this.id = item._id;
-    // <--- AGREGA ESTA LÍNEA PARA CAPTURAR EL _ID DE MONGO
+    this.id = item._id; // <--- CAPTURA EL _ID DE MONGO
     this.usuario = item.usuario;
     this.dependencia = item.dependencia;
     this.hostname = item.hostname;
@@ -132,6 +134,8 @@ cargarDatos() {
     this.numeroSerie = item.numeroSerie;
     this.codigoBienMonitor = item.codigoBienMonitor;
     this.numeroSerieMonitor = item.numeroSerieMonitor;
+    this.codigoBienMonitor2 = item.codigoBienMonitor2;     // <--- CARGAR MONITOR 2
+    this.numeroSerieMonitor2 = item.numeroSerieMonitor2;   // <--- CARGAR SERIE MONITOR 2
     this.codigoBienMouse = item.codigoBienMouse;
     this.numeroSerieMouse = item.numeroSerieMouse;
     this.codigoBienTeclado = item.codigoBienTeclado;
@@ -140,23 +144,22 @@ cargarDatos() {
     this.numeroSerieUps = item.numeroSerieUps;
     this.estadoups = item.estadoups;
     this.tipoDisco = item.tipoDisco;
+    this.observaciones = item.observaciones;                // <--- CARGAR OBSERVACIÓN
   }
 
- guardar(formulario: any) {
+  guardar(formulario: any) {
     const datos = formulario.value;
 
     console.log('Modo edición:', this.modoEdicion);
-    console.log('ID actual:', this.id); // Corregido a this.id
+    console.log('ID actual:', this.id);
     console.log('Datos del formulario:', datos);
 
     if (this.modoEdicion) {
-      // Usamos this.id porque así declaraste la variable arriba
       if (!this.id) {
         alert("❌ Error: No se encontró el ID del equipo para actualizar.");
         return;
       }
 
-      // Enviamos la actualización con el this.id
       this.servicio.updateEdificioCentral(this.id, datos).subscribe({
         next: (respuesta) => {
           alert("✅ Equipo actualizado correctamente");
@@ -169,7 +172,6 @@ cargarDatos() {
         }
       });
     } else {
-      // SI ESTAMOS CREANDO
       const idsExistentes = this.edificioCentral.map(a => Number(a.id) || 0);
       const maxId = idsExistentes.length > 0 ? Math.max(...idsExistentes) : 0;
 
@@ -192,10 +194,13 @@ cargarDatos() {
   limpiarFormulario() {
     this.id = ''; this.usuario = ''; this.dependencia = ''; this.hostname = '';
     this.tipo = ''; this.modelo = ''; this.codigoBien = ''; this.numeroSerie = '';
-    this.codigoBienMonitor = ''; this.numeroSerieMonitor = ''; this.codigoBienMouse = '';
-    this.numeroSerieMouse = ''; this.codigoBienTeclado = ''; this.numeroSerieTeclado = '';
+    this.codigoBienMonitor = ''; this.numeroSerieMonitor = '';
+    this.codigoBienMonitor2 = ''; this.numeroSerieMonitor2 = ''; // <--- LIMPIAR MONITOR 2
+    this.codigoBienMouse = ''; this.numeroSerieMouse = '';
+    this.codigoBienTeclado = ''; this.numeroSerieTeclado = '';
     this.codigoBienUps = ''; this.numeroSerieUps = ''; this.estadoups = ''; this.tipoDisco = '';
     this.procesador = '';
+    this.observaciones = ''; // <--- LIMPIAR OBSERVACIÓN
   }
 
   // --- RESTO DE FUNCIONES (ELIMINAR, FILTRAR, ETIQUETA) ---
@@ -207,31 +212,28 @@ cargarDatos() {
       });
     }
   }
-  // Abre el modal y guarda temporalmente el equipo elegido
- abrirModalBaja(equipo: any) {
+
+  abrirModalBaja(equipo: any) {
     this.equipoSeleccionados = equipo;
-    // Reseteamos el formulario por si se abrió antes
     this.datosBaja = {
       componente: 'Completo',
       motivo: '',
       informe: '',
       observacion: '',
-      nuevoCodigo: '', // <--- NUEVO
+      nuevoCodigo: '',
       nuevaSerie: '',
       fecha: new Date().toISOString().substring(0, 10)
     };
   }
-///////////
-onFileSelected(event: any) {
+
+  onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       this.archivoBaja = file;
       console.log('Archivo adjunto seleccionado:', file.name);
     }
   }
-  // Envía los datos al Backend
-// Envía los datos al Backend
-  // Envía los datos al Backend para Edificio Central
+
   confirmarBaja() {
     if (!this.datosBaja.motivo || !this.datosBaja.observacion || !this.datosBaja.componente) {
       alert('El componente, motivo y observación son obligatorios.');
@@ -264,12 +266,10 @@ onFileSelected(event: any) {
       }
     }
 
-    // Usamos updateEdificioCentral para apuntar a la ruta correcta de Edificio Central
     this.servicio.updateEdificioCentral(this.equipoSeleccionados._id, actualizacionBaja).subscribe({
       next: (respuesta: any) => {
         console.log('RESPUESTA DEL SERVIDOR:', respuesta);
 
-        // 1. Cerramos el modal de Bootstrap de forma segura
         const modalElement = document.getElementById('modalBaja');
         if (modalElement) {
           modalElement.classList.remove('show');
@@ -281,7 +281,6 @@ onFileSelected(event: any) {
           }
         }
 
-        // 2. ACTUALIZACIÓN LOCAL INMEDIATA EN LA TABLA (Usando edificioCentral)
         if (this.datosBaja.componente === 'Completo') {
           this.edificioCentral = this.edificioCentral.filter((e: any) => e._id !== this.equipoSeleccionados._id);
         } else {
@@ -304,15 +303,12 @@ onFileSelected(event: any) {
           }
         }
 
-        // 3. Forzamos a Angular a redibujar la tabla
         this.vehiculosFiltrados = [];
         setTimeout(() => {
           this.vehiculosFiltrados = [...this.edificioCentral];
         }, 30);
 
         alert('Trámite de baja procesado y actualizado correctamente.');
-
-        // 4. Recargamos los datos del servidor
         this.cargarDatos();
       },
       error: (error) => {
@@ -322,17 +318,15 @@ onFileSelected(event: any) {
     });
   }
 
-  filtrarEquiposs2() { /* Tu código original */ }
+  filtrarEquiposs2() { }
   trackById(index: number, item: any) { return item.id; }
   contarUpsMalos() { return this.vehiculosFiltrados.filter(x => x.estadoups === 'Malo').length; }
   contarUsuarios() { const usuarios = new Set(this.vehiculosFiltrados.map(x => x.usuario)); return usuarios.size; }
   contarSSD() { return this.vehiculosFiltrados.filter(x => x.tipoDisco === 'SSD').length; }
   contarM2() { return this.vehiculosFiltrados.filter(x => x.tipoDisco === 'M2').length; }
   contarHDD() { return this.vehiculosFiltrados.filter(x => x.tipoDisco === 'HDD').length; }
-  // ----------------------------------------------------
 
-  ///MARCAR EQUIPOS MANTENIMIENTO
-marcarMantenimiento(equipo: any) {
+  marcarMantenimiento(equipo: any) {
     if (!equipo._id) {
       alert('Este equipo es nuevo y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
       setTimeout(() => equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado, 100);
@@ -340,7 +334,6 @@ marcarMantenimiento(equipo: any) {
     }
 
     equipo.guardandoMantenimiento = true;
-    console.log("Enviando a Edificio Central ID:", equipo._id);
 
     if (!equipo.historialMantenimientos) {
       equipo.historialMantenimientos = [];
@@ -358,7 +351,6 @@ marcarMantenimiento(equipo: any) {
       equipo.fechaUltimoMantenimiento = null;
     }
 
-    // CORRECCIÓN CLAVE: Usamos updateEdificioCentral en lugar de actualizarEquipo
     this.servicio.updateEdificioCentral(equipo._id, equipo).subscribe({
       next: (res: any) => {
         console.log('Mantenimiento guardado con éxito:', res);
@@ -374,7 +366,6 @@ marcarMantenimiento(equipo: any) {
       }
     });
   }
-
   limpiarMantenimiento(equipo: any) {
     if (!equipo._id) {
       alert('Error: El equipo no tiene un ID válido. Recarga la página.');
@@ -388,7 +379,6 @@ marcarMantenimiento(equipo: any) {
       equipo.fechaUltimoMantenimiento = null;
       equipo.historialMantenimientos = [];
 
-      // CORRECCIÓN CLAVE: Usamos updateEdificioCentral
       this.servicio.updateEdificioCentral(equipo._id, equipo).subscribe({
         next: (res: any) => {
           console.log('Mantenimiento limpiado exitosamente');
@@ -403,118 +393,614 @@ marcarMantenimiento(equipo: any) {
     }
   }
 
-  // ETIQUETAS
-  // ----------------------------------------------------
 imprimirEtiqueta(equipo: any) {
+
   const fechaHoy = new Date().toLocaleDateString('es-EC');
-  const fechaManual = prompt("Ingrese la fecha para la etiqueta:", fechaHoy);
+
+  const fechaManual = prompt(
+    'Ingrese la fecha para la etiqueta:',
+    fechaHoy
+  );
+
   if (fechaManual === null) return;
 
-  const WindowPrt = window.open('', '', 'width=400,height=300');
-  if (WindowPrt) {
-    WindowPrt.document.write(`
-    <html>
+  const codigoBien = equipo.codigoBien || '';
+  const tipo = equipo.tipo || 'ESCRITORIO';
+  const ubicacion = equipo.dependencia || '';
+  const tecnico = (this.tecnicoLogeado || '').toUpperCase();
+
+
+  // ==========================================
+  // ELIMINAR IFRAME ANTERIOR
+  // ==========================================
+
+  const iframeAnterior = document.getElementById(
+    'iframe-etiqueta-impresion'
+  );
+
+  if (iframeAnterior) {
+    iframeAnterior.remove();
+  }
+
+
+  // ==========================================
+  // CREAR IFRAME
+  // ==========================================
+
+  const iframe = document.createElement('iframe');
+
+  iframe.id = 'iframe-etiqueta-impresion';
+
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+
+  document.body.appendChild(iframe);
+
+
+  const doc = iframe.contentWindow?.document;
+
+  if (!doc) {
+
+    alert('No se pudo preparar la impresión.');
+
+    iframe.remove();
+
+    return;
+  }
+
+
+  // ==========================================
+  // ESCAPAR HTML
+  // ==========================================
+
+  const escapeHtml = (texto: any): string => {
+
+    return String(texto ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+
+  };
+
+
+  const codigo = escapeHtml(codigoBien);
+  const tipoSeguro = escapeHtml(tipo);
+  const ubicacionSegura = escapeHtml(ubicacion);
+  const tecnicoSeguro = escapeHtml(tecnico);
+  const fechaSegura = escapeHtml(fechaManual);
+
+
+  // ==========================================
+  // DOCUMENTO
+  // ==========================================
+
+  doc.open();
+
+  doc.write(`
+
+    <!DOCTYPE html>
+
+    <html lang="es">
+
     <head>
-      <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+      <meta charset="UTF-8">
+
+      <title>Etiqueta ${codigo}</title>
+
+
       <style>
-        @page { size: 79mm 35mm; margin: 0; }
-        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; }
-        html, body {
-  width: 79mm;
-  height: 35mm;
-  overflow: hidden;
-  font-family: 'Arial Narrow', Arial, sans-serif;
-  background: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-        .label {
-  width: 35mm;
-  height: 79mm;
-  padding: 0.8mm 2mm;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transform: rotate(90deg); /* ESTA ES LA LÍNEA QUE LO HACE GIRAR */
-}
+        /* ================================================
+           PAPEL
+           ================================================ */
 
-        .header { text-align: center; height: 6mm; overflow: hidden; }
-        .header h1 { font-size: 8.5pt; font-weight: 800; line-height: 1; }
+        @page {
+
+          size: 76mm 39mm;
+
+          margin: 0;
+
+        }
+
+
+        * {
+
+          box-sizing: border-box;
+
+        }
+
+
+        html,
+        body {
+
+          margin: 0;
+
+          padding: 0;
+
+          width: 76mm;
+
+          height: 39mm;
+
+          overflow: hidden;
+
+          background: white;
+
+        }
+
+
+        body {
+
+          font-family: Arial, Helvetica, sans-serif;
+
+          -webkit-print-color-adjust: exact;
+
+          print-color-adjust: exact;
+
+        }
+
+
+        /* ================================================
+           CONTENEDOR GENERAL
+
+           TODO EL CONTENIDO SE REDUCE AL 80 %
+           ================================================ */
+
+        .etiqueta {
+
+          position: absolute;
+
+          left: 2mm;
+
+          top: 1mm;
+
+          width: 90mm;
+
+          height: 46mm;
+
+          transform: scale(0.80);
+
+          transform-origin: top left;
+
+          overflow: hidden;
+
+        }
+
+
+        /* ================================================
+           ENCABEZADO
+           ================================================ */
+
+        .header {
+
+          width: 90mm;
+
+          height: 7mm;
+
+          text-align: center;
+
+          border-bottom: 0.25mm solid #000;
+
+          padding: 0;
+
+        }
+
+
+        .header h1 {
+
+          margin: 0;
+
+          padding: 0;
+
+          font-size: 7pt;
+
+          line-height: 7pt;
+
+          font-weight: bold;
+
+        }
+
+
         .header p {
-          margin: 0.3mm auto 0; font-size: 3.4pt; font-weight: bold; text-transform: uppercase;
-          border-bottom: 0.3px solid #000; display: inline-block; padding-bottom: 0.2mm; line-height: 1;
+
+          margin: 0.3mm 0 0 0;
+
+          padding: 0;
+
+          font-size: 4.2pt;
+
+          line-height: 4.2pt;
+
+          font-weight: bold;
+
+          white-space: nowrap;
+
         }
 
-        .data-section { height: 9mm; overflow: hidden; margin-top: 0.3mm; }
-        .row { display: flex; font-size: 5pt; line-height: 1.1; }
-        .label-txt { font-weight: bold; width: 13mm; flex-shrink: 0; }
-        .val { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .barcode-container {
-          height: 9mm;
-          display: flex; justify-content: center; align-items: center;
-          overflow: hidden;
-        }
-        #barcode { height: 7mm !important; max-width: 68mm; }
+        /* ================================================
+           DATOS
+           ================================================ */
 
-        .footer {
-          height: 4mm;
-          display: flex; justify-content: space-between; align-items: center;
-          font-size: 4.4pt; font-weight: bold;
-          border-top: 0.3px solid #000;
-          overflow: hidden;
+        .datos {
+
+          width: 90mm;
+
+          padding-top: 0.8mm;
+
         }
 
-        .mantenimiento {
+.fila {
+
+  width: 90mm;
+
+  height: 4.2mm;
+
+  display: flex;
+
+  align-items: center;
+
+  font-size: 5.5pt;
+
+  line-height: 3.8mm;
+
+  margin: 0;
+
+  /* MOVER DATOS HACIA LA DERECHA */
+  padding-left: 8mm;
+}
+
+
+        /* ================================================
+           CAMPOS
+
+           Dejamos espacio suficiente para:
+           BIEN:
+           TIPO:
+           UBICACIÓN:
+           ================================================ */
+
+        .campo {
+
+  width: 23mm;
+  min-width: 23mm;
+
+  flex-shrink: 0;
+
+  font-weight: bold;
+
+  white-space: nowrap;
+}
+
+
+       .valor {
+
+  width: 62mm;
+
+  max-width: 62mm;
+
+  margin-left: -6mm;
+
+  font-weight: normal;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+        /* ================================================
+           CÓDIGO
+           ================================================ */
+
+        .codigo {
+
+          width: 90mm;
+
           height: 5mm;
-          display: flex; align-items: center; justify-content: center;
-          border: 0.4px solid #000; border-radius: 0.5mm;
-          font-size: 4.8pt; font-weight: bold;
-          text-transform: uppercase;
+
+          margin-top: 0.3mm;
+
+          text-align: center;
+
+          font-size: 6.5pt;
+
+          line-height: 5mm;
+
+          font-weight: bold;
+
+          white-space: nowrap;
+
           overflow: hidden;
+
         }
+
+
+        /* ================================================
+           PIE
+           ================================================ */
+
+        .pie {
+
+          width: 90mm;
+
+          height: 5mm;
+
+          border-top: 0.25mm solid #000;
+
+          border-bottom: 0.25mm solid #000;
+
+          display: flex;
+
+          align-items: center;
+
+          padding: 0 1mm;
+
+          font-size: 4.8pt;
+
+          line-height: 4.5mm;
+
+          font-weight: bold;
+
+        }
+
+
+        .tecnico {
+
+  width: 50mm;
+
+  margin-left: 8mm;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+    .fecha {
+
+  width: 25mm;
+
+  margin-left: 5mm;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+
+        /* ================================================
+           CONTROL
+           ================================================ */
+
+        .control {
+
+          width: 90mm;
+
+          height: 4.5mm;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          text-align: center;
+
+          font-size: 4.8pt;
+
+          line-height: 4mm;
+
+          font-weight: bold;
+
+          white-space: nowrap;
+
+          overflow: hidden;
+
+        }
+
+
+        /* ================================================
+           IMPRESIÓN
+           ================================================ */
+
+        @media print {
+
+          html,
+          body {
+
+            width: 76mm;
+
+            height: 39mm;
+
+            margin: 0;
+
+            padding: 0;
+
+            overflow: hidden;
+
+          }
+
+
+          .etiqueta {
+
+            left: 2mm;
+
+            top: 1mm;
+
+          }
+
+        }
+
       </style>
+
     </head>
+
+
     <body>
-      <div class="label">
+
+
+      <div class="etiqueta">
+
+
+        <!-- =========================================
+             ENCABEZADO
+             ========================================= -->
+
         <div class="header">
-          <h1>CSTM</h1>
-          <p>Prefectura de Pichincha - Soporte Técnico</p>
+
+          <h1>CIRST</h1>
+
+          <p>
+            PREFECTURA DE PICHINCHA - SOPORTE TÉCNICO
+          </p>
+
         </div>
 
-        <div class="data-section">
-          <div class="row"><span class="label-txt">BIEN:</span><span class="val">${equipo.codigoBien}</span></div>
-          <div class="row"><span class="label-txt">TIPO:</span><span class="val">${equipo.tipo || 'ESCRITORIO'}</span></div>
-          <div class="row"><span class="label-txt">UBICACIÓN:</span><span class="val">${equipo.dependencia}</span></div>
+
+        <!-- =========================================
+             INFORMACIÓN
+             ========================================= -->
+
+        <div class="datos">
+
+
+          <div class="fila">
+
+            <span class="campo">
+              BIEN:
+            </span>
+
+            <span class="valor">
+              ${codigo}
+            </span>
+
+          </div>
+
+
+          <div class="fila">
+
+            <span class="campo">
+              TIPO:
+            </span>
+
+            <span class="valor">
+              ${tipoSeguro}
+            </span>
+
+          </div>
+
+
+          <div class="fila">
+
+            <span class="campo">
+              UBICACIÓN:
+            </span>
+
+            <span class="valor">
+              ${ubicacionSegura}
+            </span>
+
+          </div>
+
+
         </div>
 
-        <div class="barcode-container"><svg id="barcode"></svg></div>
 
-        <div class="footer">
-          <span>TÉC: ${this.tecnicoLogeado.toUpperCase()}</span>
-          <span>${fechaManual}</span>
+        <!-- =========================================
+             CÓDIGO
+             ========================================= -->
+
+        <div class="codigo">
+
+           ${codigo}
+
         </div>
 
-        <div class="mantenimiento">Control Mantenimiento</div>
+
+        <!-- =========================================
+             TÉCNICO Y FECHA
+             ========================================= -->
+
+        <div class="pie">
+
+          <span class="tecnico">
+            TÉC: ${tecnicoSeguro}
+          </span>
+
+          <span class="fecha">
+            ${fechaSegura}
+          </span>
+
+        </div>
+
+
+        <!-- =========================================
+             CONTROL
+             ========================================= -->
+
+        <div class="control">
+
+          CONTROL MANTENIMIENTO-CIRST
+
+        </div>
+
+
       </div>
 
-      <script>
-        JsBarcode("#barcode", "${equipo.codigoBien}", {
-          format: "CODE128",
-          width: 0.55,
-          height: 16,
-          displayValue: true,
-          fontSize: 4.5,
-          margin: 0
-        });
-        setTimeout(() => { window.print(); window.close(); }, 500);
-      </script>
+
     </body>
+
     </html>
-    `);
-    WindowPrt.document.close();
-  }
+
+  `);
+
+  doc.close();
+
+
+  // ==========================================
+  // IMPRIMIR
+  // ==========================================
+
+  iframe.onload = () => {
+
+    setTimeout(() => {
+
+      iframe.contentWindow?.focus();
+
+      iframe.contentWindow?.print();
+
+    }, 500);
+
+  };
+
+
+  // ==========================================
+  // ELIMINAR IFRAME
+  // ==========================================
+
+  iframe.contentWindow?.addEventListener(
+    'afterprint',
+    () => {
+
+      setTimeout(() => {
+
+        iframe.remove();
+
+      }, 500);
+
+    }
+  );
+
 }
 }

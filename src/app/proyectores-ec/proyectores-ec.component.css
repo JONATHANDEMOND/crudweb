@@ -1,0 +1,117 @@
+/* Contenedor y tabla general */
+.main-container {
+  background-color: #0d1b2a;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.table-wrapper {
+  background-color: #111d2e;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Cabeceras de la tabla (Azul brillante y en MAYÚSCULAS) */
+.modern-table th {
+  background-color: #111d2e;
+  color: #00d2ff !important; /* Mantiene el azul brillante institucional */
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  padding: 14px 16px;
+  border-bottom: 2px solid #1b2a4a;
+  letter-spacing: 0.5px;
+}
+
+/* Forzar que todo el texto dentro de las celdas sea claro y legible sobre fondo oscuro */
+.modern-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #1b2a4a;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  color: #f8f9fa !important;
+}
+
+/* Tipografía principal */
+.primary-text {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.link-detail:hover {
+  text-decoration: underline;
+}
+
+/* Asegurar que los textos secundarios o dependencias tengan un tono claro visible */
+.modern-table .secondary-text,
+.modern-table .text-muted {
+  color: #adb5bd !important;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Ajustar los textos de estado de mantenimiento debajo de los switches */
+.modern-table div[style*="font-size: 0.75rem"] {
+  color: #ced4da !important;
+}
+
+/* Píldoras de códigos */
+.code-pill {
+  background-color: #1b2a4a;
+  color: #e0fbfc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+/* Botones minimalistas de acciones */
+.modern-table .btn-sm {
+  padding: 5px 8px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  background-color: transparent !important;
+}
+
+.modern-table .btn-outline-primary {
+  color: #3a86ff !important;
+  border-color: #3a86ff !important;
+}
+.modern-table .btn-outline-primary:hover {
+  background-color: #3a86ff !important;
+  color: #ffffff !important;
+}
+
+.modern-table .btn-outline-success {
+  color: #38b000 !important;
+  border-color: #38b000 !important;
+}
+.modern-table .btn-outline-success:hover {
+  background-color: #38b000 !important;
+  color: #ffffff !important;
+}
+
+.modern-table .btn-outline-danger {
+  color: #ff595e !important;
+  border-color: #ff595e !important;
+}
+.modern-table .btn-outline-danger:hover {
+  background-color: #ff595e !important;
+  color: #ffffff !important;
+}
+
+.modern-table .btn-outline-warning {
+  color: #ffb703 !important;
+  border-color: #ffb703 !important;
+}
+.modern-table .btn-outline-warning:hover {
+  background-color: #ffb703 !important;
+  color: #000000 !important;
+}

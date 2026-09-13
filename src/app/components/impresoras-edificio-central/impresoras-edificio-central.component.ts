@@ -16,7 +16,8 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   impresorasFiltradas: any[] = [];
   busquedaGlobal: string = '';
 
-  impresoraActual: any = {};
+  // Inicializamos impresoraActual incluyendo por defecto el tipo 'Impresora'
+  impresoraActual: any = { tipo: 'Impresora' };
   mostrarModalRegistro: boolean = false;
   modoEdicion: boolean = false;
 
@@ -26,13 +27,12 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   equipoSeleccionados: any = null;
   archivoBaja: File | null = null;
 
-  // CORRECCIÓN 1: Le agregamos ": any" para que permita guardar el texto Base64
   datosBaja: any = {
     motivo: '',
     informe: '',
     observacion: '',
     fecha: new Date().toISOString().substring(0, 10),
-    documento: null // Aquí guardaremos el archivo convertido
+    documento: null
   };
 
   // Inyectamos el servicio en lugar de HttpClient directo
@@ -51,34 +51,34 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   }
 
   filtrarImpresoras() {
-    // 1. Iniciamos con todos los datos
     let resultado = this.impresoras;
 
-    // 2. Filtramos por Piso (si el usuario seleccionó uno)
+    // 1. Filtramos por Piso (si el usuario seleccionó uno)
     if (this.pisoSeleccionado) {
       resultado = resultado.filter(i =>
         i.piso && i.piso.toLowerCase() === this.pisoSeleccionado.toLowerCase()
       );
     }
 
-    // 3. Filtramos por Texto (si el usuario escribió algo)
+    // 2. Filtramos por Texto (incluyendo búsqueda por el campo tipo)
     if (this.busquedaGlobal) {
       const busqueda = this.busquedaGlobal.toLowerCase();
       resultado = resultado.filter(i =>
         (i.codigoAB || '').toLowerCase().includes(busqueda) ||
         (i.custodio || '').toLowerCase().includes(busqueda) ||
         (i.marcaModelo || '').toLowerCase().includes(busqueda) ||
-        (i.oficina || '').toLowerCase().includes(busqueda)
+        (i.oficina || '').toLowerCase().includes(busqueda) ||
+        (i.tipo || '').toLowerCase().includes(busqueda)
       );
     }
 
-    // 4. Asignamos el resultado final a la tabla
     this.impresorasFiltradas = resultado;
   }
 
   abrirModalRegistro(impresora: any = null) {
     this.modoEdicion = !!impresora;
-    this.impresoraActual = impresora ? { ...impresora } : {};
+    // Si es nuevo registro, asignamos 'Impresora' por defecto; si es edición, clonamos el objeto existente
+    this.impresoraActual = impresora ? { ...impresora } : { tipo: 'Impresora' };
     this.mostrarModalRegistro = true;
   }
 
@@ -97,26 +97,24 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   }
 
   eliminar(_id: string) {
-    if (_id && confirm('¿Estás seguro de eliminar esta impresora?')) {
+    if (_id && confirm('¿Estás seguro de eliminar este equipo?')) {
       this.autoService.deleteImpresoraEC(_id).subscribe(() => this.obtenerImpresoras());
     }
   }
 
   // ==========================================
-  // --- MANTENIMIENTO DE IMPRESORAS ---
+  // --- MANTENIMIENTO DE EQUIPOS ---
   // ==========================================
 
   marcarMantenimiento(item: any) {
     if (!item._id) {
-      alert('Esta impresora es nueva y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
+      alert('Este equipo es nuevo y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
       setTimeout(() => item.mantenimientoRealizado = !item.mantenimientoRealizado, 100);
       return;
     }
 
-    // 1. Bloqueo visual
     item.guardandoMantenimiento = true;
 
-    // 2. Preparación del historial
     if (!item.historialMantenimientos) {
       item.historialMantenimientos = [];
     }
@@ -125,7 +123,6 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
     const historialAnterior = [...item.historialMantenimientos];
     const fechaPlanaAnterior = item.fechaUltimoMantenimiento;
 
-    // 3. Lógica de fechas
     if (item.mantenimientoRealizado) {
       const nuevaFecha = new Date().toISOString();
       item.historialMantenimientos.push({ fecha: nuevaFecha });
@@ -134,15 +131,13 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
       item.fechaUltimoMantenimiento = null;
     }
 
-    // 4. Llamada al servicio (usando updateImpresoraEC)
     this.autoService.updateImpresoraEC(item._id, item).subscribe({
       next: (res: any) => {
-        console.log('Mantenimiento EC guardado:', res);
+        console.log('Mantenimiento guardado:', res);
         item.guardandoMantenimiento = false;
       },
       error: (err: any) => {
-        console.error('Error al actualizar mantenimiento EC:', err);
-        // Reversión
+        console.error('Error al actualizar mantenimiento:', err);
         item.mantenimientoRealizado = estadoSwitchAnterior;
         item.historialMantenimientos = historialAnterior;
         item.fechaUltimoMantenimiento = fechaPlanaAnterior;
@@ -155,7 +150,7 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   limpiarMantenimiento(item: any) {
     if (!item._id) return;
 
-    if (confirm('¿Está seguro de que desea eliminar todo el historial de mantenimiento de esta impresora?')) {
+    if (confirm('¿Está seguro de que desea eliminar todo el historial de mantenimiento de este equipo?')) {
       item.guardandoMantenimiento = true;
       item.mantenimientoRealizado = false;
       item.fechaUltimoMantenimiento = null;
@@ -163,7 +158,7 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
 
       this.autoService.updateImpresoraEC(item._id, item).subscribe({
         next: () => {
-          console.log('Historial de impresora limpiado.');
+          console.log('Historial limpiado.');
           item.guardandoMantenimiento = false;
         },
         error: (err) => {
@@ -176,14 +171,13 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   }
 
   // ==========================================
-  // --- TRÁMITE DE BAJA DE IMPRESORAS ---
+  // --- TRÁMITE DE BAJA ---
   // ==========================================
 
   abrirModalBaja(equipo: any) {
     this.equipoSeleccionados = equipo;
-    this.archivoBaja = null; // Limpiar archivo previo si lo hay
+    this.archivoBaja = null;
 
-    // CORRECCIÓN 2: Aseguramos que el documento se limpie al abrir
     this.datosBaja = {
       motivo: '',
       informe: '',
@@ -196,7 +190,6 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      // Recomendación: Limitar el tamaño a 2MB para no saturar MongoDB
       if (file.size > 2 * 1024 * 1024) {
         alert('El archivo es demasiado pesado. Por favor, sube un PDF o imagen menor a 2MB.');
         return;
@@ -205,9 +198,8 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        // Convierte el archivo a una cadena de texto (Base64) y lo guarda en el JSON
         this.datosBaja.documento = reader.result as string;
-        console.log('Archivo procesado exitosamente para el envío.');
+        console.log('Archivo procesado exitosamente.');
       };
       reader.onerror = (error) => {
         console.error('Error al procesar el archivo: ', error);
@@ -215,25 +207,21 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
     }
   }
 
-  // Envía los datos al Backend (Formato JSON compatible)
   confirmarBaja() {
     if (!this.datosBaja.motivo || !this.datosBaja.observacion) {
       alert('El motivo y la observación técnica son obligatorios.');
       return;
     }
 
-    // Al ser una impresora, siempre se da de baja el equipo completo
     let actualizacionBaja = {
       estadoFisico: 'De Baja',
       datosBajaTecnica: this.datosBaja
     };
 
-    // Usamos updateImpresoraEC para apuntar a la base de Edificio Central
     this.autoService.updateImpresoraEC(this.equipoSeleccionados._id, actualizacionBaja).subscribe({
       next: (respuesta: any) => {
         console.log('RESPUESTA DEL SERVIDOR:', respuesta);
 
-        // 1. Cerramos el modal de Bootstrap de forma segura
         const modalElement = document.getElementById('modalBaja');
         if (modalElement) {
           modalElement.classList.remove('show');
@@ -245,23 +233,18 @@ export class ImpresorasEdificioCentralComponent implements OnInit {
           }
         }
 
-        // 2. ACTUALIZACIÓN LOCAL INMEDIATA EN LA TABLA
-        // Quitamos la impresora del arreglo principal para que desaparezca al instante
         this.impresoras = this.impresoras.filter((e: any) => e._id !== this.equipoSeleccionados._id);
 
-        // 3. Forzamos a Angular a redibujar la tabla
         this.impresorasFiltradas = [];
         setTimeout(() => {
           this.impresorasFiltradas = [...this.impresoras];
         }, 30);
 
-        alert('Impresora dada de baja correctamente.');
-
-        // 4. Recargamos los datos del servidor para asegurar sincronización
+        alert('Equipo dado de baja correctamente.');
         this.obtenerImpresoras();
       },
       error: (error) => {
-        console.error('Error al procesar la baja de la impresora:', error);
+        console.error('Error al procesar la baja:', error);
         alert('Hubo un error al procesar el trámite en el servidor.');
       }
     });

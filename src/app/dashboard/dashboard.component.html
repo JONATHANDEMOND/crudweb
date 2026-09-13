@@ -44,32 +44,78 @@
   </div>
 
   <div class="row mb-5">
-    <div class="col-12">
-      <div class="chart-card">
-        <div class="chart-header" style="background-color: #f8f9fa; border-bottom: 2px solid #e9ecef;">
-          <i class="fas fa-file-pdf text-danger fs-5"></i>
-          <span class="fs-5 fw-bold text-dark">Generación de Informes Mensuales (PDF)</span>
+  <div class="col-12">
+    <div class="chart-card shadow-sm border-0">
+      <div class="chart-header" style="background-color: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+        <i class="fas fa-file-pdf text-danger fs-5"></i>
+        <span class="fs-5 fw-bold text-dark">Generación de Informes Mensuales (PDF)</span>
+      </div>
+
+      <div class="chart-body p-4">
+        <!-- CUADRÍCULA DE BOTONES AGRUPADOS POR TIPO -->
+        <div class="row g-3">
+
+          <!-- COLUMNA 1: PCs -->
+          <div class="col-12 col-md-6 col-xl-3 d-flex flex-column gap-2">
+            <h6 class="text-muted fw-bold mb-1"><i class="fas fa-desktop me-1"></i> Equipos PC</h6>
+            <button class="btn btn-primary w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Edificio Central')">
+              <i class="fas fa-building me-2 w-20px text-center"></i> Edificio Central
+            </button>
+            <button class="btn btn-info text-white w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Sitios Remotos')">
+              <i class="fas fa-map-marker-alt me-2 w-20px text-center"></i> Sitios Remotos
+            </button>
+          </div>
+
+          <!-- COLUMNA 2: IMPRESORAS -->
+          <div class="col-12 col-md-6 col-xl-3 d-flex flex-column gap-2">
+            <h6 class="text-muted fw-bold mb-1"><i class="fas fa-print me-1"></i> Impresoras</h6>
+            <button class="btn btn-warning text-dark w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Impresoras Edificio Central')">
+              <i class="fas fa-building me-2 w-20px text-center"></i> Edificio Central
+            </button>
+            <button class="btn btn-danger w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Impresoras Sitios Remotos')">
+              <i class="fas fa-map-marker-alt me-2 w-20px text-center"></i> Sitios Remotos
+            </button>
+          </div>
+
+          <!-- COLUMNA 3: PROYECTORES -->
+          <div class="col-12 col-md-6 col-xl-3 d-flex flex-column gap-2">
+            <h6 class="text-muted fw-bold mb-1"><i class="fas fa-video me-1"></i> Proyectores</h6>
+            <button class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Proyectores Edificio Central')">
+              <i class="fas fa-building me-2 w-20px text-center"></i> Edificio Central
+            </button>
+            <button class="btn btn-outline-info text-dark w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Proyectores Sitios Remotos')">
+              <i class="fas fa-map-marker-alt me-2 w-20px text-center"></i> Sitios Remotos
+            </button>
+          </div>
+
+          <!-- COLUMNA 4: SCANNERS -->
+          <div class="col-12 col-md-6 col-xl-3 d-flex flex-column gap-2">
+            <h6 class="text-muted fw-bold mb-1"><i class="fas fa-copy me-1"></i> Scanners</h6>
+            <button class="btn btn-outline-warning text-dark w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Scanners Edificio Central')">
+              <i class="fas fa-building me-2 w-20px text-center"></i> Edificio Central
+            </button>
+            <button class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-start shadow-sm" (click)="generarReporteDetallado('Scanners Sitios Remotos')">
+              <i class="fas fa-map-marker-alt me-2 w-20px text-center"></i> Sitios Remotos
+            </button>
+          </div>
+
         </div>
-        <div class="chart-body d-flex flex-wrap gap-3 p-4">
-          <button class="btn btn-primary px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Edificio Central')">
-            <i class="fas fa-desktop me-2"></i> Informe PCs Edificio Central
-          </button>
-          <button class="btn btn-info text-white px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Sitios Remotos')">
-            <i class="fas fa-laptop me-2"></i> Informe PCs Sitios Remotos
-          </button>
-          <button class="btn btn-warning text-dark px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Impresoras Edificio Central')">
-            <i class="fas fa-print me-2"></i> Informe Impresoras EC
-          </button>
-          <button class="btn btn-danger px-4 py-2 d-flex align-items-center shadow-sm" (click)="generarReporteDetallado('Impresoras Sitios Remotos')">
-            <i class="fas fa-network-wired me-2"></i> Informe Impresoras SR
-          </button>
-          <button class="btn btn-secondary text-white px-4 py-2 d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#modalFiltroBajas">
-            <i class="fas fa-trash-alt me-2"></i> Informe de Bajas
-          </button>
+
+        <hr class="my-4 text-muted opacity-25">
+
+        <!-- BOTÓN DE BAJAS SEPARADO -->
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-8 col-lg-5">
+            <button class="btn btn-secondary text-white w-100 d-flex align-items-center justify-content-center shadow-sm py-2 fs-6" data-bs-toggle="modal" data-bs-target="#modalFiltroBajas">
+              <i class="fas fa-trash-alt me-2"></i> Generar Informe General de Bajas
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
+</div>
 
   <div class="row mb-5">
     <div class="col-12">

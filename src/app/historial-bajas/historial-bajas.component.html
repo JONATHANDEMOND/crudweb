@@ -38,11 +38,15 @@
             <span class="badge"
                   [ngClass]="{'bg-primary': item.tipoCategoria === 'Equipo PC',
                               'bg-warning text-dark': item.tipoCategoria === 'Periférico',
-                              'bg-dark': item.tipoCategoria === 'Impresora'}">
+                              'bg-dark': item.tipoCategoria === 'Impresora',
+                              'bg-info text-dark': item.tipoCategoria === 'Proyector',
+                              'bg-secondary text-white': item.tipoCategoria === 'Scanner'}">
               <i class="fas"
                  [ngClass]="{'fa-desktop': item.tipoCategoria === 'Equipo PC',
-                             'fa-mouse': item.tipoCategoria === 'Periférico',
-                             'fa-print': item.tipoCategoria === 'Impresora'}"></i>
+                              'fa-mouse': item.tipoCategoria === 'Periférico',
+                              'fa-print': item.tipoCategoria === 'Impresora',
+                              'fa-project-diagram': item.tipoCategoria === 'Proyector',
+                              'fa-scanner': item.tipoCategoria === 'Scanner'}"></i>
               {{item.tipoCategoria}}
             </span>
             <div style="font-size: 0.75rem; color: #666; margin-top: 3px;">{{item.origenBD}}</div>
