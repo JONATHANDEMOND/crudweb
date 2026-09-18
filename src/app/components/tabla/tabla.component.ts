@@ -54,13 +54,24 @@ export class TablaComponent implements OnInit {
     this.cargarTecnico();
   }
 
-  cargarDatos() {
-    this.servicio.getAutos().subscribe(p => {
-      // 1. Guardamos en this.autos SOLO los equipos que NO estén de baja
-      this.autos = p.filter((equipo: any) => equipo.estadoFisico !== 'De Baja');
+ cargarDatos() {
+    this.servicio.getAutos().subscribe({
+      next: (p: any) => {
+        // 1. Filtramos los que NO estén de baja y apagamos el spinner de mantenimiento
+        this.autos = p
+          .filter((equipo: any) => equipo.estadoFisico !== 'De Baja')
+          .map((equipo: any) => {
+            // Forzamos a que inicie apagado el estado visual de carga
+            equipo.guardandoMantenimiento = false;
+            return equipo;
+          });
 
-      // 2. Actualizamos la lista filtrada que se muestra en la tabla
-      this.vehiculosFiltrados = [...this.autos];
+        // 2. Actualizamos la lista filtrada que se muestra en la tabla
+        this.vehiculosFiltrados = [...this.autos];
+      },
+      error: (err: any) => {
+        console.error('Error al cargar los datos de Sitios Remotos:', err);
+      }
     });
   }
 
@@ -142,20 +153,49 @@ export class TablaComponent implements OnInit {
   }
 
   guardar(formulario: any) {
+    // 1. Validamos que el formulario esté completo
+    if (formulario.invalid) {
+      alert("Por favor, complete todos los campos obligatorios.");
+      return;
+    }
+
     const datos = formulario.value;
 
-    console.log('Modo edición:', this.modoEdicion);
-    console.log('ID actual:', this.id); // Corregido a this.id
-    console.log('Datos del formulario:', datos);
+    // ==========================================================
+    // VALIDACIÓN DE SERIE DUPLICADA ANTES DE GUARDAR
+    // ==========================================================
+    if (datos.numeroSerie && datos.numeroSerie.trim() !== '' && datos.numeroSerie.toUpperCase() !== 'S/N') {
+      // Usamos this.autos porque en este componente tu lista se llama así
+      const serieDuplicada = this.autos.find((equipo: any) => {
+        const coincideSerie = equipo.numeroSerie && equipo.numeroSerie.toUpperCase() === datos.numeroSerie.toUpperCase();
+
+        if (this.modoEdicion) {
+          // Comparamos convirtiendo a String para evitar errores entre números e IDs de Mongo
+          const idEquipo = String(equipo._id || equipo.id);
+          const idActual = String(this.id);
+
+          return coincideSerie && idEquipo !== idActual;
+        }
+
+        return coincideSerie;
+      });
+
+      if (serieDuplicada) {
+        alert(`❌ ALERTA: El número de serie "${datos.numeroSerie}" ya está registrado en el equipo: ${serieDuplicada.codigoBien || 'Desconocido'}.`);
+        return;
+      }
+    }
+    // ==========================================================
 
     if (this.modoEdicion) {
-      // Usamos this.id porque así declaraste la variable arriba
       if (!this.id) {
         alert("❌ Error: No se encontró el ID del equipo para actualizar.");
         return;
       }
 
-      // Enviamos la actualización con el this.id
+      // Nos aseguramos de inyectar el ID en los datos
+      datos._id = this.id;
+
       this.servicio.updateAuto(this.id, datos).subscribe({
         next: (respuesta) => {
           alert("✅ Equipo actualizado correctamente");
@@ -334,55 +374,66 @@ export class TablaComponent implements OnInit {
 
   // ----------------------------------------------------
 
-  ///MARCAR EQUIPOS MANTENIMIENTO
-marcarMantenimiento(equipo: any) {
-  // 0. VALIDACIÓN CRÍTICA: Si el equipo no tiene ID, detenemos el proceso
-  if (!equipo._id) {
-    alert('Este equipo es nuevo y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
-    // Revertimos el switch para que no se quede marcado por error
-    setTimeout(() => equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado, 100);
-    return;
-  }
+// MARCAR EQUIPOS MANTENIMIENTO
+ marcarMantenimiento(equipo: any) {
+    // 0. Obtener el ID correcto (soporta _id de Mongo o id numérico)
+    const idActualizar = equipo._id || equipo.id;
 
-  // 1. Bloqueo para evitar spam de clics
-  equipo.guardandoMantenimiento = true;
-
-
-  // 2. Preparación del historial
-  if (!equipo.historialMantenimientos) {
-    equipo.historialMantenimientos = [];
-  }
-
-  const estadoSwitchAnterior = !equipo.mantenimientoRealizado;
-  const historialAnterior = [...equipo.historialMantenimientos];
-  const fechaPlanaAnterior = equipo.fechaUltimoMantenimiento;
-
-  // 3. Lógica de actualización local
-  if (equipo.mantenimientoRealizado) {
-    const nuevaFecha = new Date().toISOString();
-    equipo.historialMantenimientos.push({ fecha: nuevaFecha });
-    equipo.fechaUltimoMantenimiento = nuevaFecha;
-  } else {
-    equipo.fechaUltimoMantenimiento = null;
-  }
-
-  // 4. Llamada al servicio
-  this.servicio.actualizarEquipo(equipo._id, equipo).subscribe({
-    next: (res: any) => {
-      console.log('Respuesta del servidor:', res);
-      equipo.guardandoMantenimiento = false;
-    },
-    error: (err: any) => {
-      console.error('ERROR DETALLADO:', err);
-      // 5. REVERSIÓN TOTAL
-      equipo.mantenimientoRealizado = estadoSwitchAnterior;
-      equipo.historialMantenimientos = historialAnterior;
-      equipo.fechaUltimoMantenimiento = fechaPlanaAnterior;
-      equipo.guardandoMantenimiento = false;
-      alert('Error de conexión al guardar el mantenimiento. Revisa la consola (F12).');
+    if (!idActualizar) {
+      alert('Este equipo es nuevo y aún no se ha sincronizado su ID. Por favor, recarga la página e intenta de nuevo.');
+      setTimeout(() => equipo.mantenimientoRealizado = !equipo.mantenimientoRealizado, 100);
+      return;
     }
-  });
-}
+
+    // 1. Bloqueo visual en la interfaz (activa el texto "Guardando...")
+    equipo.guardandoMantenimiento = true;
+
+    // 2. Preparación de historiales para posible reversión
+    if (!equipo.historialMantenimientos) {
+      equipo.historialMantenimientos = [];
+    }
+
+    const estadoSwitchAnterior = !equipo.mantenimientoRealizado;
+    const historialAnterior = [...equipo.historialMantenimientos];
+    const fechaPlanaAnterior = equipo.fechaUltimoMantenimiento;
+
+    // 3. Lógica de actualización local
+    if (equipo.mantenimientoRealizado) {
+      const nuevaFecha = new Date().toISOString();
+
+      // Añadimos al historial con la fecha y el técnico responsable
+      equipo.historialMantenimientos.push({
+        fecha: nuevaFecha,
+        tecnico: this.tecnicoLogeado || 'Soporte Técnico'
+      });
+      equipo.fechaUltimoMantenimiento = nuevaFecha;
+    } else {
+      equipo.fechaUltimoMantenimiento = null;
+    }
+
+    // 4. PREPARAMOS LOS DATOS PARA EL BACKEND
+    // Clonamos el equipo para aislar las variables de la interfaz gráfica
+    const datosParaGuardar = { ...equipo };
+    datosParaGuardar.guardandoMantenimiento = false; // Evita que se guarde como 'true' en MongoDB
+
+    // 5. Llamada al servicio usando updateAuto
+    this.servicio.updateAuto(idActualizar, datosParaGuardar).subscribe({
+      next: (res: any) => {
+        console.log('✅ Mantenimiento actualizado en el servidor:', res);
+        // Quitamos el modo "cargando" de la interfaz gráfica
+        equipo.guardandoMantenimiento = false;
+      },
+      error: (err: any) => {
+        console.error('❌ ERROR DETALLADO:', err);
+        // 6. REVERSIÓN TOTAL SI FALLA EL SERVIDOR
+        equipo.mantenimientoRealizado = estadoSwitchAnterior;
+        equipo.historialMantenimientos = historialAnterior;
+        equipo.fechaUltimoMantenimiento = fechaPlanaAnterior;
+        equipo.guardandoMantenimiento = false;
+        alert('Error de conexión al guardar el mantenimiento. El botón regresará a su estado anterior.');
+      }
+    });
+  }
   // LIMPIAR MANTENIMIENTO
 limpiarMantenimiento(equipo: any) {
   // Validación de seguridad

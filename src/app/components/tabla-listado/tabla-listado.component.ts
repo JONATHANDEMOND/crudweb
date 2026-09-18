@@ -52,11 +52,17 @@ export class TablaListadoComponent implements OnInit {
     this.cargarTecnico();
   }
 
-  cargarDatos() {
+ cargarDatos() {
     this.servicio.getEdificioCentral().subscribe({
       next: (edificio) => {
-        // 1. Filtramos: Nos quedamos SOLO con los que NO estén de baja
-        this.edificioCentral = edificio.filter((equipo: any) => equipo.estadoFisico !== 'De Baja');
+        // 1. Filtramos los que NO estén de baja y apagamos el spinner de mantenimiento
+        this.edificioCentral = edificio
+          .filter((equipo: any) => equipo.estadoFisico !== 'De Baja')
+          .map((equipo: any) => {
+            // Forzamos a que inicie apagado el estado visual de carga para corregir el error de la base de datos
+            equipo.guardandoMantenimiento = false;
+            return equipo;
+          });
 
         // 2. Actualizamos la lista que se muestra en la tabla
         this.vehiculosFiltrados = [...this.edificioCentral];
@@ -147,12 +153,40 @@ export class TablaListadoComponent implements OnInit {
     this.observaciones = item.observaciones;                // <--- CARGAR OBSERVACIÓN
   }
 
-  guardar(formulario: any) {
+ guardar(formulario: any) {
+    // Si el formulario es inválido, no hacemos nada
+    if (formulario.invalid) {
+      alert("Por favor, complete todos los campos obligatorios.");
+      return;
+    }
+
     const datos = formulario.value;
 
-    console.log('Modo edición:', this.modoEdicion);
-    console.log('ID actual:', this.id);
-    console.log('Datos del formulario:', datos);
+    // ==========================================================
+    // VALIDACIÓN DE SERIE DUPLICADA ANTES DE GUARDAR
+    // ==========================================================
+    if (datos.numeroSerie && datos.numeroSerie.trim() !== '' && datos.numeroSerie.toUpperCase() !== 'S/N') {
+      const serieDuplicada = this.edificioCentral.find((equipo: any) => {
+        const coincideSerie = equipo.numeroSerie && equipo.numeroSerie.toUpperCase() === datos.numeroSerie.toUpperCase();
+
+        if (this.modoEdicion) {
+          // CORRECCIÓN: Convertimos ambos a texto (String) para que la comparación no falle
+          // si uno es número y el otro es texto, o si es un ObjectId de Mongo.
+          const idEquipo = String(equipo._id || equipo.id);
+          const idActual = String(this.id);
+
+          return coincideSerie && idEquipo !== idActual;
+        }
+
+        return coincideSerie;
+      });
+
+      if (serieDuplicada) {
+        alert(`❌ ALERTA: El número de serie "${datos.numeroSerie}" ya está registrado en el equipo: ${serieDuplicada.codigoBien || 'Desconocido'}.`);
+        return;
+      }
+    }
+    // ==========================================================
 
     if (this.modoEdicion) {
       if (!this.id) {
@@ -160,26 +194,26 @@ export class TablaListadoComponent implements OnInit {
         return;
       }
 
+      // Nos aseguramos de enviar el ID en los datos para el backend
+      datos._id = this.id;
+
       this.servicio.updateEdificioCentral(this.id, datos).subscribe({
         next: (respuesta) => {
           alert("✅ Equipo actualizado correctamente");
           this.cerrarModalRegistro();
-          this.cargarDatos();
+          this.cargarDatos(); // Recargamos la tabla
         },
         error: (err) => {
           console.error("Error al actualizar:", err);
-          alert("❌ Ocurrió un error al intentar actualizar. Revisa la consola.");
+          alert("❌ Ocurrió un error al intentar actualizar. Revisa la consola (F12) para más detalles.");
         }
       });
+
     } else {
-      const idsExistentes = this.edificioCentral.map(a => Number(a.id) || 0);
-      const maxId = idsExistentes.length > 0 ? Math.max(...idsExistentes) : 0;
-
-      datos.id = (maxId + 1).toString();
-
+      // MODO CREAR NUEVO
       this.servicio.postEdificioCentral(datos).subscribe({
         next: (respuesta) => {
-          alert("✅ Equipo registrado con ID: " + datos.id);
+          alert("✅ Equipo registrado exitosamente.");
           this.cerrarModalRegistro();
           this.cargarDatos();
         },
@@ -235,8 +269,17 @@ export class TablaListadoComponent implements OnInit {
   }
 
   confirmarBaja() {
+    // 1. Validación de campos obligatorios
     if (!this.datosBaja.motivo || !this.datosBaja.observacion || !this.datosBaja.componente) {
       alert('El componente, motivo y observación son obligatorios.');
+      return;
+    }
+
+    // 2. OBTENER ID SEGURO (Soporta _id de Mongo o id numérico)
+    const idBaja = this.equipoSeleccionados._id || this.equipoSeleccionados.id;
+
+    if (!idBaja) {
+      alert('❌ Error: No se encontró el ID del equipo para dar de baja.');
       return;
     }
 
@@ -266,10 +309,12 @@ export class TablaListadoComponent implements OnInit {
       }
     }
 
-    this.servicio.updateEdificioCentral(this.equipoSeleccionados._id, actualizacionBaja).subscribe({
+    // 3. ENVIAR AL SERVIDOR USANDO EL ID SEGURO
+    this.servicio.updateEdificioCentral(idBaja, actualizacionBaja).subscribe({
       next: (respuesta: any) => {
         console.log('RESPUESTA DEL SERVIDOR:', respuesta);
 
+        // Limpieza visual del Modal
         const modalElement = document.getElementById('modalBaja');
         if (modalElement) {
           modalElement.classList.remove('show');
@@ -281,10 +326,13 @@ export class TablaListadoComponent implements OnInit {
           }
         }
 
+        // 4. ACTUALIZACIÓN LOCAL USANDO EL ID SEGURO
         if (this.datosBaja.componente === 'Completo') {
-          this.edificioCentral = this.edificioCentral.filter((e: any) => e._id !== this.equipoSeleccionados._id);
+          // Filtramos comparando con _id o id
+          this.edificioCentral = this.edificioCentral.filter((e: any) => (e._id || e.id) !== idBaja);
         } else {
-          const index = this.edificioCentral.findIndex((e: any) => e._id === this.equipoSeleccionados._id);
+          // Buscamos el índice comparando con _id o id
+          const index = this.edificioCentral.findIndex((e: any) => (e._id || e.id) === idBaja);
           if (index !== -1) {
             if (this.datosBaja.componente === 'Monitor') {
               this.edificioCentral[index].codigoBienMonitor = nuevoCod;
@@ -303,21 +351,21 @@ export class TablaListadoComponent implements OnInit {
           }
         }
 
+        // Refrescar tabla visual
         this.vehiculosFiltrados = [];
         setTimeout(() => {
           this.vehiculosFiltrados = [...this.edificioCentral];
         }, 30);
 
-        alert('Trámite de baja procesado y actualizado correctamente.');
-        this.cargarDatos();
+        alert('✅ Trámite de baja procesado y actualizado correctamente.');
+        this.cargarDatos(); // Sincronizamos con la base de datos real
       },
       error: (error) => {
         console.error('Error al procesar la baja:', error);
-        alert('Hubo un error al procesar el trámite en el servidor.');
+        alert('❌ Hubo un error al procesar el trámite en el servidor. Verifica la consola (F12).');
       }
     });
   }
-
   filtrarEquiposs2() { }
   trackById(index: number, item: any) { return item.id; }
   contarUpsMalos() { return this.vehiculosFiltrados.filter(x => x.estadoups === 'Malo').length; }

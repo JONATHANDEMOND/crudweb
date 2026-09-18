@@ -39,7 +39,7 @@
       <thead>
         <tr>
           <th>Responsable / Dependencia</th>
-          <th>Modelo Equipo</th>
+          <th>HostName</th>
           <th>Cód. CPU</th>
           <th>Cód. Monitor</th>
           <th>Estado UPS</th>
@@ -56,7 +56,7 @@
             </div>
             <div class="secondary-text">{{item.dependencia}}</div>
           </td>
-          <td class="primary-text">{{item.modelo}}</td>
+          <td class="primary-text">{{item.hostname}}</td>
           <td><span class="code-pill">{{item.codigoBien}}</span></td>
           <td><span class="code-pill">{{item.codigoBienMonitor}}</span></td>
           <td><span class="status-indicator" [ngClass]="item.estadoups?.toLowerCase()">{{item.estadoups}}</span></td>
@@ -309,17 +309,17 @@
               </div>
               <div class="row g-3 mt-1">
                 <div class="col-12 col-md-4"><label class="form-label fw-bold">Disco</label><select class="form-control form-select" name="tipoDisco" [(ngModel)]="tipoDisco"><option value="HDD">HDD</option><option value="SSD">SSD</option><option value="M2">M.2</option></select></div>
-                <div class="col-12 col-md-4"><label class="form-label fw-bold">Cód. CPU</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien"></div>
-                <div class="col-12 col-md-4"><label class="form-label">Serie CPU</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie"></div>
+                <div class="col-12 col-md-4"><label class="form-label fw-bold">Cód. CPU</label><input type="text" class="form-control" name="codigoBien" [(ngModel)]="codigoBien" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-4"><label class="form-label">Serie CPU</label><input type="text" class="form-control" name="numeroSerie" [(ngModel)]="numeroSerie" (keydown.enter)="$event.preventDefault()"></div>
               </div>
               <div class="row g-3 mt-1">
-                <div class="col-12 col-md-6"><label class="form-label fw-bold">Cód. Monitor 1</label><input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor"></div>
-                <div class="col-12 col-md-6"><label class="form-label">Serie Monitor 1</label><input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor"></div>
+                <div class="col-12 col-md-6"><label class="form-label fw-bold">Cód. Monitor 1</label><input type="text" class="form-control" name="codigoBienMonitor" [(ngModel)]="codigoBienMonitor" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Serie Monitor 1</label><input type="text" class="form-control" name="numeroSerieMonitor" [(ngModel)]="numeroSerieMonitor" (keydown.enter)="$event.preventDefault()"></div>
               </div>
               <!-- MONITOR 2 -->
               <div class="row g-3 mt-1">
-                <div class="col-12 col-md-6"><label class="form-label fw-bold text-info">Cód. Monitor 2</label><input type="text" class="form-control border-info" name="codigoBienMonitor2" [(ngModel)]="codigoBienMonitor2" placeholder="Opcional"></div>
-                <div class="col-12 col-md-6"><label class="form-label text-info">Serie Monitor 2</label><input type="text" class="form-control border-info" name="numeroSerieMonitor2" [(ngModel)]="numeroSerieMonitor2" placeholder="Opcional"></div>
+                <div class="col-12 col-md-6"><label class="form-label fw-bold text-info">Cód. Monitor 2</label><input type="text" class="form-control border-info" name="codigoBienMonitor2" [(ngModel)]="codigoBienMonitor2" placeholder="Opcional" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-6"><label class="form-label text-info">Serie Monitor 2</label><input type="text" class="form-control border-info" name="numeroSerieMonitor2" [(ngModel)]="numeroSerieMonitor2" placeholder="Opcional" (keydown.enter)="$event.preventDefault()"></div>
               </div>
             </div>
           </div>
@@ -328,14 +328,14 @@
             <div class="card-body">
               <h6 class="text-secondary fw-bold border-bottom pb-2">Periféricos, UPS y Observaciones</h6>
               <div class="row g-3 mt-1">
-                <div class="col-12 col-md-6"><label class="form-label">Cód. Mouse</label><input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse"></div>
-                <div class="col-12 col-md-6"><label class="form-label">Serie Mouse</label><input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="numeroSerieMouse"></div>
-                <div class="col-12 col-md-6"><label class="form-label">Cód. Teclado</label><input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado"></div>
-                <div class="col-12 col-md-6"><label class="form-label">Serie Teclado</label><input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="numeroSerieTeclado"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Cód. Mouse</label><input type="text" class="form-control" name="codigoBienMouse" [(ngModel)]="codigoBienMouse" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Serie Mouse</label><input type="text" class="form-control" name="numeroSerieMouse" [(ngModel)]="numeroSerieMouse" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Cód. Teclado</label><input type="text" class="form-control" name="codigoBienTeclado" [(ngModel)]="codigoBienTeclado" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-6"><label class="form-label">Serie Teclado</label><input type="text" class="form-control" name="numeroSerieTeclado" [(ngModel)]="numeroSerieTeclado" (keydown.enter)="$event.preventDefault()"></div>
               </div>
               <div class="row g-3 mt-1">
-                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps"></div>
-                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps"></div>
+                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Cód. UPS</label><input type="text" class="form-control" name="codigoBienUps" [(ngModel)]="codigoBienUps" (keydown.enter)="$event.preventDefault()"></div>
+                <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Serie UPS</label><input type="text" class="form-control" name="numeroSerieUps" [(ngModel)]="numeroSerieUps" (keydown.enter)="$event.preventDefault()"></div>
                 <div class="col-12 col-md-4"><label class="form-label text-warning fw-bold">Estado UPS</label><select class="form-control form-select" name="estadoups" [(ngModel)]="estadoups"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
               </div>
 
@@ -408,11 +408,11 @@
             <div class="row g-2">
               <div class="col-12 col-sm-6">
                 <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nuevo Cód. Bien</label>
-                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: 123456" [(ngModel)]="datosBaja.nuevoCodigo">
+                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: 123456" [(ngModel)]="datosBaja.nuevoCodigo" (keydown.enter)="$event.preventDefault()">
               </div>
               <div class="col-12 col-sm-6">
                 <label class="form-label mb-1 fw-bold" style="font-size: 0.75em;">Nueva Serie</label>
-                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: SN-987" [(ngModel)]="datosBaja.nuevaSerie">
+                <input type="text" class="form-control form-control-sm border-warning" placeholder="Ej: SN-987" [(ngModel)]="datosBaja.nuevaSerie" (keydown.enter)="$event.preventDefault()">
               </div>
             </div>
           </div>
